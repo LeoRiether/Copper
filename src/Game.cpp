@@ -52,7 +52,10 @@ void Game::Run() {
     log("entering game loop");
     while (!state->QuitRequested()) {
         state->Update(0);
+
         state->Render();
+        SDL_RenderPresent(renderer);
+
         SDL_Delay(33);
     }
 }

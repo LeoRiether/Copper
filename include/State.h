@@ -1,19 +1,20 @@
 #pragma once
 
-#include "SDL_include.h"
 #include "Music.h"
+#include "SDL_include.h"
 #include "Sprite.h"
 
 #define MODULE "State"
 
 class State {
    private:
-    Sprite bg;
-    Music music;
+    Music* music;
+    Sprite* bg;
     bool quitRequested;
 
    public:
     State();
+    ~State();
 
     bool QuitRequested();
 

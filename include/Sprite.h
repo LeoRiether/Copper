@@ -8,7 +8,7 @@ using std::string;
 
 class Sprite {
    private:
-    SDL_Texture* texture = nullptr;
+    SDL_Texture* texture;
     int width, height;
     SDL_Rect clipRect;
 

@@ -22,7 +22,7 @@ void Sprite::Open(const string& file) {
 
     int qt_status =
         SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
-    if (qt_status)
+    if (qt_status != 0)
         fail2("couldn't query texture " YELLOW "'%s'" RESET "! Reason: %s",
               file.c_str(), SDL_GetError());
 
@@ -35,7 +35,7 @@ void Sprite::SetClip(int x, int y, int w, int h) {
 
 void Sprite::Render(int x, int y) {
     Game& game = Game::GetInstance();
-    auto destRect = SDL_Rect{x, y, clipRect.w, clipRect.h};
+    SDL_Rect destRect{x, y, clipRect.w, clipRect.h};
     SDL_RenderCopy(game.GetRenderer(), texture, &clipRect, &destRect);
 }
 

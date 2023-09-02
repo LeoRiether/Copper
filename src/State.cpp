@@ -1,22 +1,26 @@
 #include "State.h"
+
 #include "util.h"
 
 State::State() : quitRequested(false) {
-    log("initializing");
+    info("initializing");
     LoadAssets();
-    log("loaded assets");
-    music.Play();
-    log("initialized");
+    music->Play();
+    info("initialized");
+}
+
+State::~State() {
+    delete bg;
+    delete music;
 }
 
 bool State::QuitRequested() { return quitRequested; }
 
 void State::LoadAssets() {
-    bg = Sprite(ASSETS "/img/ocean.jpg");
-    // music = Music(ASSETS "/audio/stageState.ogg");
-    music = Music();
+    bg = new Sprite(ASSETS "/img/ocean.jpg");
+    music = new Music(ASSETS "/audio/stageState.ogg");
 }
 
 void State::Update(float dt) { quitRequested |= SDL_QuitRequested(); }
 
-void State::Render() { bg.Render(0, 0); }
+void State::Render() { bg->Render(0, 0);}
