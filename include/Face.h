@@ -14,6 +14,7 @@ class Face : Component {
 
    public:
     Face(GameObject& associated);
+    ~Face();
 
     void Damage(int damage);
 

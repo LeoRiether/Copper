@@ -1,16 +1,22 @@
 #pragma once
 
+#include "GameObject.h"
 #include "Music.h"
 #include "SDL_include.h"
 #include "Sprite.h"
+#include "Vec2.h"
+#include "Face.h"
+#include <memory>
+#include <vector>
 
-#define MODULE "State"
+using std::vector;
+using std::unique_ptr;
 
 class State {
    private:
     Music* music;
-    Sprite* bg;
     bool quitRequested;
+    vector<unique_ptr<GameObject>> objects;
 
    public:
     State();
@@ -21,4 +27,6 @@ class State {
     void LoadAssets();
     void Update(float dt);
     void Render();
+    void Input();
+    void AddObject(int mouseX, int mouseY);
 };

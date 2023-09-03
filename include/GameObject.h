@@ -1,9 +1,11 @@
 #pragma once
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "Component.h"
 #include "Rect.h"
+using std::unique_ptr;
 using std::string;
 using std::vector;
 
@@ -25,6 +27,8 @@ class GameObject {
     Component* GetComponent(const string& type);
 
    private:
-    vector<Component*> components;
+    // TODO: maybe a map<ComponentType, shared_ptr<Component>> would be better
+    // here
+    vector<unique_ptr<Component>> components;
     bool isDead;
 };

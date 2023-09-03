@@ -1,16 +1,14 @@
 #include "GameObject.h"
 
 #include <algorithm>
+#include <memory>
 
 #include "Component.h"
 
 #define MODULE "GameObject"
 
-GameObject::GameObject() : components({}), isDead(false) {}
+GameObject::GameObject() : isDead(false) {}
 GameObject::~GameObject() {
-    for (auto& component : components) {
-        delete component;
-    }
     components
         .clear();  // pretty sure it would be cleared without this line anyway
 }
@@ -31,15 +29,23 @@ bool GameObject::IsDead() { return isDead; }
 
 void GameObject::RequestDelete() { isDead = true; }
 
-void GameObject::AddComponent(Component* cmp) { components.push_back(cmp); }
+void GameObject::AddComponent(Component* cmp) { components.emplace_back(cmp); }
+
+// NOTE: components are removed without maintaining order
 void GameObject::RemoveComponent(Component* cmp) {
-    components.erase(std::find(components.begin(), components.end(), cmp));
+    for (size_t i = 0; i < components.size(); i++) {
+        if (components[i].get() == cmp) {
+            std::swap(components[i], components.back());
+            components.pop_back();
+            return;
+        }
+    }
 }
 
 // Should return an std::optional<Component*>, really
 Component* GameObject::GetComponent(const string& type) {
     for (const auto& component : components) {
-        if (component->Is(type)) return component;
+        if (component->Is(type)) return component.get();
     }
     return nullptr;
 }

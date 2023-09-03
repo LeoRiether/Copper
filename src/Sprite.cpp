@@ -1,12 +1,15 @@
 #include "Sprite.h"
 
 #include "Game.h"
+#include "GameObject.h"
 
 #define MODULE "Sprite"
 
-Sprite::Sprite() : texture(nullptr) {}
+Sprite::Sprite(GameObject& associated)
+    : Component(associated), texture(nullptr) {}
 
-Sprite::Sprite(const string& file) {
+Sprite::Sprite(GameObject& associated, const string& file)
+    : Sprite(associated) {
     info2("loading sprite %s", file.c_str());
     Open(file);
 }
@@ -33,14 +36,18 @@ void Sprite::SetClip(int x, int y, int w, int h) {
     clipRect = SDL_Rect{x, y, w, h};
 }
 
-void Sprite::Render(int x, int y) {
-    Game& game = Game::GetInstance();
-    SDL_Rect destRect{x, y, clipRect.w, clipRect.h};
-    SDL_RenderCopy(game.GetRenderer(), texture, &clipRect, &destRect);
-}
-
 int Sprite::GetWidth() { return width; }
 
 int Sprite::GetHeight() { return height; }
 
 bool Sprite::IsOpen() { return texture != nullptr; }
+
+void Sprite::Update(float dt) {}
+
+void Sprite::Render() {
+    Game& game = Game::GetInstance();
+    SDL_Rect destRect{(int)associated.box.x, (int)associated.box.y, clipRect.w,
+                      clipRect.h};
+    SDL_RenderCopy(game.GetRenderer(), texture, &clipRect, &destRect);
+}
+bool Sprite::Is(const string& type) { return type == "Sprite"; }

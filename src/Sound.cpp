@@ -30,6 +30,7 @@ void Sound::Stop() {
 }
 
 void Sound::Open(const string& file) {
+    info2("loading sound %s", file.c_str());
     chunk = Mix_LoadWAV(file.c_str());
     if (!chunk) fail2("couldn't open " YELLOW "%s" RESET, file.c_str());
 }

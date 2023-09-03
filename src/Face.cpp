@@ -7,6 +7,7 @@
 #define MODULE "Face"
 
 Face::Face(GameObject& associated) : Component(associated) {}
+Face::~Face() {}
 
 void Face::Damage(int damage) {
     hitpoints = std::max(hitpoints - damage, 0);
