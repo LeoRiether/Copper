@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include "CType.h"
 #include "Component.h"
 #include "SDL_include.h"
 using std::string;
@@ -26,5 +27,5 @@ class Sprite : Component {
 
     void Update(float dt);
     void Render();
-    bool Is(const string& type);
+    bool Is(CType type);
 };

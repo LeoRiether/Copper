@@ -43,7 +43,7 @@ void GameObject::RemoveComponent(Component* cmp) {
 }
 
 // Should return an std::optional<Component*>, really
-Component* GameObject::GetComponent(const string& type) {
+Component* GameObject::GetComponent(CType type) {
     for (const auto& component : components) {
         if (component->Is(type)) return component.get();
     }

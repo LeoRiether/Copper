@@ -39,4 +39,4 @@ bool Sound::IsOpen() { return chunk != nullptr; }
 
 void Sound::Update(float dt) { (void)dt; }
 void Sound::Render() {}
-bool Sound::Is(const string& type) { return type == "Sound"; }
+bool Sound::Is(CType type) { return type == CType::Sound; }

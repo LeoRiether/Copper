@@ -50,4 +50,5 @@ void Sprite::Render() {
                       clipRect.h};
     SDL_RenderCopy(game.GetRenderer(), texture, &clipRect, &destRect);
 }
-bool Sprite::Is(const string& type) { return type == "Sprite"; }
+bool Sprite::Is(CType type) { return type == CType::Sprite; }
+

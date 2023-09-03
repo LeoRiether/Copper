@@ -5,8 +5,8 @@
 
 #include "Component.h"
 #include "Rect.h"
-using std::unique_ptr;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 class Component;
@@ -24,7 +24,7 @@ class GameObject {
     void RequestDelete();
     void AddComponent(Component* cmp);
     void RemoveComponent(Component* cmp);
-    Component* GetComponent(const string& type);
+    Component* GetComponent(CType type);
 
    private:
     // TODO: maybe a map<ComponentType, shared_ptr<Component>> would be better

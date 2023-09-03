@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 
+#include "CType.h"
 #include "GameObject.h"
 using std::string;
 
@@ -17,6 +18,5 @@ class Component {
     virtual void Update(float dt) = 0;
     virtual void Render() = 0;
 
-    // TODO: would be nice if instead of string we had an enum
-    virtual bool Is(const string& type) = 0;
+    virtual bool Is(CType type) = 0;
 };

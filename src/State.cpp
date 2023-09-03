@@ -77,7 +77,7 @@ void State::Input() {
                 const auto& go = objects[i];
 
                 if (go->box.Contains({(float)mouseX, (float)mouseY})) {
-                    Face* face = (Face*)go->GetComponent("Face");
+                    Face* face = (Face*)go->GetComponent(CType::Face);
                     if (face != nullptr) {
                         // Aplica dano
                         face->Damage(std::rand() % 10 + 10);
