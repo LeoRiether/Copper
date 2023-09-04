@@ -43,19 +43,29 @@ int& TileMap::At(int x, int y, int z) {
 void TileMap::Update(float dt) { UNUSED(dt); }
 
 void TileMap::Render() {
-    // TODO: what?
     RenderLayer(0);
 }
 
 void TileMap::RenderLayer(int layer, int cameraX, int cameraY) {
-    // TODO: start y at the point where rendery >= 0
+    static int cx = 0;
+    static int cy = 0;
+    cameraX = cx++;
+    cameraY = cy++;
+
     const Rect& viewport = associated.box;
-    for (int y = 0; y < height; y++) {
-        const float rendery = y * tileSet->TileHeight() - cameraY;
+    const int tileHeight = tileSet->TileHeight();
+    const int tileWidth = tileSet->TileWidth();
+    const int starty = cameraY / tileHeight;
+    const int startx = cameraX / tileWidth;
+    const int endy = (cameraY + viewport.h + tileHeight - 1) / tileHeight;
+    const int endx = (cameraX + viewport.w + tileWidth - 1) / tileWidth;
+
+    for (int y = starty; y < endy; y++) {
+        const float rendery = y * tileHeight - cameraY;
         if (rendery > viewport.h) break;
 
-        for (int x = 0; x < width; x++) {
-            const float renderx = x * tileSet->TileWidth() - cameraX;
+        for (int x = startx; x < endx; x++) {
+            const float renderx = x * tileWidth - cameraX;
             if (renderx > viewport.w) break;
 
             tileSet->RenderTile(At(x, y, layer), renderx, rendery);
