@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "GameObject.h"
+#include "KeepSoundAlive.h"
 #include "Rect.h"
 #include "Sound.h"
 #include "util.h"

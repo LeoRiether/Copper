@@ -23,6 +23,7 @@ class Sound : Component {
     void Stop();
     void Open(const string& file);
     bool IsOpen();
+    bool IsPlaying();
 
     void Update(float dt);
     void Render();

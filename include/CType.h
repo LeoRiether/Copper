@@ -4,5 +4,6 @@ enum class CType {
     Sprite,
     Sound,
     Face,
+    KeepSoundAlive,
 };
 

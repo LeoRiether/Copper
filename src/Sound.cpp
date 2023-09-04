@@ -37,6 +37,8 @@ void Sound::Open(const string& file) {
 
 bool Sound::IsOpen() { return chunk != nullptr; }
 
+bool Sound::IsPlaying() { return channel != -1 && Mix_Playing(channel); }
+
 void Sound::Update(float dt) { (void)dt; }
 void Sound::Render() {}
 bool Sound::Is(CType type) { return type == CType::Sound; }
