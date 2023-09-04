@@ -47,10 +47,10 @@ void TileMap::Render() {
 }
 
 void TileMap::RenderLayer(int layer, int cameraX, int cameraY) {
-    static int cx = 0;
-    static int cy = 0;
-    cameraX = cx++;
-    cameraY = cy++;
+    // static int cx = 0;
+    // static int cy = 0;
+    // cameraX = cx++;
+    // cameraY = cy++;
 
     const Rect& viewport = associated.box;
     const int tileHeight = tileSet->TileHeight();

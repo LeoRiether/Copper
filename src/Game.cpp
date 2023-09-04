@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "Resources.h"
 #include "SDL_mixer.h"
 
 #define MODULE "Game"
@@ -58,6 +59,9 @@ void Game::Run() {
 
         SDL_Delay(33);
     }
+    Resources::ClearImages();
+    Resources::ClearMusic();
+    Resources::ClearSounds();
 }
 
 SDL_Renderer* Game::GetRenderer() { return renderer; }

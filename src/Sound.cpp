@@ -1,5 +1,7 @@
 #include "Sound.h"
 
+#include "Resources.h"
+
 #define MODULE "Sound"
 
 Sound::Sound(GameObject& associated)
@@ -10,10 +12,7 @@ Sound::Sound(GameObject& associated, const string& file) : Sound(associated) {
 }
 
 Sound::~Sound() {
-    if (chunk) {
-        Stop();
-        Mix_FreeChunk(chunk);
-    }
+    if (chunk) Stop();
 }
 
 void Sound::Play(int times) {
@@ -29,11 +28,7 @@ void Sound::Stop() {
     }
 }
 
-void Sound::Open(const string& file) {
-    info2("loading sound %s", file.c_str());
-    chunk = Mix_LoadWAV(file.c_str());
-    if (!chunk) fail2("couldn't open " YELLOW "%s" RESET, file.c_str());
-}
+void Sound::Open(const string& file) { chunk = Resources::Sound(file); }
 
 bool Sound::IsOpen() { return chunk != nullptr; }
 

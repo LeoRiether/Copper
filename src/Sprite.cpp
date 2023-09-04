@@ -2,6 +2,7 @@
 
 #include "Game.h"
 #include "GameObject.h"
+#include "Resources.h"
 
 #define MODULE "Sprite"
 
@@ -14,14 +15,10 @@ Sprite::Sprite(GameObject& associated, const string& file)
     Open(file);
 }
 
-Sprite::~Sprite() {
-    if (texture) SDL_DestroyTexture(texture);
-}
+Sprite::~Sprite() {}
 
 void Sprite::Open(const string& file) {
-    texture = IMG_LoadTexture(Game::GetInstance().GetRenderer(), file.c_str());
-    if (!texture)
-        fail2("couldn't open texture " YELLOW "'%s'" RESET "!", file.c_str());
+    texture = Resources::Image(file);
 
     int qt_status =
         SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);

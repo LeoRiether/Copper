@@ -1,5 +1,6 @@
 #include "Music.h"
 
+#include "Resources.h"
 #include "util.h"
 
 #define MODULE "Music"
@@ -12,10 +13,7 @@ Music::Music(const string& file) {
 }
 
 Music::~Music() {
-    if (music) {
-        Stop(0);
-        Mix_FreeMusic(music);
-    }
+    if (music) Stop(0);
 }
 
 void Music::Play(int times) {
@@ -30,10 +28,6 @@ void Music::Play(int times) {
 
 void Music::Stop(int msToStop) { Mix_FadeOutMusic(msToStop); }
 
-void Music::Open(const string& file) {
-    music = Mix_LoadMUS(file.c_str());
-    if (!music)
-        fail2("couldn't open music " YELLOW "'%s'" RESET "!", file.c_str());
-}
+void Music::Open(const string& file) { music = Resources::Music(file); }
 
 bool Music::IsOpen() { return music != nullptr; }
