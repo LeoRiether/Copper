@@ -5,8 +5,8 @@
 #include <chrono>
 #include <random>
 
-#define BASEDIR "penguin"
-#define ASSETS "penguin/assets"
+#define BASEDIR "./"
+#define ASSETS "assets"
 
 #define RESET "\033[0m"
 #define RED "\033[91m"
