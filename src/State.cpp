@@ -108,9 +108,9 @@ void State::AddObject(int mouseX, int mouseY) {
     auto go = new GameObject;
 
     auto sprite = new Sprite(*go, ASSETS "/img/penguinface.png");
-    go->box = Rect{(float)mouseX - sprite->GetWidth() / 2.0f,
-                   (float)mouseY - sprite->GetHeight() / 2.0f,
-                   (float)sprite->GetWidth(), (float)sprite->GetHeight()};
+    go->box = Rect{(float)mouseX - sprite->Width() / 2.0f,
+                   (float)mouseY - sprite->Height() / 2.0f,
+                   (float)sprite->Width(), (float)sprite->Height()};
 
     auto sound = new Sound(*go, ASSETS "/audio/boom.wav");
     auto face = new Face(*go);

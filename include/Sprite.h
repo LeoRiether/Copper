@@ -21,11 +21,12 @@ class Sprite : Component {
     void Open(const string& file);
     void SetClip(int x, int y, int w, int h);
 
-    int GetWidth();
-    int GetHeight();
+    int Width();
+    int Height();
     bool IsOpen();
 
     void Update(float dt);
+    void Render(int x, int y);
     void Render();
     bool Is(CType type);
 };

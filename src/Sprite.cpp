@@ -36,19 +36,20 @@ void Sprite::SetClip(int x, int y, int w, int h) {
     clipRect = SDL_Rect{x, y, w, h};
 }
 
-int Sprite::GetWidth() { return width; }
+int Sprite::Width() { return width; }
 
-int Sprite::GetHeight() { return height; }
+int Sprite::Height() { return height; }
 
 bool Sprite::IsOpen() { return texture != nullptr; }
 
 void Sprite::Update(float dt) {}
 
-void Sprite::Render() {
+void Sprite::Render(int x, int y) {
     Game& game = Game::GetInstance();
-    SDL_Rect destRect{(int)associated.box.x, (int)associated.box.y, clipRect.w,
-                      clipRect.h};
+    SDL_Rect destRect{x, y, clipRect.w, clipRect.h};
     SDL_RenderCopy(game.GetRenderer(), texture, &clipRect, &destRect);
 }
-bool Sprite::Is(CType type) { return type == CType::Sprite; }
 
+void Sprite::Render() { Render((int)associated.box.x, (int)associated.box.y); }
+
+bool Sprite::Is(CType type) { return type == CType::Sprite; }

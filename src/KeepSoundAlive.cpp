@@ -1,7 +1,7 @@
 #include "KeepSoundAlive.h"
 #include "Sound.h"
 
-#define MODULE "KeepAlive"
+#define MODULE "KeepSoundAlive"
 
 KeepSoundAlive::KeepSoundAlive(GameObject& go) : Component(go), go(go) {}
 KeepSoundAlive::~KeepSoundAlive() {}
