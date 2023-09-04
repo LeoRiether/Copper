@@ -7,6 +7,9 @@
 using std::string;
 using std::unique_ptr;
 
+constexpr int DEFAULT_TILE_WIDTH = 64;
+constexpr int DEFAULT_TILE_HEIGHT = 64;
+
 class TileSet {
    private:
     unique_ptr<GameObject> go;

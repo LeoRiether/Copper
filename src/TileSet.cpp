@@ -33,6 +33,8 @@ void TileSet::RenderTile(int index, float x, float y) {
         return;
     }
 
+    tileSet->SetClip((index % columns) * tileWidth,
+                     (index / columns) * tileHeight, tileWidth, tileHeight);
     tileSet->Render(x, y);
 }
 

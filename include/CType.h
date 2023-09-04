@@ -5,5 +5,5 @@ enum class CType {
     Sound,
     Face,
     KeepSoundAlive,
+    TileMap,
 };
-

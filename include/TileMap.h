@@ -2,17 +2,19 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "Component.h"
 #include "GameObject.h"
 #include "TileSet.h"
 using std::string;
 using std::vector;
+using std::unique_ptr;
 
 class TileMap : Component {
    private:
     vector<int> tileMatrix;
-    TileSet* tileSet;
+    unique_ptr<TileSet> tileSet;
     int width, height, depth;
 
    public:
@@ -22,8 +24,10 @@ class TileMap : Component {
     void SetTileSet(TileSet* tileSet);
     int& At(int x, int y); // separated for performance reasons
     int& At(int x, int y, int z);
+    void Update(float dt);
     void Render();
     void RenderLayer(int layer, int cameraX = 0, int cameraY = 0);
+    bool Is(CType type);
 
     int Width();
     int Height();

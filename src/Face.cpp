@@ -26,6 +26,6 @@ void Face::Damage(int damage) {
     }
 }
 
-void Face::Update(float dt) {}
+void Face::Update(float dt) { UNUSED(dt); }
 void Face::Render() {}
 bool Face::Is(CType type) { return type == CType::Face; }

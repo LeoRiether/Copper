@@ -2,10 +2,13 @@
 
 #include <vector>
 
+#include "Game.h"
 #include "GameObject.h"
 #include "KeepSoundAlive.h"
 #include "Rect.h"
 #include "Sound.h"
+#include "TileMap.h"
+#include "TileSet.h"
 #include "util.h"
 
 #define MODULE "State"
@@ -26,8 +29,14 @@ bool State::QuitRequested() { return quitRequested; }
 
 void State::LoadAssets() {
     auto go = new GameObject;
-    go->box = Rect{0, 0, 0, 0};
-    go->AddComponent((Component*)new Sprite(*go, ASSETS "/img/ocean.jpg"));
+    go->box = Rect{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+
+    auto tileset = new TileSet(DEFAULT_TILE_WIDTH, DEFAULT_TILE_HEIGHT,
+                               ASSETS "/img/tileset.png");
+    auto tilemap = new TileMap(*go, ASSETS "/map/tileMap.txt", tileset);
+
+    go->AddComponent((Component*)tilemap);
+
     objects.emplace_back(go);
 
     music = new Music(ASSETS "/audio/stageState.ogg");

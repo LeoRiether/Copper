@@ -2,6 +2,7 @@
 
 #include <fstream>
 
+#include "Game.h"
 #include "util.h"
 
 #define MODULE "TileMap"
@@ -32,12 +33,14 @@ void TileMap::Load(const string& file) {
     }
 }
 
-void TileMap::SetTileSet(TileSet* ts) { tileSet = ts; }
+void TileMap::SetTileSet(TileSet* ts) { tileSet = unique_ptr<TileSet>(ts); }
 
 int& TileMap::At(int x, int y) { return tileMatrix[x + y * width]; }
 int& TileMap::At(int x, int y, int z) {
     return tileMatrix[x + y * width + z * width * height];
 }
+
+void TileMap::Update(float dt) { UNUSED(dt); }
 
 void TileMap::Render() {
     // TODO: what?
@@ -45,15 +48,22 @@ void TileMap::Render() {
 }
 
 void TileMap::RenderLayer(int layer, int cameraX, int cameraY) {
-    // TODO: only render tiles that are within the viewport
+    // TODO: start y at the point where rendery >= 0
+    const Rect& viewport = associated.box;
     for (int y = 0; y < height; y++) {
         const float rendery = y * tileSet->TileHeight() - cameraY;
+        if (rendery > viewport.h) break;
+
         for (int x = 0; x < width; x++) {
             const float renderx = x * tileSet->TileWidth() - cameraX;
+            if (renderx > viewport.w) break;
+
             tileSet->RenderTile(At(x, y, layer), renderx, rendery);
         }
     }
 }
+
+bool TileMap::Is(CType type) { return type == CType::TileMap; }
 
 int TileMap::Width() { return width; }
 int TileMap::Height() { return height; }
