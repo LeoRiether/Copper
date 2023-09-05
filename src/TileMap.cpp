@@ -43,14 +43,16 @@ int& TileMap::At(int x, int y, int z) {
 void TileMap::Update(float dt) { UNUSED(dt); }
 
 void TileMap::Render() {
-    RenderLayer(0);
+    for (int z = 0; z < depth; z++) {
+        RenderLayer(z);
+    }
 }
 
 void TileMap::RenderLayer(int layer, int cameraX, int cameraY) {
-    // static int cx = 0;
-    // static int cy = 0;
-    // cameraX = cx++;
-    // cameraY = cy++;
+    static int cx = 0;
+    static int cy = 0;
+    cameraX = cx++;
+    cameraY = cy++;
 
     const Rect& viewport = associated.box;
     const int tileHeight = tileSet->TileHeight();
