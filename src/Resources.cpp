@@ -16,7 +16,7 @@ SDL_Texture* Resources::Image(const string& file) {
         log2("loading image %s", file.c_str());
 
         auto texture =
-            IMG_LoadTexture(Game::GetInstance().GetRenderer(), file.c_str());
+            IMG_LoadTexture(Game::Instance().Renderer(), file.c_str());
         if (!texture)
             fail2("couldn't open texture " YELLOW "'%s'" RESET "!",
                   file.c_str());

@@ -1,6 +1,8 @@
 #include "Game.h"
+
 #include "Resources.h"
 #include "SDL_mixer.h"
+#include "SDL_timer.h"
 
 #define MODULE "Game"
 
@@ -31,10 +33,12 @@ Game::Game(const char* title, int width, int height) {
                               SDL_WINDOWPOS_CENTERED, width, height, 0);
     if (!window) sdlfail("couldn't create window");
 
-    renderer = SDL_CreateRenderer(window, -1, 0/* SDL_RENDERER_ACCELERATED */);
+    renderer = SDL_CreateRenderer(window, -1, 0 /* SDL_RENDERER_ACCELERATED */);
     if (!renderer) sdlfail("couldn't create renderer");
 
     instance->state = new State{};
+
+    frameStart = SDL_GetTicks();
 
     log("initialized");
 }
@@ -49,10 +53,17 @@ Game::~Game() {
     warn("destroyed");
 }
 
+void Game::CalculateDeltaTime() {
+    uint32_t ticks = SDL_GetTicks();
+    dt = float(ticks - frameStart) / 1000.0f;
+    frameStart = ticks;
+}
+
 void Game::Run() {
     log("entering game loop");
     while (!state->QuitRequested()) {
-        state->Update(0);
+        CalculateDeltaTime();
+        state->Update(dt);
 
         state->Render();
         SDL_RenderPresent(renderer);
@@ -64,11 +75,13 @@ void Game::Run() {
     Resources::ClearSounds();
 }
 
-SDL_Renderer* Game::GetRenderer() { return renderer; }
+float Game::DeltaTime() { return dt; }
+
+SDL_Renderer* Game::Renderer() { return renderer; }
 
 State& Game::GetState() { return *state; }
 
-Game& Game::GetInstance() {
+Game& Game::Instance() {
     if (instance == nullptr) {
         // Mankai STEP BY STEP de susume!
         // STEP OUT saa, tobidase!

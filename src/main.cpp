@@ -9,7 +9,7 @@
 
 #define MODULE "main"
 int main(int argc, char* argv[]) {
-    Game& game = Game::GetInstance();
+    Game& game = Game::Instance();
     game.Run();
     return EXIT_SUCCESS;
 }

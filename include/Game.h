@@ -17,14 +17,20 @@ class Game {
     SDL_Renderer* renderer;
     State* state;
 
+    uint32_t frameStart;
+    float dt;
+
     Game(const char* title, int width, int height);
+
+    void CalculateDeltaTime();
 
    public:
     ~Game();
 
     void Run();
 
-    SDL_Renderer* GetRenderer();
+    float DeltaTime();
+    SDL_Renderer* Renderer();
     State& GetState();
-    static Game& GetInstance();
+    static Game& Instance();
 };

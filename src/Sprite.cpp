@@ -39,12 +39,12 @@ int Sprite::Height() { return height; }
 
 bool Sprite::IsOpen() { return texture != nullptr; }
 
-void Sprite::Update(float dt) {}
+void Sprite::Update(float) {}
 
 void Sprite::Render(int x, int y) {
-    Game& game = Game::GetInstance();
+    Game& game = Game::Instance();
     SDL_Rect destRect{x, y, clipRect.w, clipRect.h};
-    SDL_RenderCopy(game.GetRenderer(), texture, &clipRect, &destRect);
+    SDL_RenderCopy(game.Renderer(), texture, &clipRect, &destRect);
 }
 
 void Sprite::Render() { Render((int)associated.box.x, (int)associated.box.y); }
