@@ -1,6 +1,7 @@
 #include "InputManager.h"
 
 #include "SDL_gamecontroller.h"
+#include "util.h"
 
 #define MODULE "InputManager"
 
@@ -39,7 +40,7 @@ void InputManager::Update() {
             case SDL_KEYUP:
                 if (!event.key.repeat) {
                     keyUpdate[mapkey(event.key.keysym.sym)] = true;
-                    keyState[event.button.button] = Up;
+                    keyState[mapkey(event.key.keysym.sym)] = Up;
                 }
                 break;
             case SDL_MOUSEBUTTONDOWN:
@@ -74,7 +75,9 @@ bool InputManager::MouseRelease(int button) {
     return mouseUpdate[button] && mouseState[button] == Up;
 }
 
-bool InputManager::IsMouseDown(int button) { return mouseState[button] = Down; }
+bool InputManager::IsMouseDown(int button) {
+    return mouseState[button] == Down;
+}
 
 int InputManager::MouseX() { return mouseX; }
 int InputManager::MouseY() { return mouseY; }

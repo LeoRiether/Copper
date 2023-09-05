@@ -2,8 +2,10 @@
 
 #include <algorithm>
 
+#include "InputManager.h"
 #include "KeepSoundAlive.h"
 #include "Sound.h"
+#include "util.h"
 
 #define MODULE "Face"
 
@@ -26,6 +28,14 @@ void Face::Damage(int damage) {
     }
 }
 
-void Face::Update(float dt) { UNUSED(dt); }
+void Face::Update(float) {
+    auto& input = InputManager::Instance();
+
+    if (input.MousePress(1) && associated.box.Contains(
+            Vec2{(float)input.MouseX(), (float)input.MouseY()})) {
+        Damage(rng() % 10 + 10);
+    }
+}
+
 void Face::Render() {}
 bool Face::Is(CType type) { return type == CType::Face; }
