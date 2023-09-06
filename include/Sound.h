@@ -26,6 +26,6 @@ class Sound : Component {
     bool IsPlaying();
 
     void Update(float dt);
-    void Render();
+    void Render(Vec2 camera);
     bool Is(CType type);
 };

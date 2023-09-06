@@ -1,4 +1,5 @@
 #include "KeepSoundAlive.h"
+
 #include "Sound.h"
 
 #define MODULE "KeepSoundAlive"
@@ -6,7 +7,7 @@
 KeepSoundAlive::KeepSoundAlive(GameObject& go) : Component(go), go(go) {}
 KeepSoundAlive::~KeepSoundAlive() {}
 
-void KeepSoundAlive::Update(float dt) {
+void KeepSoundAlive::Update(float) {
     auto sound = (Sound*)go.GetComponent(CType::Sound);
     if (!sound || !sound->IsPlaying()) {
         log("requesting deletion of sound");
@@ -14,5 +15,5 @@ void KeepSoundAlive::Update(float dt) {
     }
 }
 
-void KeepSoundAlive::Render() {}
+void KeepSoundAlive::Render(Vec2) {}
 bool KeepSoundAlive::Is(CType _type) { return _type == CType::KeepSoundAlive; }

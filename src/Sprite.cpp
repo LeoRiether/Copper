@@ -3,6 +3,7 @@
 #include "Game.h"
 #include "GameObject.h"
 #include "Resources.h"
+#include "Vec2.h"
 
 #define MODULE "Sprite"
 
@@ -47,6 +48,9 @@ void Sprite::Render(int x, int y) {
     SDL_RenderCopy(game.Renderer(), texture, &clipRect, &destRect);
 }
 
-void Sprite::Render() { Render((int)associated.box.x, (int)associated.box.y); }
+void Sprite::Render(Vec2 camera) {
+    Render((int)(associated.box.x - camera.x),
+           (int)(associated.box.y - camera.y));
+}
 
 bool Sprite::Is(CType type) { return type == CType::Sprite; }

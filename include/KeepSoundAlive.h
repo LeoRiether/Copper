@@ -13,8 +13,6 @@ class KeepSoundAlive : Component {
     ~KeepSoundAlive();
 
     void Update(float dt);
-
-    void Render();
+    void Render(Vec2 camera);
     bool Is(CType _type);
 };
-

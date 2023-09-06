@@ -27,6 +27,6 @@ class Sprite : Component {
 
     void Update(float dt);
     void Render(int x, int y);
-    void Render();
+    void Render(Vec2 camera);
     bool Is(CType type);
 };

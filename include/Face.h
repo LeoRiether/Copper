@@ -20,6 +20,6 @@ class Face : Component {
     void Damage(int damage);
 
     void Update(float dt);
-    void Render();
+    void Render(Vec2 camera);
     bool Is(CType type);
 };

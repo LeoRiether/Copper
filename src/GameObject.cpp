@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "Component.h"
+#include "TileMap.h"
 
 #define MODULE "GameObject"
 
@@ -19,9 +20,9 @@ void GameObject::Update(float dt) {
     }
 }
 
-void GameObject::Render() {
+void GameObject::Render(Vec2 camera) {
     for (auto& component : components) {
-        component->Render();
+        component->Render(camera);
     }
 }
 

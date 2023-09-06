@@ -14,10 +14,11 @@
 
 #define MODULE "State"
 
-State::State() : quitRequested(false) {
+State::State() : camera(new Camera{}), quitRequested(false) {
     info("initializing");
     LoadAssets();
     music->Play();
+    camera->SetSpeed(Vec2{250, 250});
     info("initialized");
 }
 
@@ -44,19 +45,24 @@ void State::LoadAssets() {
 }
 
 void State::Update(float dt) {
-    auto& input = InputManager::Instance();
-    input.Update();
+    // Input
+    {
+        auto& input = InputManager::Instance();
+        input.Update();
 
-    if (input.QuitRequested() || input.KeyPress(ESCAPE_KEY))
-        quitRequested = true;
+        if (input.QuitRequested() || input.KeyPress(ESCAPE_KEY))
+            quitRequested = true;
 
-    // Create faces on SPACE key press
-    if (input.KeyPress(' ')) {
-        Vec2 objPos =
-            Vec2{200, 0}.GetRotated(-PI + PI * (rng() % 1001) / 500.0) +
-            Vec2{(float)input.MouseX(), (float)input.MouseY()};
-        AddObject((int)objPos.x, (int)objPos.y);
+        // Create faces on SPACE key press
+        if (input.KeyPress(' ')) {
+            Vec2 objPos =
+                Vec2{200, 0}.GetRotated(-PI + PI * (rng() % 1001) / 500.0) +
+                Vec2{(float)input.MouseX(), (float)input.MouseY()};
+            AddObject((int)objPos.x, (int)objPos.y);
+        }
     }
+
+    camera->Update(dt);
 
     for (const auto& go : objects) {
         go->Update(dt);
@@ -75,7 +81,7 @@ void State::Update(float dt) {
 
 void State::Render() {
     for (const auto& go : objects) {
-        go->Render();
+        go->Render(camera->Pos());
     }
 }
 

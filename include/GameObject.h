@@ -5,6 +5,7 @@
 
 #include "Component.h"
 #include "Rect.h"
+#include "Vec2.h"
 using std::string;
 using std::unique_ptr;
 using std::vector;
@@ -19,7 +20,7 @@ class GameObject {
     ~GameObject();
 
     void Update(float dt);
-    void Render();
+    void Render(Vec2 cameraPosition);
     bool IsDead();
     void RequestDelete();
     void AddComponent(Component* cmp);

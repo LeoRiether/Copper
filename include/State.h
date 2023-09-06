@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Camera.h"
 #include "GameObject.h"
 #include "Music.h"
 #include "SDL_include.h"
@@ -15,6 +16,7 @@ using std::unique_ptr;
 class State {
    private:
     Music* music;
+    Camera* camera;
     bool quitRequested;
     vector<unique_ptr<GameObject>> objects;
 

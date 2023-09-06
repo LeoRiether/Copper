@@ -31,11 +31,12 @@ void Face::Damage(int damage) {
 void Face::Update(float) {
     auto& input = InputManager::Instance();
 
-    if (input.MousePress(1) && associated.box.Contains(
+    if (input.MousePress(1) &&
+        associated.box.Contains(
             Vec2{(float)input.MouseX(), (float)input.MouseY()})) {
         Damage(rng() % 10 + 10);
     }
 }
 
-void Face::Render() {}
+void Face::Render(Vec2) {}
 bool Face::Is(CType type) { return type == CType::Face; }

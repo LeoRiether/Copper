@@ -3,6 +3,7 @@
 
 #include "CType.h"
 #include "GameObject.h"
+#include "Vec2.h"
 using std::string;
 
 class GameObject;
@@ -16,7 +17,7 @@ class Component {
     virtual ~Component();
 
     virtual void Update(float dt) = 0;
-    virtual void Render() = 0;
+    virtual void Render(Vec2 camera) = 0;
 
     virtual bool Is(CType type) = 0;
 };
