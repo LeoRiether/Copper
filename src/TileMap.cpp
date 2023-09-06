@@ -46,7 +46,8 @@ void TileMap::Render() { Render(Vec2{0, 0}); }
 
 void TileMap::Render(Vec2 cameraPosition) {
     for (int z = 0; z < depth; z++) {
-        RenderLayer(z, cameraPosition.x, cameraPosition.y);
+        RenderLayer(z, cameraPosition.x * (z * 0.8f + 1),
+                    cameraPosition.y * (z * 0.8f + 1));
     }
 }
 
