@@ -33,7 +33,7 @@ class InputManager {
    public:
     static InputManager& Instance();
 
-    void Update(Vec2 camera);
+    void Update();
     bool KeyPress(int key);
     bool KeyRelease(int key);
     bool IsKeyDown(int key);

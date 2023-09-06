@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#include "CameraFollower.h"
 #include "Game.h"
 #include "GameObject.h"
 #include "InputManager.h"
@@ -30,17 +31,23 @@ State::~State() {
 bool State::QuitRequested() { return quitRequested; }
 
 void State::LoadAssets() {
-    auto go = new GameObject;
-    go->box = Rect{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+    // Background
+    auto bgGO = new GameObject;
+    bgGO->box = Rect{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+    bgGO->AddComponent((Component*)new Sprite{*bgGO, ASSETS "/img/ocean.jpg"});
+    bgGO->AddComponent((Component*)new CameraFollower{*bgGO});
+    objects.emplace_back(bgGO);
 
+    // Tilemap
+    auto tileGO = new GameObject;
+    tileGO->box = Rect{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
     auto tileset = new TileSet(DEFAULT_TILE_WIDTH, DEFAULT_TILE_HEIGHT,
                                ASSETS "/img/tileset.png");
-    auto tilemap = new TileMap(*go, ASSETS "/map/tileMap.txt", tileset);
+    auto tilemap = new TileMap(*tileGO, ASSETS "/map/tileMap.txt", tileset);
+    tileGO->AddComponent((Component*)tilemap);
+    objects.emplace_back(tileGO);
 
-    go->AddComponent((Component*)tilemap);
-
-    objects.emplace_back(go);
-
+    // Background music
     music = new Music(ASSETS "/audio/stageState.ogg");
 }
 
@@ -48,7 +55,7 @@ void State::Update(float dt) {
     camera->Update(dt);
 
     auto& input = InputManager::Instance();
-    input.Update(camera->Pos());
+    input.Update();
 
     if (input.QuitRequested() || input.KeyPress(ESCAPE_KEY))
         quitRequested = true;

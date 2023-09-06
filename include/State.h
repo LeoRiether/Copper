@@ -1,17 +1,18 @@
 #pragma once
 
+#include <memory>
+#include <vector>
+
 #include "Camera.h"
+#include "Face.h"
 #include "GameObject.h"
 #include "Music.h"
 #include "SDL_include.h"
 #include "Sprite.h"
 #include "Vec2.h"
-#include "Face.h"
-#include <memory>
-#include <vector>
 
-using std::vector;
 using std::unique_ptr;
+using std::vector;
 
 class State {
    private:
@@ -31,4 +32,6 @@ class State {
     void Render();
     void Input();
     void AddObject(int mouseX, int mouseY);
+
+    inline Camera& GetCamera() { return *camera; }
 };

@@ -6,4 +6,5 @@ enum class CType {
     Face,
     KeepSoundAlive,
     TileMap,
+    CameraFollower,
 };

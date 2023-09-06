@@ -1,5 +1,6 @@
 #include "InputManager.h"
 
+#include "Game.h"
 #include "util.h"
 
 #define MODULE "InputManager"
@@ -18,8 +19,9 @@ InputManager::InputManager() {}
 
 InputManager::~InputManager() {}
 
-void InputManager::Update(Vec2 camera) {
+void InputManager::Update() {
     SDL_GetMouseState(&mouseX, &mouseY);
+    auto camera = Game::Instance().GetState().GetCamera().Pos();
     mouseX += camera.x;
     mouseY += camera.y;
     quitRequested = false;
