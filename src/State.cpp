@@ -45,24 +45,21 @@ void State::LoadAssets() {
 }
 
 void State::Update(float dt) {
-    // Input
-    {
-        auto& input = InputManager::Instance();
-        input.Update();
-
-        if (input.QuitRequested() || input.KeyPress(ESCAPE_KEY))
-            quitRequested = true;
-
-        // Create faces on SPACE key press
-        if (input.KeyPress(' ')) {
-            Vec2 objPos =
-                Vec2{200, 0}.GetRotated(-PI + PI * (rng() % 1001) / 500.0) +
-                Vec2{(float)input.MouseX(), (float)input.MouseY()};
-            AddObject((int)objPos.x, (int)objPos.y);
-        }
-    }
-
     camera->Update(dt);
+
+    auto& input = InputManager::Instance();
+    input.Update(camera->Pos());
+
+    if (input.QuitRequested() || input.KeyPress(ESCAPE_KEY))
+        quitRequested = true;
+
+    // Create faces on SPACE key press
+    if (input.KeyPress(' ')) {
+        Vec2 objPos =
+            Vec2{200, 0}.GetRotated(-PI + PI * (rng() % 1001) / 500.0) +
+            Vec2{(float)input.MouseX(), (float)input.MouseY()};
+        AddObject((int)objPos.x, (int)objPos.y);
+    }
 
     for (const auto& go : objects) {
         go->Update(dt);

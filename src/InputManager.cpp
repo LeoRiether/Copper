@@ -1,6 +1,5 @@
 #include "InputManager.h"
 
-#include "SDL_gamecontroller.h"
 #include "util.h"
 
 #define MODULE "InputManager"
@@ -19,8 +18,10 @@ InputManager::InputManager() {}
 
 InputManager::~InputManager() {}
 
-void InputManager::Update() {
+void InputManager::Update(Vec2 camera) {
     SDL_GetMouseState(&mouseX, &mouseY);
+    mouseX += camera.x;
+    mouseY += camera.y;
     quitRequested = false;
     memset(keyUpdate, 0, sizeof(keyUpdate));
     memset(mouseUpdate, 0, sizeof(mouseUpdate));

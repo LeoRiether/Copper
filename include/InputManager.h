@@ -1,5 +1,6 @@
 #pragma once
 #include "SDL_include.h"
+#include "Vec2.h"
 
 constexpr int KEYS = 0x7F + 0x11A;  // A soma dos tamanhos dos blocos de teclas
 constexpr int BLOCK0_SIZE = 0x7F;
@@ -32,7 +33,7 @@ class InputManager {
    public:
     static InputManager& Instance();
 
-    void Update();
+    void Update(Vec2 camera);
     bool KeyPress(int key);
     bool KeyRelease(int key);
     bool IsKeyDown(int key);
