@@ -55,19 +55,15 @@ void TileMap::RenderLayer(int layer, int cameraX, int cameraY) {
     const Rect& viewport = associated.box;
     const int tileHeight = tileSet->TileHeight();
     const int tileWidth = tileSet->TileWidth();
-    const int starty = cameraY / tileHeight;
-    const int startx = cameraX / tileWidth;
-    const int endy = (cameraY + viewport.h + tileHeight - 1) / tileHeight;
-    const int endx = (cameraX + viewport.w + tileWidth - 1) / tileWidth;
+    const int starty = std::max(0, cameraY / tileHeight);
+    const int startx = std::max(0, cameraX / tileWidth);
+    const int endy = std::min<int>(height, (cameraY + viewport.h + tileHeight - 1) / tileHeight);
+    const int endx = std::min<int>(width, (cameraX + viewport.w + tileWidth - 1) / tileWidth);
 
     for (int y = starty; y < endy; y++) {
         const float rendery = y * tileHeight - cameraY;
-        if (rendery > viewport.h) break;
-
         for (int x = startx; x < endx; x++) {
             const float renderx = x * tileWidth - cameraX;
-            if (renderx > viewport.w) break;
-
             tileSet->RenderTile(At(x, y, layer), renderx, rendery);
         }
     }
