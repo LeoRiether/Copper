@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "Camera.h"
-#include "Face.h"
 #include "GameObject.h"
 #include "Music.h"
 #include "SDL_include.h"
@@ -24,8 +23,6 @@ class State {
     bool quitRequested;
     bool started;
     vector<shared_ptr<GameObject>> objects;
-
-    GameObject* CreatePenguin();
 
    public:
     State();

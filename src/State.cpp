@@ -3,6 +3,8 @@
 #include <memory>
 #include <vector>
 
+#include "Alien.h"
+#include "CType.h"
 #include "CameraFollower.h"
 #include "Game.h"
 #include "GameObject.h"
@@ -16,7 +18,7 @@
 
 #define MODULE "State"
 
-GameObject* State::CreatePenguin() {
+GameObject* CreatePenguin() {
     auto& input = InputManager::Instance();
     Vec2 objPos = Vec2{200, 0}.GetRotated(-PI + PI * (rng() % 1001) / 500.0) +
                   Vec2{(float)input.MouseX(), (float)input.MouseY()};
@@ -27,12 +29,26 @@ GameObject* State::CreatePenguin() {
                    (float)sprite->Height()};
 
     auto sound = new Sound(*go, ASSETS "/audio/boom.wav");
-    auto face = new Face(*go);
 
     go->AddComponent((Component*)sprite);
     go->AddComponent((Component*)sound);
-    go->AddComponent((Component*)face);
     return go;
+}
+
+GameObject* CreateAlien(float x, float y) {
+    auto go = new GameObject{};
+    auto alien = new Alien{*go, 5};
+    auto sprite = (Sprite*)go->GetComponent(CType::Sprite);
+    go->box = Rect{x, y, (float)sprite->Width(), (float)sprite->Height()};
+
+    go->AddComponent((Component*)alien);
+    return go;
+}
+GameObject* CreateAlien() {
+    auto& input = InputManager::Instance();
+    Vec2 objPos = Vec2{200, 0}.GetRotated(-PI + PI * (rng() % 1001) / 500.0) +
+                  Vec2{(float)input.MouseX(), (float)input.MouseY()};
+    return CreateAlien(objPos.x, objPos.y);
 }
 
 State::State() : camera(new Camera{}), quitRequested(false), started(false) {
@@ -49,6 +65,7 @@ State::~State() {
 void State::Start() {
     started = true;
     LoadAssets();
+    AddObject(CreateAlien(512, 300));
     for (auto& go : objects) {
         go->Start();
     }
@@ -90,7 +107,7 @@ void State::Update(float dt) {
     }
 
     if (input.KeyPress(' ')) {
-        AddObject(CreatePenguin());
+        AddObject(CreateAlien());
     }
 
     for (const auto& go : objects) {

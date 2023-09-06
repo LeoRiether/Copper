@@ -16,4 +16,12 @@ struct Vec2 {
     inline Vec2 operator*(const float s) const { return Vec2{x * s, y * s}; }
     inline Vec2 operator/(const float s) const { return Vec2{x / s, y / s}; }
     inline friend Vec2 operator*(const float s, const Vec2& v) { return v * s; }
+
+    inline Vec2 lerp(Vec2 to, float perc) const {
+        return *this + (to - *this) * perc;
+    }
+
+    inline float norm2() const { return (double)x * x + (double)y * y; }
+    inline float norm() const { return sqrt((double)x * x + (double)y * y); }
+    inline Vec2 normalize() const { return *this / norm(); }
 };
