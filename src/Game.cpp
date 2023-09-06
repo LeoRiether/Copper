@@ -61,6 +61,7 @@ void Game::CalculateDeltaTime() {
 
 void Game::Run() {
     log("entering game loop");
+    state->Start();
     while (!state->QuitRequested()) {
         CalculateDeltaTime();
         state->Update(dt);

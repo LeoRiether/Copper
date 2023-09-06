@@ -1,5 +1,6 @@
 #include "State.h"
 
+#include <memory>
 #include <vector>
 
 #include "CameraFollower.h"
@@ -15,10 +16,27 @@
 
 #define MODULE "State"
 
-State::State() : camera(new Camera{}), quitRequested(false) {
+GameObject* State::CreatePenguin() {
+    auto& input = InputManager::Instance();
+    Vec2 objPos = Vec2{200, 0}.GetRotated(-PI + PI * (rng() % 1001) / 500.0) +
+                  Vec2{(float)input.MouseX(), (float)input.MouseY()};
+
+    auto go = new GameObject{};
+    auto sprite = new Sprite(*go, ASSETS "/img/penguinface.png");
+    go->box = Rect{objPos.x, objPos.y, (float)sprite->Width(),
+                   (float)sprite->Height()};
+
+    auto sound = new Sound(*go, ASSETS "/audio/boom.wav");
+    auto face = new Face(*go);
+
+    go->AddComponent((Component*)sprite);
+    go->AddComponent((Component*)sound);
+    go->AddComponent((Component*)face);
+    return go;
+}
+
+State::State() : camera(new Camera{}), quitRequested(false), started(false) {
     info("initializing");
-    LoadAssets();
-    music->Play();
     camera->SetSpeed(Vec2{250, 250});
     info("initialized");
 }
@@ -26,6 +44,16 @@ State::State() : camera(new Camera{}), quitRequested(false) {
 State::~State() {
     delete music;
     objects.clear();
+}
+
+void State::Start() {
+    started = true;
+    LoadAssets();
+    for (auto& go : objects) {
+        go->Start();
+    }
+
+    music->Play();
 }
 
 bool State::QuitRequested() { return quitRequested; }
@@ -57,15 +85,12 @@ void State::Update(float dt) {
     auto& input = InputManager::Instance();
     input.Update();
 
-    if (input.QuitRequested() || input.KeyPress(ESCAPE_KEY))
+    if (input.QuitRequested() || input.KeyPress(ESCAPE_KEY)) {
         quitRequested = true;
+    }
 
-    // Create faces on SPACE key press
     if (input.KeyPress(' ')) {
-        Vec2 objPos =
-            Vec2{200, 0}.GetRotated(-PI + PI * (rng() % 1001) / 500.0) +
-            Vec2{(float)input.MouseX(), (float)input.MouseY()};
-        AddObject((int)objPos.x, (int)objPos.y);
+        AddObject(CreatePenguin());
     }
 
     for (const auto& go : objects) {
@@ -89,19 +114,20 @@ void State::Render() {
     }
 }
 
-void State::AddObject(int mouseX, int mouseY) {
-    auto go = new GameObject;
+weak_ptr<GameObject> State::AddObject(GameObject* go) {
+    go->Start();
+    shared_ptr<GameObject> ptr{go};
+    objects.emplace_back(ptr);
+    return ptr;
+}
 
-    auto sprite = new Sprite(*go, ASSETS "/img/penguinface.png");
-    go->box = Rect{(float)mouseX - sprite->Width() / 2.0f,
-                   (float)mouseY - sprite->Height() / 2.0f,
-                   (float)sprite->Width(), (float)sprite->Height()};
-
-    auto sound = new Sound(*go, ASSETS "/audio/boom.wav");
-    auto face = new Face(*go);
-
-    go->AddComponent((Component*)sprite);
-    go->AddComponent((Component*)sound);
-    go->AddComponent((Component*)face);
-    objects.emplace_back(go);
+// NOTE: why do you need a weak_ptr when you already have a pointer to the
+// object anyway?
+// WARN: partial function, only call if you're sure the GameObject is in
+// `objects`
+weak_ptr<GameObject> State::GetObject(GameObject* go) {
+    for (auto& candidate : objects) {
+        if (go == candidate.get()) return candidate;
+    }
+    fail("GetObject called with GameObject that's not registered");
 }

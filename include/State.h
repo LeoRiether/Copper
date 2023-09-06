@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <shared_mutex>
 #include <vector>
 
 #include "Camera.h"
@@ -11,19 +12,25 @@
 #include "Sprite.h"
 #include "Vec2.h"
 
+using std::shared_ptr;
 using std::unique_ptr;
 using std::vector;
+using std::weak_ptr;
 
 class State {
    private:
     Music* music;
     Camera* camera;
     bool quitRequested;
-    vector<unique_ptr<GameObject>> objects;
+    bool started;
+    vector<shared_ptr<GameObject>> objects;
+
+    GameObject* CreatePenguin();
 
    public:
     State();
     ~State();
+    void Start();
 
     bool QuitRequested();
 
@@ -31,7 +38,8 @@ class State {
     void Update(float dt);
     void Render();
     void Input();
-    void AddObject(int mouseX, int mouseY);
+    weak_ptr<GameObject> AddObject(GameObject* go);
+    weak_ptr<GameObject> GetObject(GameObject* go);
 
     inline Camera& GetCamera() { return *camera; }
 };

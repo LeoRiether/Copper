@@ -8,10 +8,17 @@
 
 #define MODULE "GameObject"
 
-GameObject::GameObject() : isDead(false) {}
+GameObject::GameObject() : isDead(false), started(false) {}
 GameObject::~GameObject() {
     components
         .clear();  // pretty sure it would be cleared without this line anyway
+}
+
+void GameObject::Start() {
+    if (started) return;
+    for (auto& component : components) {
+        component->Start();
+    }
 }
 
 void GameObject::Update(float dt) {
