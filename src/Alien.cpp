@@ -1,13 +1,14 @@
 #include "Alien.h"
 
+#include "Game.h"
 #include "InputManager.h"
+#include "Minion.h"
 #include "Sprite.h"
 #include "util.h"
 
 #define MODULE "Alien"
 
-Alien::Alien(GameObject& go, int nMinions)
-    : Component(go), go(go), minions(nMinions) {
+Alien::Alien(GameObject& go, int nMinions) : Component(go), minions(nMinions) {
     auto sprite = new Sprite{go, ASSETS "/img/alien.png"};
     go.AddComponent((Component*)sprite);
 }
@@ -18,7 +19,17 @@ Alien::~Alien() {
 }
 
 void Alien::Start() {
-    // TODO:
+    auto& state = Game::Instance().GetState();
+
+    for (size_t i = 0; i < minions.size(); i++) {
+        auto minionGO = new GameObject{};
+        auto sprite = new Sprite{*minionGO, ASSETS "/img/minion.png"};
+        float arc = 2 * PI * i / minions.size();
+        auto minion = new Minion{*minionGO, state.GetObject(&associated), arc};
+        minionGO->AddComponent((Component*)sprite);
+        minionGO->AddComponent((Component*)minion);
+        minions[i] = state.AddObject(minionGO);
+    }
 }
 
 void Alien::Update(float dt) {
@@ -32,8 +43,9 @@ void Alien::Update(float dt) {
         auto task = tasks.front();
         switch (task.type) {
             case Action::Move: {
-                Vec2 delta = task.pos - Vec2{go.box.x + go.box.w / 2.0f,
-                                             go.box.y + go.box.h / 2.0f};
+                Vec2 delta =
+                    task.pos - Vec2{associated.box.x + associated.box.w / 2.0f,
+                                    associated.box.y + associated.box.h / 2.0f};
                 if (delta.norm() <= SPEEEED * dt) {
                     // Stop moving!
                     tasks.pop();
@@ -55,11 +67,11 @@ void Alien::Update(float dt) {
         }
     }
 
-    go.box.x += speed.x * dt;
-    go.box.y += speed.y * dt;
+    associated.box.x += speed.x * dt;
+    associated.box.y += speed.y * dt;
 
     if (hp <= 0) {
-        go.RequestDelete();
+        associated.RequestDelete();
     }
 }
 

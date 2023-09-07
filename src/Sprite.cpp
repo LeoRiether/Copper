@@ -32,6 +32,7 @@ void Sprite::Open(const string& file) {
 
 void Sprite::SetClip(int x, int y, int w, int h) {
     clipRect = SDL_Rect{x, y, w, h};
+    associated.box = Rect{(float)x, (float)y, (float)width, (float)height};
 }
 
 int Sprite::Width() { return width; }

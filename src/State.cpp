@@ -37,7 +37,7 @@ GameObject* CreatePenguin() {
 
 GameObject* CreateAlien(float x, float y) {
     auto go = new GameObject{};
-    auto alien = new Alien{*go, 5};
+    auto alien = new Alien{*go, 7};
     auto sprite = (Sprite*)go->GetComponent(CType::Sprite);
     go->box = Rect{x, y, (float)sprite->Width(), (float)sprite->Height()};
 
@@ -65,7 +65,7 @@ State::~State() {
 void State::Start() {
     started = true;
     LoadAssets();
-    AddObject(CreateAlien(512, 300));
+    // AddObject(CreateAlien(512, 300));
     for (auto& go : objects) {
         go->Start();
     }
@@ -132,9 +132,9 @@ void State::Render() {
 }
 
 weak_ptr<GameObject> State::AddObject(GameObject* go) {
-    go->Start();
     shared_ptr<GameObject> ptr{go};
     objects.emplace_back(ptr);
+    go->Start();
     return ptr;
 }
 

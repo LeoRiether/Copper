@@ -8,4 +8,5 @@ enum class CType {
     TileMap,
     CameraFollower,
     Alien,
+    Minion,
 };

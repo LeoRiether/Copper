@@ -27,8 +27,6 @@ class Alien : Component {
         Vec2 pos;
     };
 
-    GameObject& go;
-
     Vec2 speed{0, 0};
     int hp{30};
 
