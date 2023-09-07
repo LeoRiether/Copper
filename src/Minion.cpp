@@ -40,7 +40,7 @@ void Minion::Shoot(Vec2 target) {
 
     auto go = new GameObject{};
     auto bullet = new Bullet{*go,    angle, 300,
-                             damage, 500,   ASSETS "/img/minionbullet1.png"};
+                             damage, 500,   ASSETS "/img/minionbullet2.png"};
     go->box.x = associated.box.Center().x;
     go->box.y = associated.box.Center().y;
     go->AddComponent(bullet);

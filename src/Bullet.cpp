@@ -16,7 +16,7 @@ Bullet::Bullet(GameObject& associated, float angle, float speed, int damage,
       speedNorm(this->speed.norm()),
       distanceLeft(maxDistance),
       damage(damage) {
-    auto sprite = new Sprite{associated, spritePath};
+    auto sprite = new Sprite{associated, spritePath, 3, 0.2};
     associated.AddComponent(sprite);
     associated.angle = angle;
 }

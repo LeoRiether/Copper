@@ -11,8 +11,12 @@
 Sprite::Sprite(GameObject& associated)
     : Component(associated), texture(nullptr) {}
 
-Sprite::Sprite(GameObject& associated, const string& file)
-    : Sprite(associated) {
+Sprite::Sprite(GameObject& associated, const string& file, int frameCount,
+               float frameTime)
+    : Component(associated),
+      texture(nullptr),
+      frameCount(frameCount),
+      frameTime(frameTime) {
     Open(file);
 }
 
@@ -27,15 +31,23 @@ void Sprite::Open(const string& file) {
         fail2("couldn't query texture " YELLOW "'%s'" RESET "! Reason: %s",
               file.c_str(), SDL_GetError());
 
-    SetClip(0, 0, width, height);
+    SetClip(0, 0, Width(), Height());
 }
 
 void Sprite::SetClip(int x, int y, int w, int h) {
     clipRect = SDL_Rect{x, y, w, h};
-    associated.box = Rect{(float)x, (float)y, (float)width, (float)height};
+    associated.box.w = w;
+    associated.box.h = h;
 }
 
-void Sprite::Update(float) {}
+void Sprite::Update(float dt) {
+    timeElapsed += dt;
+    while (timeElapsed >= frameTime) {
+        timeElapsed -= dt;
+        SetFrame(currentFrame + 1 >= frameCount ? currentFrame + 1 - frameCount
+                                                : currentFrame + 1);
+    }
+}
 
 void Sprite::Render(int x, int y) {
     Game& game = Game::Instance();
@@ -55,5 +67,11 @@ bool Sprite::Is(CType type) { return type == CType::Sprite; }
 void Sprite::SetScale(float scaleX, float scaleY) {
     SetScale(Vec2{scaleX, scaleY});
 }
-
 void Sprite::SetScale(Vec2 s) { scale = s; }
+
+void Sprite::SetFrame(int frame) {
+    currentFrame = frame;
+    clipRect.x = 1ll * frame * width / frameCount;
+}
+void Sprite::SetFrameCount(int fc) { frameCount = fc; }
+void Sprite::SetFrameTime(float ft) { frameTime = ft; }

@@ -12,17 +12,22 @@ class Sprite : public Component {
     SDL_Texture* texture;
     int width, height;
     Vec2 scale{1, 1};
+
+    int frameCount, currentFrame{0};
+    float timeElapsed{0}, frameTime;
+
     SDL_Rect clipRect;
 
    public:
     Sprite(GameObject& associated);
-    Sprite(GameObject& associated, const string& file);
+    Sprite(GameObject& associated, const string& file, int frameCount = 1,
+           float frameTime = 1);
     ~Sprite();
 
     void Open(const string& file);
     void SetClip(int x, int y, int w, int h);
 
-    inline int Width() { return width * scale.x; }
+    inline int Width() { return width * scale.x / frameCount; }
     inline int Height() { return height * scale.y; }
     inline bool IsOpen() { return texture != nullptr; }
 
@@ -34,4 +39,8 @@ class Sprite : public Component {
     inline Vec2 Scale() { return scale; }
     void SetScale(float scaleX, float scaleY);
     void SetScale(Vec2 scale);
+
+    void SetFrame(int frame);
+    void SetFrameCount(int frameCount);
+    void SetFrameTime(float frameTime);
 };
