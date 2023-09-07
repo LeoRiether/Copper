@@ -152,8 +152,6 @@ weak_ptr<GameObject> State::AddObject(GameObject* go) {
     return ptr;
 }
 
-// NOTE: why do you need a weak_ptr when you already have a pointer to the
-// object anyway?
 // WARN: partial function, only call if you're sure the GameObject is in
 // `objects`
 weak_ptr<GameObject> State::GetObject(GameObject* go) {

@@ -13,7 +13,6 @@ Sprite::Sprite(GameObject& associated)
 
 Sprite::Sprite(GameObject& associated, const string& file)
     : Sprite(associated) {
-    info2("loading sprite %s", file.c_str());
     Open(file);
 }
 
