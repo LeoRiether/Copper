@@ -17,11 +17,15 @@ class GameObject {
     // TODO: maybe a map<ComponentType, shared_ptr<Component>> would be better
     // here
     vector<unique_ptr<Component>> components;
-    bool isDead;
-    bool started;
+    bool isDead{false};
+    bool started{false};
 
    public:
     Rect box;
+    double angle{0};
+
+    // Objects that will be added on the end of the update
+    vector<GameObject*> addRequests;
 
     GameObject();
     ~GameObject();
@@ -31,6 +35,7 @@ class GameObject {
     void Render(Vec2 cameraPosition);
     bool IsDead();
     void RequestDelete();
+    void RequestAdd(GameObject* go);
     void AddComponent(Component* cmp);
     void RemoveComponent(Component* cmp);
     Component* GetComponent(CType type);

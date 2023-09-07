@@ -13,7 +13,7 @@
 
 Alien::Alien(GameObject& go, int nMinions) : Component(go), minions(nMinions) {
     auto sprite = new Sprite{go, ASSETS "/img/alien.png"};
-    go.AddComponent((Component*)sprite);
+    go.AddComponent(sprite);
 }
 
 Alien::~Alien() {
@@ -27,10 +27,10 @@ void Alien::Start() {
     for (size_t i = 0; i < minions.size(); i++) {
         auto minionGO = new GameObject{};
         auto sprite = new Sprite{*minionGO, ASSETS "/img/minion.png"};
+        minionGO->AddComponent(sprite);
         float arc = 2 * PI * i / minions.size();
         auto minion = new Minion{*minionGO, state.GetObject(&associated), arc};
-        minionGO->AddComponent((Component*)sprite);
-        minionGO->AddComponent((Component*)minion);
+        minionGO->AddComponent(minion);
         minions[i] = state.AddObject(minionGO);
     }
 }
@@ -46,9 +46,7 @@ void Alien::Update(float dt) {
         auto task = tasks.front();
         switch (task.type) {
             case Action::Move: {
-                Vec2 delta =
-                    task.pos - Vec2{associated.box.x + associated.box.w / 2.0f,
-                                    associated.box.y + associated.box.h / 2.0f};
+                Vec2 delta = task.pos - associated.box.Center();
                 if (delta.norm() <= SPEEEED * dt) {
                     // Stop moving!
                     tasks.pop();
@@ -59,16 +57,13 @@ void Alien::Update(float dt) {
                 break;
             }
             case Action::Shoot: {
-                tasks.pop();
                 Vec2 target{(float)input.MouseX(), (float)input.MouseY()};
 
                 // Find minion closest to target
-                size_t minionIndex = -1;
                 float bestDist = std::numeric_limits<float>::max();
                 Minion* bestMinion = nullptr;
                 for (size_t i = 0; i < minions.size(); i++) {
-                    auto box = minions[i].lock()->box;
-                    auto pos = Vec2{box.x, box.y};
+                    Vec2 pos = minions[i].lock()->box.Center();
                     if ((target - pos).norm2() < bestDist) {
                         bestDist = (target - pos).norm2();
                         bestMinion = (Minion*)minions[i].lock()->GetComponent(
@@ -81,6 +76,7 @@ void Alien::Update(float dt) {
                 } else {
                     bestMinion->Shoot(target);
                 }
+                tasks.pop();
                 break;
             }
             default: {
@@ -92,6 +88,7 @@ void Alien::Update(float dt) {
 
     associated.box.x += speed.x * dt;
     associated.box.y += speed.y * dt;
+    associated.angle -= dt * 0.3;
 
     if (hp <= 0) {
         associated.RequestDelete();

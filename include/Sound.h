@@ -9,7 +9,7 @@
 #include "util.h"
 using std::string;
 
-class Sound : Component {
+class Sound : public Component {
    private:
     Mix_Chunk* chunk;
     int channel;

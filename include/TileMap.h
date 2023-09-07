@@ -11,7 +11,7 @@ using std::string;
 using std::vector;
 using std::unique_ptr;
 
-class TileMap : Component {
+class TileMap : public Component {
    private:
     vector<int> tileMatrix;
     unique_ptr<TileSet> tileSet;

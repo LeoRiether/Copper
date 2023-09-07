@@ -5,8 +5,9 @@
 #include "Component.h"
 #include "GameObject.h"
 #include "Vec2.h"
+using std::string;
 
-class Bullet : Component {
+class Bullet : public Component {
    private:
     Vec2 speed;
     float speedNorm;

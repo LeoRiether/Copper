@@ -5,10 +5,11 @@
 
 #include "Component.h"
 #include "TileMap.h"
+#include "util.h"
 
 #define MODULE "GameObject"
 
-GameObject::GameObject() : isDead(false), started(false) {}
+GameObject::GameObject() {}
 GameObject::~GameObject() {
     components
         .clear();  // pretty sure it would be cleared without this line anyway
@@ -36,6 +37,7 @@ void GameObject::Render(Vec2 camera) {
 bool GameObject::IsDead() { return isDead; }
 
 void GameObject::RequestDelete() { isDead = true; }
+void GameObject::RequestAdd(GameObject* go) { addRequests.emplace_back(go); }
 
 void GameObject::AddComponent(Component* cmp) { components.emplace_back(cmp); }
 
@@ -55,5 +57,6 @@ Component* GameObject::GetComponent(CType type) {
     for (const auto& component : components) {
         if (component->Is(type)) return component.get();
     }
+    fail("didn't find component");  // maybe I'll change to just a warning later
     return nullptr;
 }

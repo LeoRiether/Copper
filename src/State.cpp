@@ -1,5 +1,6 @@
 #include "State.h"
 
+#include <algorithm>
 #include <memory>
 #include <vector>
 
@@ -30,8 +31,8 @@ GameObject* CreatePenguin() {
 
     auto sound = new Sound(*go, ASSETS "/audio/boom.wav");
 
-    go->AddComponent((Component*)sprite);
-    go->AddComponent((Component*)sound);
+    go->AddComponent(sprite);
+    go->AddComponent(sound);
     return go;
 }
 
@@ -41,7 +42,7 @@ GameObject* CreateAlien(float x, float y) {
     auto sprite = (Sprite*)go->GetComponent(CType::Sprite);
     go->box = Rect{x, y, (float)sprite->Width(), (float)sprite->Height()};
 
-    go->AddComponent((Component*)alien);
+    go->AddComponent(alien);
     return go;
 }
 GameObject* CreateAlien() {
@@ -65,11 +66,11 @@ State::~State() {
 void State::Start() {
     started = true;
     LoadAssets();
-    // AddObject(CreateAlien(512, 300));
     for (auto& go : objects) {
         go->Start();
     }
 
+    AddObject(CreateAlien(512, 300));
     music->Play();
 }
 
@@ -79,9 +80,9 @@ void State::LoadAssets() {
     // Background
     auto bgGO = new GameObject;
     bgGO->box = Rect{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-    bgGO->AddComponent((Component*)new Sprite{*bgGO, ASSETS "/img/ocean.jpg"});
-    bgGO->AddComponent((Component*)new CameraFollower{*bgGO});
-    objects.emplace_back(bgGO);
+    bgGO->AddComponent(new Sprite{*bgGO, ASSETS "/img/ocean.jpg"});
+    bgGO->AddComponent(new CameraFollower{*bgGO});
+    AddObject(bgGO);
 
     // Tilemap
     auto tileGO = new GameObject;
@@ -89,8 +90,8 @@ void State::LoadAssets() {
     auto tileset = new TileSet(DEFAULT_TILE_WIDTH, DEFAULT_TILE_HEIGHT,
                                ASSETS "/img/tileset.png");
     auto tilemap = new TileMap(*tileGO, ASSETS "/map/tileMap.txt", tileset);
-    tileGO->AddComponent((Component*)tilemap);
-    objects.emplace_back(tileGO);
+    tileGO->AddComponent(tilemap);
+    AddObject(tileGO);
 
     // Background music
     music = new Music(ASSETS "/audio/stageState.ogg");
@@ -110,9 +111,11 @@ void State::Update(float dt) {
         AddObject(CreateAlien());
     }
 
-    for (const auto& go : objects) {
+    currentlyOnUpdate = true;
+    for (auto& go : objects) {
         go->Update(dt);
     }
+    currentlyOnUpdate = false;
 
     // swap-remove dead objects
     for (size_t i = 0; i < objects.size();) {
@@ -123,6 +126,15 @@ void State::Update(float dt) {
             i++;
         }
     }
+
+    // add new objects
+    size_t n = objects.size();
+    for (size_t i = 0; i < n; i++) {
+        for (auto go : objects[i]->addRequests) {
+            AddObject(go);
+        }
+        objects[i]->addRequests.clear();
+    }
 }
 
 void State::Render() {
@@ -132,9 +144,11 @@ void State::Render() {
 }
 
 weak_ptr<GameObject> State::AddObject(GameObject* go) {
+    if (currentlyOnUpdate)
+        fail("Please don't call AddObject during State::Update!");
     shared_ptr<GameObject> ptr{go};
-    objects.emplace_back(ptr);
-    go->Start();
+    objects.push_back(ptr);
+    ptr->Start();
     return ptr;
 }
 

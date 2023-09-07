@@ -15,7 +15,7 @@ using std::weak_ptr;
 
 constexpr int SPEEEED = 250;
 
-class Alien : Component {
+class Alien : public Component {
    private:
     struct Action {
         enum ActionType { Move, Shoot };

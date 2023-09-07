@@ -17,7 +17,8 @@ Bullet::Bullet(GameObject& associated, float angle, float speed, int damage,
       distanceLeft(maxDistance),
       damage(damage) {
     auto sprite = new Sprite{associated, spritePath};
-    associated.AddComponent((Component*)sprite);
+    associated.AddComponent(sprite);
+    associated.angle = angle;
 }
 
 void Bullet::Update(float dt) {

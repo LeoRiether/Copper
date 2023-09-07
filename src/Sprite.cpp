@@ -3,6 +3,7 @@
 #include "Game.h"
 #include "GameObject.h"
 #include "Resources.h"
+#include "SDL_render.h"
 #include "Vec2.h"
 
 #define MODULE "Sprite"
@@ -35,18 +36,14 @@ void Sprite::SetClip(int x, int y, int w, int h) {
     associated.box = Rect{(float)x, (float)y, (float)width, (float)height};
 }
 
-int Sprite::Width() { return width; }
-
-int Sprite::Height() { return height; }
-
-bool Sprite::IsOpen() { return texture != nullptr; }
-
 void Sprite::Update(float) {}
 
 void Sprite::Render(int x, int y) {
     Game& game = Game::Instance();
-    SDL_Rect destRect{x, y, clipRect.w, clipRect.h};
-    SDL_RenderCopy(game.Renderer(), texture, &clipRect, &destRect);
+    SDL_Rect destRect{x, y, int(clipRect.w * scale.x),
+                      int(clipRect.h * scale.y)};
+    SDL_RenderCopyEx(game.Renderer(), texture, &clipRect, &destRect,
+                     associated.angle * 180 / PI, nullptr, SDL_FLIP_NONE);
 }
 
 void Sprite::Render(Vec2 camera) {
@@ -55,3 +52,9 @@ void Sprite::Render(Vec2 camera) {
 }
 
 bool Sprite::Is(CType type) { return type == CType::Sprite; }
+
+void Sprite::SetScale(float scaleX, float scaleY) {
+    SetScale(Vec2{scaleX, scaleY});
+}
+
+void Sprite::SetScale(Vec2 s) { scale = s; }

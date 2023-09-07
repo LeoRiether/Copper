@@ -4,7 +4,7 @@
 #include "Component.h"
 
 // Keeps a GameObject alive until the Sound component stops playing
-class KeepSoundAlive : Component {
+class KeepSoundAlive : public Component {
    private:
     GameObject& go;
 

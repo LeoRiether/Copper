@@ -6,7 +6,7 @@
 
 using std::weak_ptr;
 
-class Minion : Component {
+class Minion : public Component {
    private:
     static constexpr float RADIUS = 150;
 

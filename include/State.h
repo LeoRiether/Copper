@@ -22,6 +22,7 @@ class State {
     Camera* camera;
     bool quitRequested;
     bool started;
+    bool currentlyOnUpdate{false};
     vector<shared_ptr<GameObject>> objects;
 
    public:

@@ -3,7 +3,7 @@
 #include "CType.h"
 #include "Component.h"
 
-class CameraFollower : Component {
+class CameraFollower : public Component {
    private:
     GameObject& go;
 
