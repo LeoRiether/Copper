@@ -9,4 +9,5 @@ enum class CType {
     CameraFollower,
     Alien,
     Minion,
+    Bullet,
 };

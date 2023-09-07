@@ -1,5 +1,8 @@
 #include "Alien.h"
 
+#include <limits>
+
+#include "CType.h"
 #include "Game.h"
 #include "InputManager.h"
 #include "Minion.h"
@@ -56,8 +59,28 @@ void Alien::Update(float dt) {
                 break;
             }
             case Action::Shoot: {
-                // TODO:
                 tasks.pop();
+                Vec2 target{(float)input.MouseX(), (float)input.MouseY()};
+
+                // Find minion closest to target
+                size_t minionIndex = -1;
+                float bestDist = std::numeric_limits<float>::max();
+                Minion* bestMinion = nullptr;
+                for (size_t i = 0; i < minions.size(); i++) {
+                    auto box = minions[i].lock()->box;
+                    auto pos = Vec2{box.x, box.y};
+                    if ((target - pos).norm2() < bestDist) {
+                        bestDist = (target - pos).norm2();
+                        bestMinion = (Minion*)minions[i].lock()->GetComponent(
+                            CType::Minion);
+                    }
+                }
+
+                if (!bestMinion) {
+                    warn("didn't find any minion to shoot?");
+                } else {
+                    bestMinion->Shoot(target);
+                }
                 break;
             }
             default: {
