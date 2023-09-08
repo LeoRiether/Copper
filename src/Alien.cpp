@@ -13,6 +13,7 @@
 
 Alien::Alien(GameObject& go, int nMinions) : Component(go), minions(nMinions) {
     auto sprite = new Sprite{go, ASSETS "/img/alien.png"};
+    associated.debugName = "Alien";
     go.AddComponent(sprite);
 }
 
@@ -31,7 +32,7 @@ void Alien::Start() {
         float arc = 2 * PI * i / minions.size();
         auto minion = new Minion{*minionGO, state.GetObject(&associated), arc};
         minionGO->AddComponent(minion);
-        minions[i] = state.AddObject(minionGO);
+        minions[i] = state.RequestAddObject(minionGO);
     }
 }
 

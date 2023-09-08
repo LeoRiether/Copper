@@ -22,8 +22,10 @@ class State {
     Camera* camera;
     bool quitRequested;
     bool started;
-    bool currentlyOnUpdate{false};
     vector<shared_ptr<GameObject>> objects;
+    vector<shared_ptr<GameObject>> addRequests;
+
+    void ProcessAddRequests();
 
    public:
     State();
@@ -36,7 +38,7 @@ class State {
     void Update(float dt);
     void Render();
     void Input();
-    weak_ptr<GameObject> AddObject(GameObject* go);
+    weak_ptr<GameObject> RequestAddObject(GameObject* go);
     weak_ptr<GameObject> GetObject(GameObject* go);
 
     inline Camera& GetCamera() { return *camera; }

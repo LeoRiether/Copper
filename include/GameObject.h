@@ -23,9 +23,7 @@ class GameObject {
    public:
     Rect box;
     double angle{0};
-
-    // Objects that will be added on the end of the update
-    vector<GameObject*> addRequests;
+    const char* debugName;
 
     GameObject();
     ~GameObject();

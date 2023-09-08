@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "Component.h"
+#include "Game.h"
 #include "TileMap.h"
 #include "util.h"
 
@@ -37,7 +38,9 @@ void GameObject::Render(Vec2 camera) {
 bool GameObject::IsDead() { return isDead; }
 
 void GameObject::RequestDelete() { isDead = true; }
-void GameObject::RequestAdd(GameObject* go) { addRequests.emplace_back(go); }
+void GameObject::RequestAdd(GameObject* go) {
+    Game::Instance().GetState().RequestAddObject(go);
+}
 
 void GameObject::AddComponent(Component* cmp) { components.emplace_back(cmp); }
 

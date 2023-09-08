@@ -10,4 +10,6 @@ enum class CType {
     Alien,
     Minion,
     Bullet,
+    PenguinBody,
+    PenguinCannon,
 };

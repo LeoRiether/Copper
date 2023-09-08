@@ -11,3 +11,7 @@ release *args:
     premake5 gmake2
     bear -- make config=release
     ./penguin_release {{args}}
+
+grind:
+    just make
+    valgrind ./penguin_debug

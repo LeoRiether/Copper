@@ -14,6 +14,7 @@
 Minion::Minion(GameObject& go, weak_ptr<GameObject> alienCenter,
                float arcOffsetRad)
     : Component(go), alienCenter(alienCenter), arc(arcOffsetRad) {
+    associated.debugName = "Minion";
     std::uniform_real_distribution<float> dist(1, 1.5);
     auto sprite = (Sprite*)go.GetComponent(CType::Sprite);
     float scale = dist(rng);

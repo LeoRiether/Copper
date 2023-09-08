@@ -1,5 +1,7 @@
 #include "State.h"
 
+#include <bits/fs_fwd.h>
+
 #include <algorithm>
 #include <memory>
 #include <vector>
@@ -64,13 +66,15 @@ State::~State() {
 }
 
 void State::Start() {
-    started = true;
     LoadAssets();
+    RequestAddObject(CreateAlien(512, 300));
+
     for (auto& go : objects) {
         go->Start();
     }
+    ProcessAddRequests();
+    started = true;
 
-    AddObject(CreateAlien(512, 300));
     music->Play();
 }
 
@@ -82,7 +86,7 @@ void State::LoadAssets() {
     bgGO->box = Rect{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
     bgGO->AddComponent(new Sprite{*bgGO, ASSETS "/img/ocean.jpg"});
     bgGO->AddComponent(new CameraFollower{*bgGO});
-    AddObject(bgGO);
+    RequestAddObject(bgGO);
 
     // Tilemap
     auto tileGO = new GameObject;
@@ -91,13 +95,17 @@ void State::LoadAssets() {
                                ASSETS "/img/tileset.png");
     auto tilemap = new TileMap(*tileGO, ASSETS "/map/tileMap.txt", tileset);
     tileGO->AddComponent(tilemap);
-    AddObject(tileGO);
+    RequestAddObject(tileGO);
 
     // Background music
     music = new Music(ASSETS "/audio/stageState.ogg");
 }
 
 void State::Update(float dt) {
+    // process add requests here so added objects are updated before their first
+    // render
+    ProcessAddRequests();
+
     camera->Update(dt);
 
     auto& input = InputManager::Instance();
@@ -108,14 +116,12 @@ void State::Update(float dt) {
     }
 
     if (input.KeyPress(' ')) {
-        AddObject(CreateAlien());
+        RequestAddObject(CreateAlien());
     }
 
-    currentlyOnUpdate = true;
     for (auto& go : objects) {
         go->Update(dt);
     }
-    currentlyOnUpdate = false;
 
     // swap-remove dead objects
     for (size_t i = 0; i < objects.size();) {
@@ -126,15 +132,6 @@ void State::Update(float dt) {
             i++;
         }
     }
-
-    // add new objects
-    size_t n = objects.size();
-    for (size_t i = 0; i < n; i++) {
-        for (auto go : objects[i]->addRequests) {
-            AddObject(go);
-        }
-        objects[i]->addRequests.clear();
-    }
 }
 
 void State::Render() {
@@ -143,12 +140,9 @@ void State::Render() {
     }
 }
 
-weak_ptr<GameObject> State::AddObject(GameObject* go) {
-    if (currentlyOnUpdate)
-        fail("Please don't call AddObject during State::Update!");
+weak_ptr<GameObject> State::RequestAddObject(GameObject* go) {
     shared_ptr<GameObject> ptr{go};
-    objects.push_back(ptr);
-    ptr->Start();
+    addRequests.emplace_back(ptr);
     return ptr;
 }
 
@@ -159,4 +153,18 @@ weak_ptr<GameObject> State::GetObject(GameObject* go) {
         if (go == candidate.get()) return candidate;
     }
     fail("GetObject called with GameObject that's not registered");
+}
+
+void State::ProcessAddRequests() {
+    int i = 0;
+    while (!addRequests.empty()) {
+        auto newObjects = std::move(addRequests);
+        addRequests = {};
+        for (auto& go : newObjects) {
+            objects.emplace_back(go);
+        }
+        for (auto& go : newObjects) {
+            go->Start();
+        }
+    }
 }
