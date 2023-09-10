@@ -36,14 +36,14 @@ void InputManager::Update() {
                 break;
             case SDL_KEYDOWN:
                 if (!event.key.repeat) {
-                    keyUpdate[mapkey(event.key.keysym.sym)] = true;
-                    keyState[mapkey(event.key.keysym.sym)] = Down;
+                    keyUpdate[mapkey(event.key.keysym.scancode)] = true;
+                    keyState[mapkey(event.key.keysym.scancode)] = Down;
                 }
                 break;
             case SDL_KEYUP:
                 if (!event.key.repeat) {
-                    keyUpdate[mapkey(event.key.keysym.sym)] = true;
-                    keyState[mapkey(event.key.keysym.sym)] = Up;
+                    keyUpdate[mapkey(event.key.keysym.scancode)] = true;
+                    keyState[mapkey(event.key.keysym.scancode)] = Up;
                 }
                 break;
             case SDL_MOUSEBUTTONDOWN:
