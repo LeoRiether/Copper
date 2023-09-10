@@ -60,6 +60,11 @@ Component* GameObject::GetComponent(CType type) {
     for (const auto& component : components) {
         if (component->Is(type)) return component.get();
     }
-    fail("didn't find component");  // maybe I'll change to just a warning later
     return nullptr;
+}
+
+void GameObject::NotifyCollision(GameObject& other) {
+    for (auto& component : components) {
+        component->NotifyCollision(other);
+    }
 }

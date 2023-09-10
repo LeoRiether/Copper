@@ -5,6 +5,7 @@
 #include <iterator>
 
 #include "CType.h"
+#include "Collider.h"
 #include "Sprite.h"
 
 #define MODULE "Bullet"
@@ -19,6 +20,8 @@ Bullet::Bullet(GameObject& associated, float angle, float speed, int damage,
     auto sprite = new Sprite{associated, spritePath, 3, 0.2};
     associated.AddComponent(sprite);
     associated.angle = angle;
+
+    associated.AddComponent(new Collider{associated});
 }
 
 void Bullet::Update(float dt) {

@@ -26,4 +26,5 @@ class PenguinBody : public Component {
     void Update(float dt);
     void Render(Vec2 camera);
     bool Is(CType type);
+    void NotifyCollision(GameObject& other);
 };

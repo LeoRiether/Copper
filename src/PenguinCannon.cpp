@@ -1,6 +1,7 @@
 #include "PenguinCannon.h"
 
 #include "Bullet.h"
+#include "Collider.h"
 #include "Component.h"
 #include "InputManager.h"
 #include "Sprite.h"
@@ -11,6 +12,7 @@ PenguinCannon::PenguinCannon(GameObject& associated,
     : Component(associated), pbody(penguinBody) {
     auto sprite = new Sprite{associated, ASSETS "/img/cubngun.png"};
     associated.AddComponent(sprite);
+    associated.AddComponent(new Collider{associated});
 }
 
 void PenguinCannon::Update(float dt) {

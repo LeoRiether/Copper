@@ -21,4 +21,6 @@ class Component {
     virtual void Render(Vec2 camera) = 0;
 
     virtual bool Is(CType type) = 0;
+
+    virtual void NotifyCollision(GameObject& other);
 };

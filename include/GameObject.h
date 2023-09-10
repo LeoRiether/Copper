@@ -37,4 +37,5 @@ class GameObject {
     void AddComponent(Component* cmp);
     void RemoveComponent(Component* cmp);
     Component* GetComponent(CType type);
+    void NotifyCollision(GameObject& other);
 };

@@ -9,6 +9,8 @@
 #include "Alien.h"
 #include "CType.h"
 #include "CameraFollower.h"
+#include "Collider.h"
+#include "Collision.h"
 #include "Game.h"
 #include "GameObject.h"
 #include "InputManager.h"
@@ -132,8 +134,30 @@ void State::Update(float dt) {
         RequestAddObject(CreateAlien());
     }
 
+    // Handle updates
+    vector<GameObject*> collidableObjects;
     for (auto& go : objects) {
         go->Update(dt);
+
+        if (go->GetComponent(CType::Collider))
+            collidableObjects.push_back(go.get());
+    }
+
+    // Handle collisions
+    size_t n = collidableObjects.size();
+    for (size_t i = 0; i < n; i++) {
+        auto collider_i =
+            (Collider*)collidableObjects[i]->GetComponent(CType::Collider);
+        for (size_t j = i + 1; j < n; j++) {
+            auto collider_j =
+                (Collider*)collidableObjects[i]->GetComponent(CType::Collider);
+            if (Collision::IsColliding(collider_i->box, collider_j->box,
+                                       collidableObjects[i]->angle,
+                                       collidableObjects[j]->angle)) {
+                collidableObjects[i]->NotifyCollision(*collidableObjects[j]);
+                collidableObjects[j]->NotifyCollision(*collidableObjects[i]);
+            }
+        }
     }
 
     // swap-remove dead objects

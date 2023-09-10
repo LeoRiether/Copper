@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <cmath>
 
+#include "Bullet.h"
+#include "Collider.h"
 #include "Game.h"
 #include "GameObject.h"
 #include "InputManager.h"
@@ -19,6 +21,7 @@ PenguinBody::PenguinBody(GameObject& associated) : Component(associated) {
 
     auto sprite = new Sprite{associated, ASSETS "/img/penguin.png"};
     associated.AddComponent(sprite);
+    associated.AddComponent(new Collider{associated});
 }
 
 PenguinBody::~PenguinBody() { PenguinBody::player = nullptr; }
@@ -63,3 +66,14 @@ void PenguinBody::Update(float dt) {
 void PenguinBody::Render(Vec2) {}
 
 bool PenguinBody::Is(CType type) { return type == CType::PenguinBody; }
+
+void PenguinBody::NotifyCollision(GameObject& other) {
+    auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
+    if (!bullet) return;
+
+    if (rng() % 2 == 0) {
+        log("Collided with bullet!");
+    } else {
+        warn("Collided with bullet!");
+    }
+}

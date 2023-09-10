@@ -4,6 +4,7 @@
 
 #include "Bullet.h"
 #include "CType.h"
+#include "Collider.h"
 #include "Component.h"
 #include "Game.h"
 #include "GameObject.h"
@@ -19,6 +20,9 @@ Minion::Minion(GameObject& go, weak_ptr<GameObject> alienCenter,
     auto sprite = (Sprite*)go.GetComponent(CType::Sprite);
     float scale = dist(rng);
     sprite->SetScale(scale, scale);
+
+    // TODO: scaling
+    go.AddComponent(new Collider{go});
 }
 
 void Minion::Update(float dt) {

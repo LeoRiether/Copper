@@ -3,6 +3,7 @@
 #include <limits>
 
 #include "CType.h"
+#include "Collider.h"
 #include "Game.h"
 #include "InputManager.h"
 #include "Minion.h"
@@ -15,6 +16,7 @@ Alien::Alien(GameObject& go, int nMinions) : Component(go), minions(nMinions) {
     auto sprite = new Sprite{go, ASSETS "/img/alien.png"};
     associated.debugName = "Alien";
     go.AddComponent(sprite);
+    go.AddComponent(new Collider{go});
 }
 
 Alien::~Alien() {
