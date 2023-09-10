@@ -10,7 +10,6 @@ using std::weak_ptr;
 class PenguinCannon : public Component {
    private:
     weak_ptr<GameObject> pbody;
-    float angle{0};
 
    public:
     PenguinCannon(GameObject& associated, weak_ptr<GameObject> penguinBody);

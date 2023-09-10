@@ -13,6 +13,7 @@
 #include "GameObject.h"
 #include "InputManager.h"
 #include "KeepSoundAlive.h"
+#include "PenguinBody.h"
 #include "Rect.h"
 #include "Sound.h"
 #include "TileMap.h"
@@ -35,6 +36,14 @@ GameObject* CreatePenguin() {
 
     go->AddComponent(sprite);
     go->AddComponent(sound);
+    return go;
+}
+
+GameObject* CreatePenguinBody() {
+    auto go = new GameObject{};
+    auto body = new PenguinBody{*go};
+    go->AddComponent(body);
+    go->box.SetCenter(Vec2{704, 640});
     return go;
 }
 
@@ -68,6 +77,10 @@ State::~State() {
 void State::Start() {
     LoadAssets();
     RequestAddObject(CreateAlien(512, 300));
+
+    auto penguinBody = CreatePenguinBody();
+    camera->Follow(penguinBody);
+    RequestAddObject(penguinBody);
 
     for (auto& go : objects) {
         go->Start();
@@ -156,7 +169,6 @@ weak_ptr<GameObject> State::GetObject(GameObject* go) {
 }
 
 void State::ProcessAddRequests() {
-    int i = 0;
     while (!addRequests.empty()) {
         auto newObjects = std::move(addRequests);
         addRequests = {};

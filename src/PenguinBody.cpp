@@ -1,10 +1,16 @@
 #include "PenguinBody.h"
 
+#include <algorithm>
+#include <cmath>
+
 #include "Game.h"
 #include "GameObject.h"
+#include "InputManager.h"
 #include "PenguinCannon.h"
 #include "Sprite.h"
 #include "util.h"
+
+#define MODULE "PenguinBody"
 
 PenguinBody* PenguinBody::player;
 
@@ -21,10 +27,38 @@ void PenguinBody::Start() {
     auto& state = Game::Instance().GetState();
     auto go = new GameObject{};
     auto cannon = new PenguinCannon{*go, state.GetObject(&associated)};
+    go->AddComponent(cannon);
     associated.RequestAdd(go);
 }
 
-void PenguinBody::Update(float dt) {}
+void PenguinBody::Update(float dt) {
+    auto& input = InputManager::Instance();
+    if (input.IsKeyDown(MOVE_FORWARD_KEY)) {
+        linearSpeed = std::min(linearSpeed + 1000.0f * dt, +400.0f);
+    }
+    if (input.IsKeyDown(MOVE_BACKWARDS_KEY)) {
+        linearSpeed = std::max(linearSpeed - 1000.0f * dt, -400.0f);
+    }
+
+    float sign = linearSpeed >= 0 ? 1 : -1;
+    if (input.IsKeyDown(ROTATE_CLOCKWISE_KEY)) {
+        angle += 3 * dt * sign;
+    }
+    if (input.IsKeyDown(ROTATE_COUNTERCLOCKWISE_KEY)) {
+        angle -= 3 * dt * sign;
+    }
+
+    speed = Vec2{linearSpeed, 0}.GetRotated(angle);
+
+    associated.box.x += speed.x * dt;
+    associated.box.y += speed.y * dt;
+
+    associated.angle = angle;
+
+    if (hp <= 0) {
+        associated.RequestDelete();
+    }
+}
 
 void PenguinBody::Render(Vec2) {}
 

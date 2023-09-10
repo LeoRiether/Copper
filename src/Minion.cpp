@@ -22,6 +22,11 @@ Minion::Minion(GameObject& go, weak_ptr<GameObject> alienCenter,
 }
 
 void Minion::Update(float dt) {
+    if (alienCenter.expired()) {
+        associated.RequestDelete();
+        return;
+    }
+
     arc += dt;
     associated.angle = arc;
 
