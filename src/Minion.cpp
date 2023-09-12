@@ -20,9 +20,7 @@ Minion::Minion(GameObject& go, weak_ptr<GameObject> alienCenter,
     auto sprite = (Sprite*)go.GetComponent(CType::Sprite);
     float scale = dist(rng);
     sprite->SetScale(scale, scale);
-
-    // TODO: scaling
-    go.AddComponent(new Collider{go});
+    go.AddComponent(new Collider{go, Vec2{scale, scale}});
 }
 
 void Minion::Update(float dt) {
@@ -49,8 +47,8 @@ void Minion::Shoot(Vec2 target) {
     int damage = (rng() % 10) + 5;
 
     auto go = new GameObject{};
-    auto bullet = new Bullet{*go,    angle, 300,
-                             damage, 500,   ASSETS "/img/minionbullet2.png"};
+    auto bullet = new Bullet{
+        *go, angle, 300, damage, 500, 3, ASSETS "/img/minionbullet2.png", true};
     go->box.x = associated.box.Center().x;
     go->box.y = associated.box.Center().y;
     go->AddComponent(bullet);

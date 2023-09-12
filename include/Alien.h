@@ -7,6 +7,8 @@
 #include "CType.h"
 #include "Component.h"
 #include "GameObject.h"
+#include "Minion.h"
+#include "Timer.h"
 #include "Vec2.h"
 
 using std::queue;
@@ -17,23 +19,25 @@ constexpr int SPEEEED = 250;
 
 class Alien : public Component {
    private:
-    struct Action {
-        enum ActionType { Move, Shoot };
-
-        inline Action(ActionType type, float x, float y)
-            : type(type), pos{x, y} {}
-
-        ActionType type;
-        Vec2 pos;
-    };
+    enum AlienState { Resting, Moving };
+    constexpr static float REST_TIME_S = 1.5f;
 
     Vec2 speed{0, 0};
     int hp{30};
 
-    queue<Action> tasks{};
+    AlienState state{Resting};
+    Timer restTimer;
+    Vec2 destination;
+
     vector<weak_ptr<GameObject>> minions{};
 
+    void BulletHell();
+    Minion* ClosestMinion(Vec2 target);
+
    public:
+    const char* debugName{"Alien"};
+    static int alienCount;
+
     Alien(GameObject& go, int nMinions);
     ~Alien();
 

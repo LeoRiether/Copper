@@ -29,6 +29,8 @@ class GameObject {
     ~GameObject();
     void Start();
 
+    inline vector<unique_ptr<Component>>& Components() { return components; }
+
     void Update(float dt);
     void Render(Vec2 cameraPosition);
     bool IsDead();

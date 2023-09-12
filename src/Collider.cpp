@@ -12,7 +12,7 @@ void Collider::Update(float) {
     box.w *= scale.x;
     box.h *= scale.y;
 
-    box.SetCenter(associated.box.Center());
+    offset = offset.GetRotated(associated.angle);
     box.x += offset.x;
     box.y += offset.y;
 }

@@ -2,17 +2,23 @@
 
 #include <limits>
 
+#include "Bullet.h"
 #include "CType.h"
 #include "Collider.h"
 #include "Game.h"
+#include "GameObject.h"
 #include "InputManager.h"
 #include "Minion.h"
+#include "PenguinBody.h"
 #include "Sprite.h"
 #include "util.h"
 
 #define MODULE "Alien"
 
+int Alien::alienCount = 0;
+
 Alien::Alien(GameObject& go, int nMinions) : Component(go), minions(nMinions) {
+    alienCount++;
     auto sprite = new Sprite{go, ASSETS "/img/alien.png"};
     associated.debugName = "Alien";
     go.AddComponent(sprite);
@@ -20,8 +26,8 @@ Alien::Alien(GameObject& go, int nMinions) : Component(go), minions(nMinions) {
 }
 
 Alien::~Alien() {
+    alienCount--;
     minions.clear();
-    while (!tasks.empty()) tasks.pop();
 }
 
 void Alien::Start() {
@@ -39,53 +45,29 @@ void Alien::Start() {
 }
 
 void Alien::Update(float dt) {
-    auto& input = InputManager::Instance();
-    if (input.MousePress(LEFT_MOUSE_BUTTON))
-        tasks.emplace(Action::Shoot, input.MouseX(), input.MouseY());
-    if (input.MousePress(RIGHT_MOUSE_BUTTON))
-        tasks.emplace(Action::Move, input.MouseX(), input.MouseY());
-
-    if (!tasks.empty()) {
-        auto task = tasks.front();
-        switch (task.type) {
-            case Action::Move: {
-                Vec2 delta = task.pos - associated.box.Center();
-                if (delta.norm() <= SPEEEED * dt) {
-                    // Stop moving!
-                    tasks.pop();
-                    speed = Vec2{0, 0};
-                } else {
-                    speed = delta.normalize() * SPEEEED;
+    switch (state) {
+        case Resting: {
+            restTimer.Update(dt);
+            if (restTimer.Get() >= REST_TIME_S) {
+                restTimer.Restart();
+                state = Moving;
+                if (PenguinBody::player) {
+                    destination =
+                        PenguinBody::player->Associated().box.Center();
                 }
-                break;
             }
-            case Action::Shoot: {
-                Vec2 target{(float)input.MouseX(), (float)input.MouseY()};
-
-                // Find minion closest to target
-                float bestDist = std::numeric_limits<float>::max();
-                Minion* bestMinion = nullptr;
-                for (size_t i = 0; i < minions.size(); i++) {
-                    Vec2 pos = minions[i].lock()->box.Center();
-                    if ((target - pos).norm2() < bestDist) {
-                        bestDist = (target - pos).norm2();
-                        bestMinion = (Minion*)minions[i].lock()->GetComponent(
-                            CType::Minion);
-                    }
-                }
-
-                if (!bestMinion) {
-                    warn("didn't find any minion to shoot?");
-                } else {
-                    bestMinion->Shoot(target);
-                }
-                tasks.pop();
-                break;
+            break;
+        }
+        case Moving: {
+            Vec2 delta = destination - associated.box.Center();
+            if (delta.norm() <= SPEEEED * dt) {
+                // Stop moving!
+                state = Resting;
+                BulletHell();
+            } else {
+                speed = delta.normalize() * SPEEEED;
             }
-            default: {
-                fail("unreachable");
-                break;
-            }
+            break;
         }
     }
 
@@ -101,3 +83,39 @@ void Alien::Update(float dt) {
 void Alien::Render(Vec2) {}
 
 bool Alien::Is(CType type) { return type == CType::Alien; }
+
+Minion* Alien::ClosestMinion(Vec2 target) {
+    float bestDist = std::numeric_limits<float>::max();
+    Minion* bestMinion = nullptr;
+    for (size_t i = 0; i < minions.size(); i++) {
+        Vec2 pos = minions[i].lock()->box.Center();
+        if ((target - pos).norm2() < bestDist) {
+            bestDist = (target - pos).norm2();
+            bestMinion =
+                (Minion*)minions[i].lock()->GetComponent(CType::Minion);
+        }
+    }
+
+    if (!bestMinion) {
+        warn("didn't find any closest minion?");
+    }
+
+    return bestMinion;
+}
+
+void Alien::BulletHell() {
+    auto player = PenguinBody::player;
+    Vec2 target = player ? player->Associated().box.Center()
+                         : Vec2{(float)rng(), (float)rng()};
+    auto minion = ClosestMinion(target);
+
+    Vec2 direction =
+        (player->Associated().box.Center() - associated.box.Center());
+
+    const float delta = 7.0f * PI / 180.0f;
+    for (int i = -3; i <= 3; i++) {
+        Vec2 associatedTarget =
+            direction.GetRotated(delta * i) + associated.box.Center();
+        minion->Shoot(associatedTarget);
+    }
+}

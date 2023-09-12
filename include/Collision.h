@@ -9,7 +9,8 @@ class Collision {
     // Observação: IsColliding espera ângulos em radianos!
     // Para usar graus, forneça a sua própria implementação de Rotate,
     // ou transforme os ângulos no corpo de IsColliding.
-    static bool IsColliding(Rect& a, Rect& b, float angleOfA, float angleOfB);
+    static bool IsColliding(const Rect& a, const Rect& b, float angleOfA,
+                            float angleOfB);
 
    private:
     static inline float Mag(const Vec2& p) {

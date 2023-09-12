@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <memory>
 
+#include "Collider.h"
 #include "Component.h"
 #include "Game.h"
 #include "TileMap.h"
@@ -24,9 +25,13 @@ void GameObject::Start() {
 }
 
 void GameObject::Update(float dt) {
+    Collider* collider = nullptr;
     for (auto& component : components) {
         component->Update(dt);
+        if (component->Is(CType::Collider))
+            collider = (Collider*)component.get();
     }
+    if (collider) collider->Update(dt);
 }
 
 void GameObject::Render(Vec2 camera) {

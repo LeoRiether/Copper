@@ -8,7 +8,9 @@
 #include "Game.h"
 #include "GameObject.h"
 #include "InputManager.h"
+#include "KeepSoundAlive.h"
 #include "PenguinCannon.h"
+#include "Sound.h"
 #include "Sprite.h"
 #include "util.h"
 
@@ -60,6 +62,22 @@ void PenguinBody::Update(float dt) {
 
     if (hp <= 0) {
         associated.RequestDelete();
+
+        // Create explosion sprite
+        auto explosion = new GameObject{}; 
+        auto sprite = new Sprite{*explosion, ASSETS "/img/penguindeath.png", 5, .15, 5 * .15};
+        explosion->AddComponent(sprite);
+        explosion->box.SetCenter(associated.box.Center());
+        associated.RequestAdd(explosion);
+
+        // Create explosion sound
+        auto explosionSound = new GameObject{};
+        auto sound = new Sound{*explosionSound, ASSETS "/audio/boom.wav"};
+        auto keepalive = new KeepSoundAlive{*explosionSound};
+        sound->Play();
+        explosionSound->AddComponent(sound);
+        explosionSound->AddComponent(keepalive);
+        associated.RequestAdd(explosionSound);
     }
 }
 
@@ -69,11 +87,7 @@ bool PenguinBody::Is(CType type) { return type == CType::PenguinBody; }
 
 void PenguinBody::NotifyCollision(GameObject& other) {
     auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
-    if (!bullet) return;
+    if (!bullet || !bullet->TargetsPlayer()) return;
 
-    if (rng() % 2 == 0) {
-        log("Collided with bullet!");
-    } else {
-        warn("Collided with bullet!");
-    }
+    hp -= bullet->Damage();
 }

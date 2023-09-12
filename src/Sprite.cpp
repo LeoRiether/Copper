@@ -1,5 +1,7 @@
 #include "Sprite.h"
 
+#include <chrono>
+
 #include "Game.h"
 #include "GameObject.h"
 #include "Resources.h"
@@ -12,11 +14,12 @@ Sprite::Sprite(GameObject& associated)
     : Component(associated), texture(nullptr) {}
 
 Sprite::Sprite(GameObject& associated, const string& file, int frameCount,
-               float frameTime)
+               float frameTime, float secondsToSelfDestruct)
     : Component(associated),
       texture(nullptr),
       frameCount(frameCount),
-      frameTime(frameTime) {
+      frameTime(frameTime),
+      secondsToSelfDestruct(secondsToSelfDestruct) {
     Open(file);
 }
 
@@ -31,7 +34,7 @@ void Sprite::Open(const string& file) {
         fail2("couldn't query texture " YELLOW "'%s'" RESET "! Reason: %s",
               file.c_str(), SDL_GetError());
 
-    SetClip(0, 0, Width(), Height());
+    SetClip(0, 0, width / frameCount, height);
 }
 
 void Sprite::SetClip(int x, int y, int w, int h) {
@@ -43,13 +46,21 @@ void Sprite::SetClip(int x, int y, int w, int h) {
 void Sprite::Update(float dt) {
     timeElapsed += dt;
     while (timeElapsed >= frameTime) {
-        timeElapsed -= dt;
-        SetFrame(currentFrame + 1 >= frameCount ? currentFrame + 1 - frameCount
-                                                : currentFrame + 1);
+        timeElapsed -= frameTime;
+        SetFrame(currentFrame + 1 >= frameCount
+                     ? (currentFrame + 1 - frameCount)
+                     : (currentFrame + 1));
+    }
+
+    if (secondsToSelfDestruct > 0) {
+        selfDestructCount.Update(dt);
+        if (selfDestructCount.Get() >= secondsToSelfDestruct)
+            associated.RequestDelete();
     }
 }
 
 void Sprite::Render(int x, int y) {
+    // TODO: render sprites centered at (x, y)
     Game& game = Game::Instance();
     SDL_Rect destRect{x, y, int(clipRect.w * scale.x),
                       int(clipRect.h * scale.y)};
@@ -73,5 +84,8 @@ void Sprite::SetFrame(int frame) {
     currentFrame = frame;
     clipRect.x = 1ll * frame * width / frameCount;
 }
-void Sprite::SetFrameCount(int fc) { frameCount = fc; }
+void Sprite::SetFrameCount(int fc) {
+    frameCount = fc;
+    SetClip(0, 0, width / frameCount, height);
+}
 void Sprite::SetFrameTime(float ft) { frameTime = ft; }

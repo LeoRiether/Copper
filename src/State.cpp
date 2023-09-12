@@ -78,7 +78,6 @@ State::~State() {
 
 void State::Start() {
     LoadAssets();
-    RequestAddObject(CreateAlien(512, 300));
 
     auto penguinBody = CreatePenguinBody();
     camera->Follow(penguinBody);
@@ -130,7 +129,7 @@ void State::Update(float dt) {
         quitRequested = true;
     }
 
-    if (input.KeyPress(' ')) {
+    if (input.KeyPress(SDL_SCANCODE_SPACE)) {
         RequestAddObject(CreateAlien());
     }
 
@@ -150,12 +149,15 @@ void State::Update(float dt) {
             (Collider*)collidableObjects[i]->GetComponent(CType::Collider);
         for (size_t j = i + 1; j < n; j++) {
             auto collider_j =
-                (Collider*)collidableObjects[i]->GetComponent(CType::Collider);
+                (Collider*)collidableObjects[j]->GetComponent(CType::Collider);
             if (Collision::IsColliding(collider_i->box, collider_j->box,
                                        collidableObjects[i]->angle,
                                        collidableObjects[j]->angle)) {
                 collidableObjects[i]->NotifyCollision(*collidableObjects[j]);
                 collidableObjects[j]->NotifyCollision(*collidableObjects[i]);
+                // log2("%s colliding with %s",
+                //      collidableObjects[i]->Components().back()->DebugName(),
+                //      collidableObjects[j]->Components().back()->DebugName());
             }
         }
     }
@@ -163,6 +165,7 @@ void State::Update(float dt) {
     // swap-remove dead objects
     for (size_t i = 0; i < objects.size();) {
         if (objects[i]->IsDead()) {
+            if (camera->Focus() == objects[i].get()) camera->Unfollow();
             std::swap(objects[i], objects.back());
             objects.pop_back();
         } else {

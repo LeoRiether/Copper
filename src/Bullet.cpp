@@ -11,13 +11,15 @@
 #define MODULE "Bullet"
 
 Bullet::Bullet(GameObject& associated, float angle, float speed, int damage,
-               float maxDistance, const string& spritePath)
+               float maxDistance, int spriteFrameCount,
+               const string& spritePath, bool targetsPlayer)
     : Component(associated),
       speed{speed * cos(angle), speed * sin(angle)},
       speedNorm(this->speed.norm()),
       distanceLeft(maxDistance),
-      damage(damage) {
-    auto sprite = new Sprite{associated, spritePath, 3, 0.2};
+      damage(damage),
+      targetsPlayer(targetsPlayer) {
+    auto sprite = new Sprite{associated, spritePath, spriteFrameCount, 0.1};
     associated.AddComponent(sprite);
     associated.angle = angle;
 
@@ -34,3 +36,10 @@ void Bullet::Update(float dt) {
 void Bullet::Render(Vec2) {}
 
 bool Bullet::Is(CType type) { return type == CType::Bullet; }
+
+void Bullet::NotifyCollision(GameObject& other) {
+    if (targetsPlayer && other.GetComponent(CType::PenguinBody))
+        associated.RequestDelete();
+    if (!targetsPlayer && other.GetComponent(CType::Alien))
+        associated.RequestDelete();
+}

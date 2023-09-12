@@ -9,6 +9,7 @@ class Camera {
     GameObject* focus = nullptr;
 
    public:
+    inline GameObject* Focus() { return focus; }
     void Follow(GameObject* newFocus);
     void Unfollow();
     void Update(float dt);

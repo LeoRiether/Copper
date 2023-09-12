@@ -21,6 +21,8 @@ void PenguinCannon::Update(float dt) {
         return;
     }
 
+    timer.Update(dt);
+
     auto& input = InputManager::Instance();
     auto pb = pbody.lock();
 
@@ -29,7 +31,8 @@ void PenguinCannon::Update(float dt) {
     auto mouse = Vec2{(float)input.MouseX(), (float)input.MouseY()};
     associated.angle = (mouse - associated.box.Center()).angle();
 
-    if (input.MousePress(LEFT_MOUSE_BUTTON)) {
+    if (input.IsMouseDown(LEFT_MOUSE_BUTTON) && timer.Get() >= SHOOT_DELAY_S) {
+        timer.Restart();
         Shoot();
     }
 }
@@ -43,9 +46,9 @@ void PenguinCannon::Shoot() {
     int damage = (rng() % 10) + 5;
 
     auto go = new GameObject{};
-    auto bullet = new Bullet{*go,    angle, 300,
-                             damage, 500,   ASSETS "/img/penguinbullet.png"};
-    ((Sprite*)go->GetComponent(CType::Sprite))->SetFrameCount(4);
+    auto bullet = new Bullet{
+        *go,  angle, 300, damage, 500, 4, ASSETS "/img/penguinbullet.png",
+        false};
     go->AddComponent(bullet);
 
     // distância do centro do canhão para spawnar a bullet :)

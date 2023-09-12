@@ -1,6 +1,7 @@
 #include "Collision.h"
 
-bool Collision::IsColliding(Rect& a, Rect& b, float angleOfA, float angleOfB) {
+bool Collision::IsColliding(const Rect& a, const Rect& b, float angleOfA,
+                            float angleOfB) {
     Vec2 A[] = {Vec2{a.x, a.y + a.h}, Vec2{a.x + a.w, a.y + a.h},
                 Vec2{a.x + a.w, a.y}, Vec2{a.x, a.y}};
     Vec2 B[] = {Vec2{b.x, b.y + b.h}, Vec2{b.x + b.w, b.y + b.h},

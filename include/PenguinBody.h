@@ -17,7 +17,10 @@ class PenguinBody : public Component {
     int hp{100};
 
    public:
+    const char* DebugName() { return "PenguinBody"; }
+
     static PenguinBody* player;
+    inline GameObject& Associated() { return associated; }
 
     PenguinBody(GameObject& associated);
     ~PenguinBody();

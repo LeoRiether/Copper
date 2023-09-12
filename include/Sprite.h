@@ -5,6 +5,7 @@
 #include "CType.h"
 #include "Component.h"
 #include "SDL_include.h"
+#include "Timer.h"
 using std::string;
 
 class Sprite : public Component {
@@ -16,12 +17,17 @@ class Sprite : public Component {
     int frameCount, currentFrame{0};
     float timeElapsed{0}, frameTime;
 
+    Timer selfDestructCount;
+    float secondsToSelfDestruct{0};
+
     SDL_Rect clipRect;
 
    public:
+    const char* DebugName() { return "Sprite"; }
+
     Sprite(GameObject& associated);
     Sprite(GameObject& associated, const string& file, int frameCount = 1,
-           float frameTime = 1);
+           float frameTime = 1, float secondsToSelfDestruct = 0);
     ~Sprite();
 
     void Open(const string& file);

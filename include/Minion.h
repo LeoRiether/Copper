@@ -14,6 +14,8 @@ class Minion : public Component {
     float arc;
 
    public:
+    const char* DebugName() { return "Minion"; }
+
     Minion(GameObject& go, weak_ptr<GameObject> alienCenter,
            float arcOffsetRad = 0);
 
