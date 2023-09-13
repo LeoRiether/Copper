@@ -1,10 +1,14 @@
 #pragma once
+#include <memory>
 #include <string>
+#include <vector>
 
 #include "SDL_include.h"
 #include "State.h"
 #include "util.h"
 using std::string;
+using std::vector;
+using std::unique_ptr;
 
 constexpr int SCREEN_WIDTH = 1024;
 constexpr int SCREEN_HEIGHT = 600;
@@ -15,7 +19,7 @@ class Game {
     static Game* instance;
     SDL_Window* window;
     SDL_Renderer* renderer;
-    State* state;
+    vector<unique_ptr<State>> stateStack;
 
     uint32_t frameStart;
     float dt;
@@ -28,9 +32,11 @@ class Game {
     ~Game();
 
     void Run();
+    void Push(State* state);
 
     float DeltaTime();
     SDL_Renderer* Renderer();
     State& GetState();
     static Game& Instance();
+
 };

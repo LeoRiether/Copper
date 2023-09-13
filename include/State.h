@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <shared_mutex>
 #include <vector>
 
 #include "Camera.h"
@@ -17,29 +16,35 @@ using std::vector;
 using std::weak_ptr;
 
 class State {
-   private:
-    Music* music;
-    Camera* camera;
-    bool quitRequested;
-    bool started;
-    vector<shared_ptr<GameObject>> objects;
-    vector<shared_ptr<GameObject>> addRequests;
+   protected:
+    bool popRequested{false};
+    bool quitRequested{false};
+    bool started{false};
 
-    void ProcessAddRequests();
+    unique_ptr<Camera> camera{new Camera()};
+    vector<shared_ptr<GameObject>> objects{};
+    vector<shared_ptr<GameObject>> addRequests{};
+
+    virtual void ProcessAddRequests();
+    void StartArray();
+    virtual void UpdateArray(float dt);
+    virtual void RenderArray();
 
    public:
     State();
-    ~State();
-    void Start();
+    virtual ~State();
+    virtual void LoadAssets() = 0;
+    virtual void Update(float dt) = 0;
+    virtual void Render() = 0;
 
-    bool QuitRequested();
+    virtual void Start() = 0;
+    virtual void Pause() = 0;
+    virtual void Resume() = 0;
 
-    void LoadAssets();
-    void Update(float dt);
-    void Render();
-    void Input();
-    weak_ptr<GameObject> RequestAddObject(GameObject* go);
-    weak_ptr<GameObject> GetObject(GameObject* go);
+    virtual weak_ptr<GameObject> RequestAddObject(GameObject* obj);
+    virtual weak_ptr<GameObject> GetObject(GameObject* obj);
 
-    inline Camera& GetCamera() { return *camera; }
+    inline bool PopRequested() const { return popRequested; }
+    inline bool QuitRequested() const { return quitRequested; }
+    inline Camera& GetCamera() const { return *camera.get(); }
 };

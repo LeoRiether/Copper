@@ -3,6 +3,7 @@
 #include "Resources.h"
 #include "SDL_mixer.h"
 #include "SDL_timer.h"
+#include "StageState.h"
 
 #define MODULE "Game"
 
@@ -36,7 +37,8 @@ Game::Game(const char* title, int width, int height) {
     renderer = SDL_CreateRenderer(window, -1, 0 /* SDL_RENDERER_ACCELERATED */);
     if (!renderer) sdlfail("couldn't create renderer");
 
-    instance->state = new State{};
+    instance->stateStack.clear();
+    Push(new StageState{});
 
     frameStart = SDL_GetTicks();
 
@@ -44,6 +46,7 @@ Game::Game(const char* title, int width, int height) {
 }
 
 Game::~Game() {
+    stateStack.clear();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     Mix_CloseAudio();
@@ -61,13 +64,19 @@ void Game::CalculateDeltaTime() {
 
 void Game::Run() {
     log("entering game loop");
-    state->Start();
-    while (!state->QuitRequested()) {
+    while (!stateStack.empty() && !stateStack.back()->QuitRequested()) {
+        auto state = stateStack.back().get();
+
         CalculateDeltaTime();
         state->Update(dt);
 
         state->Render();
         SDL_RenderPresent(renderer);
+
+        if (state->PopRequested()) {
+            stateStack.pop_back();
+            if (!stateStack.empty()) stateStack.back()->Resume();
+        }
 
         SDL_Delay(33);
     }
@@ -76,11 +85,17 @@ void Game::Run() {
     Resources::ClearSounds();
 }
 
+void Game::Push(State* state) {
+    if (!stateStack.empty()) stateStack.back()->Pause();
+    stateStack.emplace_back(state);
+    stateStack.back()->Start();
+}
+
 float Game::DeltaTime() { return dt; }
 
 SDL_Renderer* Game::Renderer() { return renderer; }
 
-State& Game::GetState() { return *state; }
+State& Game::GetState() { return *stateStack.back(); }
 
 Game& Game::Instance() {
     if (instance == nullptr) {
