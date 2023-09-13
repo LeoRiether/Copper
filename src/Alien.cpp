@@ -109,8 +109,7 @@ void Alien::BulletHell() {
                          : Vec2{(float)rng(), (float)rng()};
     auto minion = ClosestMinion(target);
 
-    Vec2 direction =
-        (player->Associated().box.Center() - associated.box.Center());
+    Vec2 direction = (target - associated.box.Center());
 
     const float delta = 7.0f * PI / 180.0f;
     for (int i = -3; i <= 3; i++) {

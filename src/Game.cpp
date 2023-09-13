@@ -4,6 +4,7 @@
 #include "SDL_mixer.h"
 #include "SDL_timer.h"
 #include "StageState.h"
+#include "TitleState.h"
 
 #define MODULE "Game"
 
@@ -38,7 +39,7 @@ Game::Game(const char* title, int width, int height) {
     if (!renderer) sdlfail("couldn't create renderer");
 
     instance->stateStack.clear();
-    Push(new StageState{});
+    Push(new TitleState{});
 
     frameStart = SDL_GetTicks();
 

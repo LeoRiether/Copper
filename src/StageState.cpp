@@ -17,6 +17,7 @@
 #include "KeepSoundAlive.h"
 #include "PenguinBody.h"
 #include "Rect.h"
+#include "SDL_scancode.h"
 #include "Sound.h"
 #include "TileMap.h"
 #include "TileSet.h"
@@ -119,8 +120,12 @@ void StageState::Update(float dt) {
     auto& input = InputManager::Instance();
     input.Update();
 
-    if (input.QuitRequested() || input.KeyPress(ESCAPE_KEY)) {
+    if (input.QuitRequested()) {
         quitRequested = true;
+    }
+
+    if (input.KeyPress(SDL_SCANCODE_ESCAPE)) {
+        popRequested = true;
     }
 
     if (input.KeyPress(SDL_SCANCODE_SPACE)) {
@@ -169,8 +174,5 @@ void StageState::Update(float dt) {
 }
 
 void StageState::Render() {
-    // Camera not available in State::RenderArray!
-    for (auto& go : objects) {
-        go->Render(camera->Pos());
-    }
+    RenderArray();
 }

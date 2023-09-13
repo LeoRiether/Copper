@@ -61,7 +61,7 @@ void PenguinBody::Update(float dt) {
     associated.angle = angle;
 
     if (hp <= 0) {
-        associated.RequestDelete();
+        RequestDelete();
 
         // Create explosion sprite
         auto explosion = new GameObject{}; 
@@ -90,4 +90,9 @@ void PenguinBody::NotifyCollision(GameObject& other) {
     if (!bullet || !bullet->TargetsPlayer()) return;
 
     hp -= bullet->Damage();
+}
+
+void PenguinBody::RequestDelete() {
+    associated.RequestDelete();
+    PenguinBody::player = nullptr;
 }
