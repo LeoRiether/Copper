@@ -117,3 +117,10 @@ void Resources::ClearFonts() {
         fonts.erase(key);
     }
 }
+
+void Resources::ClearAll() {
+    ClearImages();
+    ClearMusic();
+    ClearSounds();
+    ClearFonts();
+}

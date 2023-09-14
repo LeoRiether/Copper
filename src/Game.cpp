@@ -81,15 +81,14 @@ void Game::Run() {
 
         if (state->PopRequested()) {
             stateStack.pop_back();
+            Resources::ClearAll();
             if (!stateStack.empty()) stateStack.back()->Resume();
         }
 
         SDL_Delay(33);
     }
     stateStack.clear();
-    Resources::ClearImages();
-    Resources::ClearMusic();
-    Resources::ClearSounds();
+    Resources::ClearAll();
 }
 
 void Game::Push(State* state) {

@@ -38,4 +38,5 @@ class Resources {
     static void ClearMusic();
     static void ClearSounds();
     static void ClearFonts();
+    static void ClearAll();
 };
