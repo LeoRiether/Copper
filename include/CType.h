@@ -12,4 +12,6 @@ enum class CType {
     PenguinBody,
     PenguinCannon,
     Collider,
+    Text,
+    TextBlinker,
 };

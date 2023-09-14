@@ -2,6 +2,7 @@
 
 #include "Game.h"
 #include "SDL_render.h"
+#include "SDL_ttf.h"
 #include "util.h"
 
 #define MODULE "Resources"
@@ -9,6 +10,7 @@
 hashmap<string, SDL_Texture*> Resources::images;
 hashmap<string, Mix_Music*> Resources::music;
 hashmap<string, Mix_Chunk*> Resources::sounds;
+hashmap<string, TTF_Font*> Resources::fonts;
 
 SDL_Texture* Resources::Image(const string& file) {
     auto it = images.find(file);
@@ -49,6 +51,17 @@ Mix_Chunk* Resources::Sound(const string& file) {
     return it->second;
 }
 
+TTF_Font* Resources::Font(const string& file, int ptsize) {
+    auto it = fonts.find(file);
+    if (it == fonts.end()) {
+        log2("loading font %s", file.c_str());
+        auto font = TTF_OpenFont(file.c_str(), ptsize);
+        if (!font) fail2("couldn't open " YELLOW "%s@%d" RESET, file.c_str(), ptsize);
+        it = fonts.emplace(fontkey(file, ptsize), font).first;
+    }
+    return it->second;
+}
+
 void Resources::ClearImages() {
     for (auto [_file, image] : images) {
         SDL_DestroyTexture(image);
@@ -68,4 +81,11 @@ void Resources::ClearSounds() {
         Mix_FreeChunk(chunk);
     }
     sounds.clear();
+}
+
+void Resources::ClearFonts() {
+    for (auto [_key, font] : fonts) {
+        TTF_CloseFont(font);
+    }
+    fonts.clear();
 }

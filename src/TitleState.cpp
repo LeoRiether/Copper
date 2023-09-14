@@ -1,10 +1,13 @@
 #include "TitleState.h"
 
+#include "Colors.h"
 #include "Game.h"
 #include "GameObject.h"
 #include "InputManager.h"
 #include "SDL_scancode.h"
 #include "StageState.h"
+#include "Text.h"
+#include "TextBlinker.h"
 #include "util.h"
 
 #define MODULE "TitleState"
@@ -36,9 +39,21 @@ void TitleState::Update(float dt) {
 void TitleState::Render() { RenderArray(); }
 
 void TitleState::Start() {
-    auto go = new GameObject{};
-    go->AddComponent(new Sprite{*go, ASSETS "/img/title.jpg"});
-    RequestAddObject(go);
+    {
+        auto bgGO = new GameObject{};
+        bgGO->AddComponent(new Sprite{*bgGO, ASSETS "/img/title.jpg"});
+        RequestAddObject(bgGO);
+    }
+
+    {
+        auto go = new GameObject{};
+        go->AddComponent(new Text{*go, ASSETS "/font/Call me maybe.ttf", 70,
+                                  Text::Blended, "Hello World!",
+                                  colorFromHex("#F0A029")});
+        go->AddComponent(new TextBlinker{*go, 1.0f});
+        go->box.SetCenter(Vec2{SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 100});
+        RequestAddObject(go);
+    }
 }
 
 void TitleState::Pause() {}

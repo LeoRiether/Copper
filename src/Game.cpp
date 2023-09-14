@@ -1,4 +1,5 @@
 #include "Game.h"
+#include <SDL2/SDL_mouse.h>
 
 #include "Resources.h"
 #include "SDL_mixer.h"
@@ -31,6 +32,8 @@ Game::Game(const char* title, int width, int height) {
                       MIX_DEFAULT_CHANNELS, 1024) != 0)
         sdlfail("couldn't initialize audio (Mix_OpenAudio)");
 
+    if (TTF_Init() != 0) fail2("TTF_Init failed. Cause: %s", TTF_GetError());
+
     window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED,
                               SDL_WINDOWPOS_CENTERED, width, height, 0);
     if (!window) sdlfail("couldn't create window");
@@ -51,6 +54,7 @@ Game::~Game() {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     Mix_CloseAudio();
+    TTF_Quit();
     Mix_Quit();
     IMG_Quit();
     SDL_Quit();
@@ -81,6 +85,7 @@ void Game::Run() {
 
         SDL_Delay(33);
     }
+    stateStack.clear();
     Resources::ClearImages();
     Resources::ClearMusic();
     Resources::ClearSounds();
