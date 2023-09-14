@@ -6,7 +6,7 @@
 #include "Collider.h"
 #include "Component.h"
 #include "Game.h"
-#include "TileMap.h"
+#include "component/TileMap.h"
 #include "util.h"
 
 #define MODULE "GameObject"

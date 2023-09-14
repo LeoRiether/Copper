@@ -7,9 +7,9 @@
 #include "GameObject.h"
 #include "Music.h"
 #include "SDL_include.h"
-#include "Sprite.h"
 #include "State.h"
 #include "Vec2.h"
+#include "component/Sprite.h"
 
 using std::shared_ptr;
 using std::unique_ptr;

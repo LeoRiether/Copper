@@ -16,13 +16,13 @@ Sound::~Sound() {
 }
 
 void Sound::Play(int times) {
-    if (chunk) {
-        channel = Mix_PlayChannel(-1, chunk, times - 1);
+    if (chunk->inner) {
+        channel = Mix_PlayChannel(-1, chunk->inner, times - 1);
     }
 }
 
 void Sound::Stop() {
-    if (chunk && channel != -1) {
+    if (chunk->inner && channel != -1) {
         Mix_HaltChannel(channel);
         channel = -1;
     }

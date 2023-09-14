@@ -1,13 +1,13 @@
-#include "Minion.h"
+#include "component/Minion.h"
 
 #include <random>
 
-#include "Bullet.h"
 #include "CType.h"
 #include "Collider.h"
 #include "Component.h"
 #include "Game.h"
 #include "GameObject.h"
+#include "component/Bullet.h"
 #include "util.h"
 
 #define MODULE "Minion"

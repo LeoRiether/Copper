@@ -7,8 +7,8 @@
 #include "State.h"
 #include "util.h"
 using std::string;
-using std::vector;
 using std::unique_ptr;
+using std::vector;
 
 constexpr int SCREEN_WIDTH = 1024;
 constexpr int SCREEN_HEIGHT = 600;
@@ -38,5 +38,4 @@ class Game {
     SDL_Renderer* Renderer();
     State& GetState();
     static Game& Instance();
-
 };

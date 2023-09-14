@@ -1,6 +1,6 @@
-#include "TextBlinker.h"
+#include "component/TextBlinker.h"
 
-#include "Text.h"
+#include "component/Text.h"
 
 TextBlinker::TextBlinker(GameObject& associated, float fullBlinkTimeS)
     : Component(associated), fullBlinkTimeS(fullBlinkTimeS) {}

@@ -1,17 +1,17 @@
-#include "PenguinBody.h"
+#include "component/PenguinBody.h"
 
 #include <algorithm>
 #include <cmath>
 
-#include "Bullet.h"
 #include "Collider.h"
 #include "Game.h"
 #include "GameObject.h"
 #include "InputManager.h"
-#include "KeepSoundAlive.h"
-#include "PenguinCannon.h"
 #include "Sound.h"
-#include "Sprite.h"
+#include "component/Bullet.h"
+#include "component/KeepSoundAlive.h"
+#include "component/PenguinCannon.h"
+#include "component/Sprite.h"
 #include "util.h"
 
 #define MODULE "PenguinBody"
@@ -64,8 +64,9 @@ void PenguinBody::Update(float dt) {
         RequestDelete();
 
         // Create explosion sprite
-        auto explosion = new GameObject{}; 
-        auto sprite = new Sprite{*explosion, ASSETS "/img/penguindeath.png", 5, .15, 5 * .15};
+        auto explosion = new GameObject{};
+        auto sprite = new Sprite{*explosion, ASSETS "/img/penguindeath.png", 5,
+                                 .15, 5 * .15};
         explosion->AddComponent(sprite);
         explosion->box.SetCenter(associated.box.Center());
         associated.RequestAdd(explosion);

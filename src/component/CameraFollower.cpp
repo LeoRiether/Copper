@@ -1,11 +1,12 @@
-#include "CameraFollower.h"
+#include "component/CameraFollower.h"
 
 #include "Game.h"
 
 CameraFollower::CameraFollower(GameObject& go) : Component(go), go(go) {}
 
 void CameraFollower::Update(float) {
-    Vec2 camera = Game::Instance().GetState().GetCamera().Pos(); // indirection!
+    Vec2 camera =
+        Game::Instance().GetState().GetCamera().Pos();  // indirection!
     go.box.x = camera.x;
     go.box.y = camera.y;
 }

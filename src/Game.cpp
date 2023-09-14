@@ -1,4 +1,5 @@
 #include "Game.h"
+
 #include <SDL2/SDL_mouse.h>
 
 #include "Resources.h"

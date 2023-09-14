@@ -6,21 +6,21 @@
 #include <memory>
 #include <vector>
 
-#include "Alien.h"
 #include "CType.h"
-#include "CameraFollower.h"
 #include "Collider.h"
 #include "Collision.h"
 #include "Game.h"
 #include "GameObject.h"
 #include "InputManager.h"
-#include "KeepSoundAlive.h"
-#include "PenguinBody.h"
 #include "Rect.h"
 #include "SDL_scancode.h"
 #include "Sound.h"
-#include "TileMap.h"
 #include "TileSet.h"
+#include "component/Alien.h"
+#include "component/CameraFollower.h"
+#include "component/KeepSoundAlive.h"
+#include "component/PenguinBody.h"
+#include "component/TileMap.h"
 #include "util.h"
 
 #define MODULE "StageState"
@@ -173,6 +173,4 @@ void StageState::Update(float dt) {
     }
 }
 
-void StageState::Render() {
-    RenderArray();
-}
+void StageState::Render() { RenderArray(); }

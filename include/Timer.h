@@ -13,5 +13,3 @@ class Timer {
     void Restart();
     float Get();
 };
-
-

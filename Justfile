@@ -15,3 +15,8 @@ release *args:
 grind:
     just make
     valgrind ./penguin_debug
+
+format:
+    find ./ -iname *.h -o -iname *.cpp | xargs clang-format -i
+
+

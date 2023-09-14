@@ -1,4 +1,4 @@
-#include "Text.h"
+#include "component/Text.h"
 
 #include <algorithm>
 
@@ -25,9 +25,7 @@ Text::Text(GameObject& associated, string fontFile, int fontSize,
     RemakeTexture();
 }
 
-Text::~Text() {
-    if (texture) SDL_DestroyTexture(texture);
-}
+Text::~Text() {}
 
 void Text::Update(float) {}
 
@@ -36,7 +34,7 @@ void Text::Render(Vec2 camera) {
     SDL_Rect clipRect{0, 0, (int)associated.box.w, (int)associated.box.h};
     SDL_Rect destRect{int(associated.box.x - camera.x),
                       int(associated.box.y - camera.y), clipRect.w, clipRect.h};
-    SDL_RenderCopyEx(game.Renderer(), texture, &clipRect, &destRect, 0.0,
+    SDL_RenderCopyEx(game.Renderer(), texture->inner, &clipRect, &destRect, 0.0,
                      nullptr, SDL_FLIP_NONE);
 }
 
@@ -64,41 +62,36 @@ void Text::SetFontSize(int fs) {
 }
 
 void Text::RemakeTexture() {
-    if (texture) {
-        SDL_DestroyTexture(texture);
-        texture = nullptr;
-    }
-
     font = Resources::Font(fontFile, fontSize);
 
     SDL_Surface* surface;
     switch (style) {
         case Text::Solid: {
-            surface = TTF_RenderUTF8_Solid(font.get(), text.c_str(), color);
+            surface = TTF_RenderUTF8_Solid(font->inner, text.c_str(), color);
             break;
         }
         case Text::Shaded: {
-            surface = TTF_RenderUTF8_Shaded(font.get(), text.c_str(), color,
+            surface = TTF_RenderUTF8_Shaded(font->inner, text.c_str(), color,
                                             SDL_Color{0, 0, 0, 0});
             break;
         }
         case Text::Blended: {
-            surface = TTF_RenderUTF8_Blended(font.get(), text.c_str(), color);
+            surface = TTF_RenderUTF8_Blended(font->inner, text.c_str(), color);
             break;
         }
     }
 
-    texture =
-        SDL_CreateTextureFromSurface(Game::Instance().Renderer(), surface);
+    texture = unique_ptr<Texture>(new Texture{
+        SDL_CreateTextureFromSurface(Game::Instance().Renderer(), surface)});
     SDL_FreeSurface(surface);
 
     if (color.a != 255) {
-        SDL_SetTextureAlphaMod(texture, color.a);
+        SDL_SetTextureAlphaMod(texture->inner, color.a);
     }
 
     int width, height;
     int queryStatus =
-        SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
+        SDL_QueryTexture(texture->inner, nullptr, nullptr, &width, &height);
     if (queryStatus != 0)
         fail2("couldn't query texture for font " YELLOW "%s@%d" RESET "",
               fontFile.c_str(), fontSize);

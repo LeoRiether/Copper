@@ -19,9 +19,7 @@ constexpr int MOVE_BACKWARDS_KEY = SDL_SCANCODE_S;
 constexpr int ROTATE_CLOCKWISE_KEY = SDL_SCANCODE_D;
 constexpr int ROTATE_COUNTERCLOCKWISE_KEY = SDL_SCANCODE_A;
 
-enum InputState {
-    Up = false, Down = true
-};
+enum InputState { Up = false, Down = true };
 
 class InputManager {
    private:

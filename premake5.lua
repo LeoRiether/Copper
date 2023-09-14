@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-global
 -- Workspace -----------------------------------------------------------------------------------------------------------
 workspace "mypremake"      -- Nome do seu workspace
     architecture "x86_64"  -- x86_64 para LINUX - x32 para arquiteturas de 32 bits - x64 para arquiteturas de 64 bits	
@@ -17,7 +18,7 @@ project "penguin"      -- Nome do seu projeto
 
     -- Esse será seu executável.
     targetname "%{prj.name}_%{cfg.buildcfg}"
-    
+
     -- Diretório onde os códigos objetos serão gerados
     -- Mesma lógica do targetdir
     objdir ("bin/build/%{prj.name}")
@@ -55,7 +56,7 @@ project "penguin"      -- Nome do seu projeto
 
     -- Filtro para configurações no modo debug.
     filter "configurations:debug"
-        buildoptions { "-Wall", "-Wextra", "-ggdb", "-O0" }
+        buildoptions { "-Wall", "-Wextra", "-O0" }
         defines { "DEBUG" } -- Definições de flags para uso no modo debug 'equivalente a usar -D'.
         symbols "On" -- 'equivalente a usar -g'
         runtime "Debug"

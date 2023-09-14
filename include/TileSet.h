@@ -3,7 +3,7 @@
 #include <memory>
 #include <string>
 
-#include "Sprite.h"
+#include "component/Sprite.h"
 using std::string;
 using std::unique_ptr;
 

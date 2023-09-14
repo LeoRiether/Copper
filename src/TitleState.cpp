@@ -6,8 +6,8 @@
 #include "InputManager.h"
 #include "SDL_scancode.h"
 #include "StageState.h"
-#include "Text.h"
-#include "TextBlinker.h"
+#include "component/Text.h"
+#include "component/TextBlinker.h"
 #include "util.h"
 
 #define MODULE "TitleState"

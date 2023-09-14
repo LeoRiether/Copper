@@ -1,16 +1,16 @@
-#include "Alien.h"
+#include "component/Alien.h"
 
 #include <limits>
 
-#include "Bullet.h"
 #include "CType.h"
 #include "Collider.h"
 #include "Game.h"
 #include "GameObject.h"
 #include "InputManager.h"
-#include "Minion.h"
-#include "PenguinBody.h"
-#include "Sprite.h"
+#include "component/Bullet.h"
+#include "component/Minion.h"
+#include "component/PenguinBody.h"
+#include "component/Sprite.h"
 #include "util.h"
 
 #define MODULE "Alien"

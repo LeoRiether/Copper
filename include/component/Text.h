@@ -6,17 +6,20 @@
 #include "Component.h"
 #include "GameObject.h"
 #include "SDL_include.h"
+#include "wrap/Font.h"
+#include "wrap/Texture.h"
 
 using std::shared_ptr;
 using std::string;
+using std::unique_ptr;
 
 class Text : public Component {
    public:  // /shrug
     enum TextStyle { Solid, Shaded, Blended };
 
    private:
-    shared_ptr<TTF_Font> font;
-    SDL_Texture* texture;
+    shared_ptr<Font> font;
+    unique_ptr<Texture> texture;
 
     string text;
     TextStyle style;

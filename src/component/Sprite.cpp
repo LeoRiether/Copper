@@ -1,4 +1,4 @@
-#include "Sprite.h"
+#include "component/Sprite.h"
 
 #include <chrono>
 
@@ -29,7 +29,7 @@ void Sprite::Open(const string& file) {
     texture = Resources::Image(file);
 
     int qt_status =
-        SDL_QueryTexture(texture.get(), nullptr, nullptr, &width, &height);
+        SDL_QueryTexture(texture->inner, nullptr, nullptr, &width, &height);
     if (qt_status != 0)
         fail2("couldn't query texture " YELLOW "'%s'" RESET "! Reason: %s",
               file.c_str(), SDL_GetError());
@@ -64,7 +64,7 @@ void Sprite::Render(int x, int y) {
     Game& game = Game::Instance();
     SDL_Rect destRect{x, y, int(clipRect.w * scale.x),
                       int(clipRect.h * scale.y)};
-    SDL_RenderCopyEx(game.Renderer(), texture.get(), &clipRect, &destRect,
+    SDL_RenderCopyEx(game.Renderer(), texture->inner, &clipRect, &destRect,
                      associated.angle * 180 / PI, nullptr, SDL_FLIP_NONE);
 }
 

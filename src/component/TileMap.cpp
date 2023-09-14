@@ -1,4 +1,4 @@
-#include "TileMap.h"
+#include "component/TileMap.h"
 
 #include <fstream>
 
@@ -57,8 +57,10 @@ void TileMap::RenderLayer(int layer, int cameraX, int cameraY) {
     const int tileWidth = tileSet->TileWidth();
     const int starty = std::max(0, cameraY / tileHeight);
     const int startx = std::max(0, cameraX / tileWidth);
-    const int endy = std::min<int>(height, (cameraY + viewport.h + tileHeight - 1) / tileHeight);
-    const int endx = std::min<int>(width, (cameraX + viewport.w + tileWidth - 1) / tileWidth);
+    const int endy = std::min<int>(
+        height, (cameraY + viewport.h + tileHeight - 1) / tileHeight);
+    const int endx = std::min<int>(
+        width, (cameraX + viewport.w + tileWidth - 1) / tileWidth);
 
     for (int y = starty; y < endy; y++) {
         const float rendery = y * tileHeight - cameraY;

@@ -1,15 +1,15 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 
 #include "Component.h"
 #include "GameObject.h"
 #include "TileSet.h"
 using std::string;
-using std::vector;
 using std::unique_ptr;
+using std::vector;
 
 class TileMap : public Component {
    private:
@@ -24,7 +24,7 @@ class TileMap : public Component {
 
     void Load(const string& file);
     void SetTileSet(TileSet* tileSet);
-    int& At(int x, int y); // separated for performance reasons
+    int& At(int x, int y);  // separated for performance reasons
     int& At(int x, int y, int z);
     void Update(float dt);
     void Render();

@@ -1,10 +1,10 @@
-#include "PenguinCannon.h"
+#include "component/PenguinCannon.h"
 
-#include "Bullet.h"
 #include "Collider.h"
 #include "Component.h"
 #include "InputManager.h"
-#include "Sprite.h"
+#include "component/Bullet.h"
+#include "component/Sprite.h"
 #include "util.h"
 
 PenguinCannon::PenguinCannon(GameObject& associated,

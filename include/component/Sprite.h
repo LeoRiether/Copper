@@ -6,12 +6,13 @@
 #include "Component.h"
 #include "SDL_include.h"
 #include "Timer.h"
-using std::string;
+#include "wrap/Texture.h"
 using std::shared_ptr;
+using std::string;
 
 class Sprite : public Component {
    private:
-    shared_ptr<SDL_Texture> texture;
+    shared_ptr<Texture> texture;
     int width, height;
     Vec2 scale{1, 1};
 

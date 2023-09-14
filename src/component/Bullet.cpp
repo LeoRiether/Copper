@@ -1,4 +1,4 @@
-#include "Bullet.h"
+#include "component/Bullet.h"
 
 #include <math.h>
 
@@ -6,7 +6,7 @@
 
 #include "CType.h"
 #include "Collider.h"
-#include "Sprite.h"
+#include "component/Sprite.h"
 
 #define MODULE "Bullet"
 
