@@ -21,7 +21,7 @@ void Music::Play(int times) {
         warn("playing <null> music?");
         return;
     }
-    if (Mix_PlayMusic(music, times)) {
+    if (Mix_PlayMusic(music.get(), times)) {
         sdlfail("Mix_PlayMusic failed");
     }
 }

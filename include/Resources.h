@@ -11,6 +11,7 @@ template <class K, class V>
 using hashmap = std::unordered_map<K, V>;
 
 using std::string;
+using std::shared_ptr;
 
 inline string fontkey(const string& file, int ptsize) {
     return file + "@" + std::to_string(ptsize);
@@ -18,16 +19,16 @@ inline string fontkey(const string& file, int ptsize) {
 
 class Resources {
    private:
-    static hashmap<string, SDL_Texture*> images;
-    static hashmap<string, Mix_Music*> music;
-    static hashmap<string, Mix_Chunk*> sounds;
-    static hashmap<string, TTF_Font*> fonts;
+    static hashmap<string, shared_ptr<SDL_Texture>> images;
+    static hashmap<string, shared_ptr<Mix_Music>> music;
+    static hashmap<string, shared_ptr<Mix_Chunk>> sounds;
+    static hashmap<string, shared_ptr<TTF_Font>> fonts;
 
    public:
-    static SDL_Texture* Image(const string& file);
-    static Mix_Music* Music(const string& file);
-    static Mix_Chunk* Sound(const string& file);
-    static TTF_Font* Font(const string& file, int ptsize);
+    static shared_ptr<SDL_Texture> Image(const string& file);
+    static shared_ptr<Mix_Music> Music(const string& file);
+    static shared_ptr<Mix_Chunk> Sound(const string& file);
+    static shared_ptr<TTF_Font> Font(const string& file, int ptsize);
 
     static void ClearImages();
     static void ClearMusic();

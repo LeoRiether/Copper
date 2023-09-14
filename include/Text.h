@@ -7,6 +7,7 @@
 #include "GameObject.h"
 #include "SDL_include.h"
 
+using std::shared_ptr;
 using std::string;
 
 class Text : public Component {
@@ -14,7 +15,7 @@ class Text : public Component {
     enum TextStyle { Solid, Shaded, Blended };
 
    private:
-    TTF_Font* font;
+    shared_ptr<TTF_Font> font;
     SDL_Texture* texture;
 
     string text;

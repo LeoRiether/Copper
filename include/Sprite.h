@@ -7,10 +7,11 @@
 #include "SDL_include.h"
 #include "Timer.h"
 using std::string;
+using std::shared_ptr;
 
 class Sprite : public Component {
    private:
-    SDL_Texture* texture;
+    shared_ptr<SDL_Texture> texture;
     int width, height;
     Vec2 scale{1, 1};
 

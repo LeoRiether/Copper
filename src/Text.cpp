@@ -69,23 +69,21 @@ void Text::RemakeTexture() {
         texture = nullptr;
     }
 
-    // TODO: there's a TTF_Font* "leak" here, we'll never clear it from
-    // Resources.
     font = Resources::Font(fontFile, fontSize);
 
     SDL_Surface* surface;
     switch (style) {
         case Text::Solid: {
-            surface = TTF_RenderUTF8_Solid(font, text.c_str(), color);
+            surface = TTF_RenderUTF8_Solid(font.get(), text.c_str(), color);
             break;
         }
         case Text::Shaded: {
-            surface = TTF_RenderUTF8_Shaded(font, text.c_str(), color,
+            surface = TTF_RenderUTF8_Shaded(font.get(), text.c_str(), color,
                                             SDL_Color{0, 0, 0, 0});
             break;
         }
         case Text::Blended: {
-            surface = TTF_RenderUTF8_Blended(font, text.c_str(), color);
+            surface = TTF_RenderUTF8_Blended(font.get(), text.c_str(), color);
             break;
         }
     }

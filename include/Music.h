@@ -1,12 +1,14 @@
 #pragma once
 
 #include "SDL_include.h"
+#include <memory>
 #include <string> 
 using std::string;
+using std::shared_ptr;
 
 class Music {
    private:
-    Mix_Music* music;
+    shared_ptr<Mix_Music> music;
 
    public:
     Music();
