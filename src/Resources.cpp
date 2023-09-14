@@ -52,7 +52,7 @@ Mix_Chunk* Resources::Sound(const string& file) {
 }
 
 TTF_Font* Resources::Font(const string& file, int ptsize) {
-    auto it = fonts.find(file);
+    auto it = fonts.find(fontkey(file, ptsize));
     if (it == fonts.end()) {
         log2("loading font %s", file.c_str());
         auto font = TTF_OpenFont(file.c_str(), ptsize);
