@@ -1,10 +1,14 @@
 #include "state/EndState.h"
 
+#include "Colors.h"
+#include "Game.h"
 #include "GameData.h"
 #include "GameObject.h"
 #include "InputManager.h"
 #include "Resources.h"
 #include "component/Sprite.h"
+#include "component/Text.h"
+#include "component/TextBlinker.h"
 #include "util.h"
 
 EndState::EndState() {}
@@ -27,7 +31,8 @@ void EndState::Update(float dt) {
     }
 
     if (input.KeyPress(SDL_SCANCODE_SPACE)) {
-        // TODO: go back to title state
+        // Go back to the TitleState, which should be already pushed!
+        Game::Instance().RequestPop();
     }
 
     UpdateArray(dt);
@@ -51,6 +56,27 @@ void EndState::Start() {
     bgGO->box.x = 0;
     bgGO->box.y = 0;
     RequestAddObject(bgGO);
+
+    {
+        auto text = new GameObject{};
+        text->AddComponent(new Text{*text, ASSETS "/font/Call me maybe.ttf", 50,
+                                    Text::Blended, "ESC . Sair",
+                                    colorFromHex("#F0A029")});
+        text->AddComponent(new TextBlinker{*text, 1.5});
+        text->box.SetCenter(Vec2{SCREEN_WIDTH / 2.0f, 0});
+        text->box.y = SCREEN_HEIGHT - 120;
+        RequestAddObject(text);
+    }
+    {
+        auto text = new GameObject{};
+        text->AddComponent(new Text{*text, ASSETS "/font/Call me maybe.ttf", 50,
+                                    Text::Blended, "Espaco . Jogar de novo",
+                                    colorFromHex("#F0A029")});
+        text->AddComponent(new TextBlinker{*text, 1.5});
+        text->box.SetCenter(Vec2{SCREEN_WIDTH / 2.0f, 0});
+        text->box.y = SCREEN_HEIGHT - 180;
+        RequestAddObject(text);
+    }
 }
 
 void EndState::Pause() { bgMusic.Stop(); }

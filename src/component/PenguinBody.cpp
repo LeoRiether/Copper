@@ -110,8 +110,6 @@ void PenguinBody::RequestDelete() {
 }
 
 void PenguinBody::ReflectOnMapBorder() {
-    auto& box = associated.box;
-
     if (tileMap.expired()) {
         warn("TileMap object not found?");
         return;
@@ -119,20 +117,21 @@ void PenguinBody::ReflectOnMapBorder() {
 
     auto map = (TileMap*)tileMap.lock()->GetComponent(CType::TileMap);
 
+    auto& box = associated.box;
     if (box.x < 0) {
         box.x = 0;
         angle = PI - angle;
     }
-    if (box.x + box.w >= map->Width()) {
-        box.x = map->Width() - box.w;
+    if (box.x + box.w >= 1408) {
+        box.x = 1408 - box.w;
         angle = PI - angle;
     }
     if (box.y < 0) {
         box.y = 0;
         angle = 2 * PI - angle;
     }
-    if (box.y + box.h >= map->Height()) {
-        box.y = map->Height() - box.h;
+    if (box.y + box.h >= 1280) {
+        box.y = 1280 - box.h;
         angle = 2 * PI - angle;
     }
 }

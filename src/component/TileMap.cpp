@@ -76,5 +76,5 @@ bool TileMap::Is(CType type) { return type == CType::TileMap; }
 int TileMap::Columns() { return width; }
 int TileMap::Rows() { return height; }
 int TileMap::Depth() { return depth; }
-int TileMap::Width() { return width * tileSet->TileWidth(); }
-int TileMap::Height() { return height * tileSet->TileHeight(); }
+int TileMap::Width() { return (width - 1) * tileSet->TileWidth(); }
+int TileMap::Height() { return (height - 1) * tileSet->TileHeight(); }
