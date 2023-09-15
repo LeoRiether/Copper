@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "SDL_include.h"
-#include "State.h"
+#include "state/State.h"
 #include "util.h"
 using std::string;
 using std::unique_ptr;
@@ -19,7 +19,10 @@ class Game {
     static Game* instance;
     SDL_Window* window;
     SDL_Renderer* renderer;
+
     vector<unique_ptr<State>> stateStack;
+    vector<State*> stateStackOperations;  // WARN: nullptr means "pop"
+                                          // operation, sorry
 
     uint32_t frameStart;
     float dt;
@@ -27,12 +30,14 @@ class Game {
     Game(const char* title, int width, int height);
 
     void CalculateDeltaTime();
+    void UpdateStateStack();
 
    public:
     ~Game();
 
     void Run();
-    void Push(State* state);
+    void RequestPop();
+    void RequestPush(State* state);
 
     float DeltaTime();
     SDL_Renderer* Renderer();

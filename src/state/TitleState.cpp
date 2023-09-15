@@ -1,13 +1,13 @@
-#include "TitleState.h"
+#include "state/TitleState.h"
 
 #include "Colors.h"
 #include "Game.h"
 #include "GameObject.h"
 #include "InputManager.h"
 #include "SDL_scancode.h"
-#include "StageState.h"
 #include "component/Text.h"
 #include "component/TextBlinker.h"
+#include "state/StageState.h"
 #include "util.h"
 
 #define MODULE "TitleState"
@@ -30,7 +30,7 @@ void TitleState::Update(float dt) {
 
     if (input.KeyPress(SDL_SCANCODE_SPACE)) {
         log("pushing StageState");
-        Game::Instance().Push(new StageState{});
+        Game::Instance().RequestPush(new StageState{});
     }
 
     for (auto& go : objects) go->Update(dt);

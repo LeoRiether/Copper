@@ -17,7 +17,6 @@ using std::weak_ptr;
 
 class State {
    protected:
-    bool popRequested{false};
     bool quitRequested{false};
     bool started{false};
 
@@ -26,7 +25,7 @@ class State {
     vector<shared_ptr<GameObject>> addRequests{};
 
     virtual void ProcessAddRequests();
-    void StartArray();
+    virtual void StartArray();
     virtual void UpdateArray(float dt);
     virtual void RenderArray();
 
@@ -44,7 +43,6 @@ class State {
     virtual weak_ptr<GameObject> RequestAddObject(GameObject* obj);
     virtual weak_ptr<GameObject> GetObject(GameObject* obj);
 
-    inline bool PopRequested() const { return popRequested; }
     inline bool QuitRequested() const { return quitRequested; }
     inline Camera& GetCamera() const { return *camera.get(); }
 };

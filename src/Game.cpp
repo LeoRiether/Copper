@@ -2,11 +2,12 @@
 
 #include <SDL2/SDL_mouse.h>
 
+#include "InputManager.h"
 #include "Resources.h"
 #include "SDL_mixer.h"
 #include "SDL_timer.h"
-#include "StageState.h"
-#include "TitleState.h"
+#include "state/StageState.h"
+#include "state/TitleState.h"
 
 #define MODULE "Game"
 
@@ -42,9 +43,6 @@ Game::Game(const char* title, int width, int height) {
     renderer = SDL_CreateRenderer(window, -1, 0 /* SDL_RENDERER_ACCELERATED */);
     if (!renderer) sdlfail("couldn't create renderer");
 
-    instance->stateStack.clear();
-    Push(new TitleState{});
-
     frameStart = SDL_GetTicks();
 
     log("initialized");
@@ -62,14 +60,10 @@ Game::~Game() {
     warn("destroyed");
 }
 
-void Game::CalculateDeltaTime() {
-    uint32_t ticks = SDL_GetTicks();
-    dt = float(ticks - frameStart) / 1000.0f;
-    frameStart = ticks;
-}
-
 void Game::Run() {
     log("entering game loop");
+    RequestPush(new TitleState{});
+    UpdateStateStack();
     while (!stateStack.empty() && !stateStack.back()->QuitRequested()) {
         auto state = stateStack.back().get();
 
@@ -79,22 +73,20 @@ void Game::Run() {
         state->Render();
         SDL_RenderPresent(renderer);
 
-        if (state->PopRequested()) {
-            stateStack.pop_back();
-            Resources::ClearAll();
-            if (!stateStack.empty()) stateStack.back()->Resume();
-        }
-
+        UpdateStateStack();
         SDL_Delay(33);
     }
     stateStack.clear();
     Resources::ClearAll();
 }
 
-void Game::Push(State* state) {
-    if (!stateStack.empty()) stateStack.back()->Pause();
-    stateStack.emplace_back(state);
-    stateStack.back()->Start();
+void Game::RequestPop() {
+    // nullptr means "pop" stack
+    stateStackOperations.emplace_back(nullptr);
+}
+
+void Game::RequestPush(State* state) {
+    stateStackOperations.emplace_back(state);
 }
 
 float Game::DeltaTime() { return dt; }
@@ -111,4 +103,25 @@ Game& Game::Instance() {
                             SCREEN_HEIGHT};
     }
     return *instance;
+}
+
+void Game::CalculateDeltaTime() {
+    uint32_t ticks = SDL_GetTicks();
+    dt = float(ticks - frameStart) / 1000.0f;
+    frameStart = ticks;
+}
+
+void Game::UpdateStateStack() {
+    for (auto state : stateStackOperations) {
+        if (state == nullptr) {
+            stateStack.pop_back();
+            Resources::ClearAll();
+            if (!stateStack.empty()) stateStack.back()->Resume();
+        } else {
+            if (!stateStack.empty()) stateStack.back()->Pause();
+            stateStack.emplace_back(state);
+            stateStack.back()->Start();
+        }
+    }
+    stateStackOperations.clear();
 }

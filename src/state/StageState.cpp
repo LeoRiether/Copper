@@ -1,6 +1,4 @@
-#include "StageState.h"
-
-#include <bits/fs_fwd.h>
+#include "state/StageState.h"
 
 #include <algorithm>
 #include <memory>
@@ -21,6 +19,7 @@
 #include "component/KeepSoundAlive.h"
 #include "component/PenguinBody.h"
 #include "component/TileMap.h"
+#include "state/TitleState.h"
 #include "util.h"
 
 #define MODULE "StageState"
@@ -125,7 +124,8 @@ void StageState::Update(float dt) {
     }
 
     if (input.KeyPress(SDL_SCANCODE_ESCAPE)) {
-        popRequested = true;
+        Game::Instance().RequestPop();
+        return;
     }
 
     if (input.KeyPress(SDL_SCANCODE_SPACE)) {
