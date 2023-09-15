@@ -21,7 +21,7 @@ class StageState : public State {
     Music* music;
 
     GameObject* CreatePenguin();
-    GameObject* CreatePenguinBody();
+    GameObject* CreatePenguinBody(weak_ptr<GameObject> tileMap);
     GameObject* CreateAlien(float x, float y);
     GameObject* CreateAlien();
 

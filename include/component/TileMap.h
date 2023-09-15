@@ -32,7 +32,10 @@ class TileMap : public Component {
     void RenderLayer(int layer, int cameraX = 0, int cameraY = 0);
     bool Is(CType type);
 
-    int Width();
-    int Height();
+    int Columns();
+    int Rows();
     int Depth();
+
+    int Width();   // in pixels!
+    int Height();  // in pixels!
 };

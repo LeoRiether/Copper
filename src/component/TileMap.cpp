@@ -73,6 +73,8 @@ void TileMap::RenderLayer(int layer, int cameraX, int cameraY) {
 
 bool TileMap::Is(CType type) { return type == CType::TileMap; }
 
-int TileMap::Width() { return width; }
-int TileMap::Height() { return height; }
+int TileMap::Columns() { return width; }
+int TileMap::Rows() { return height; }
 int TileMap::Depth() { return depth; }
+int TileMap::Width() { return width * tileSet->TileWidth(); }
+int TileMap::Height() { return height * tileSet->TileHeight(); }

@@ -37,7 +37,7 @@ class Alien : public Component {
    public:
     static int alienCount;
 
-    Alien(GameObject& go, int nMinions);
+    Alien(GameObject& go, int nMinions, float delay);
     ~Alien();
 
     void Start();

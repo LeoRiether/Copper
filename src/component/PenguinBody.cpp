@@ -14,13 +14,15 @@
 #include "component/KeepSoundAlive.h"
 #include "component/PenguinCannon.h"
 #include "component/Sprite.h"
+#include "component/TileMap.h"
 #include "util.h"
 
 #define MODULE "PenguinBody"
 
 PenguinBody* PenguinBody::player;
 
-PenguinBody::PenguinBody(GameObject& associated) : Component(associated) {
+PenguinBody::PenguinBody(GameObject& associated, weak_ptr<GameObject> tileMap)
+    : Component(associated), tileMap(tileMap) {
     PenguinBody::player = this;
 
     auto sprite = new Sprite{associated, ASSETS "/img/penguin.png"};
@@ -59,8 +61,9 @@ void PenguinBody::Update(float dt) {
 
     associated.box.x += speed.x * dt;
     associated.box.y += speed.y * dt;
-
     associated.angle = angle;
+
+    ReflectOnMapBorder();
 
     if (hp <= 0) {
         RequestDelete();
@@ -104,4 +107,32 @@ void PenguinBody::NotifyCollision(GameObject& other) {
 void PenguinBody::RequestDelete() {
     associated.RequestDelete();
     PenguinBody::player = nullptr;
+}
+
+void PenguinBody::ReflectOnMapBorder() {
+    auto& box = associated.box;
+
+    if (tileMap.expired()) {
+        warn("TileMap object not found?");
+        return;
+    }
+
+    auto map = (TileMap*)tileMap.lock()->GetComponent(CType::TileMap);
+
+    if (box.x < 0) {
+        box.x = 0;
+        angle = PI - angle;
+    }
+    if (box.x + box.w >= map->Width()) {
+        box.x = map->Width() - box.w;
+        angle = PI - angle;
+    }
+    if (box.y < 0) {
+        box.y = 0;
+        angle = 2 * PI - angle;
+    }
+    if (box.y + box.h >= map->Height()) {
+        box.y = map->Height() - box.h;
+        angle = 2 * PI - angle;
+    }
 }

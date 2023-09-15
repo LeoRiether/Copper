@@ -25,17 +25,19 @@
 
 #define MODULE "StageState"
 
-GameObject* StageState::CreatePenguinBody() {
+GameObject* StageState::CreatePenguinBody(weak_ptr<GameObject> tileMap) {
     auto go = new GameObject{};
-    auto body = new PenguinBody{*go};
+    auto body = new PenguinBody{*go, tileMap};
     go->AddComponent(body);
     go->box.SetCenter(Vec2{704, 640});
     return go;
 }
 
 GameObject* StageState::CreateAlien(float x, float y) {
+    std::uniform_real_distribution<float> delay(0, 1);
+
     auto go = new GameObject{};
-    auto alien = new Alien{*go, 7};
+    auto alien = new Alien{*go, 7, delay(rng)};
     auto sprite = (Sprite*)go->GetComponent(CType::Sprite);
     go->box = Rect{x, y, (float)sprite->Width(), (float)sprite->Height()};
 
@@ -56,7 +58,17 @@ StageState::~StageState() {
 void StageState::Start() {
     LoadAssets();
 
-    auto penguinBody = CreatePenguinBody();
+    // Tilemap
+    auto tileGO = new GameObject;
+    tileGO->box = Rect{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+    auto tileset = new TileSet(DEFAULT_TILE_WIDTH, DEFAULT_TILE_HEIGHT,
+                               ASSETS "/img/tileset.png");
+    auto tilemap = new TileMap(*tileGO, ASSETS "/map/tileMap.txt", tileset);
+    tileGO->AddComponent(tilemap);
+    auto tileGO_weak = RequestAddObject(tileGO);
+
+    // PenguinBody
+    auto penguinBody = CreatePenguinBody(tileGO_weak);
     camera->Follow(penguinBody);
     RequestAddObject(penguinBody);
 
@@ -85,15 +97,6 @@ void StageState::LoadAssets() {
     bgGO->AddComponent(new Sprite{*bgGO, ASSETS "/img/ocean.jpg"});
     bgGO->AddComponent(new CameraFollower{*bgGO});
     RequestAddObject(bgGO);
-
-    // Tilemap
-    auto tileGO = new GameObject;
-    tileGO->box = Rect{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-    auto tileset = new TileSet(DEFAULT_TILE_WIDTH, DEFAULT_TILE_HEIGHT,
-                               ASSETS "/img/tileset.png");
-    auto tilemap = new TileMap(*tileGO, ASSETS "/map/tileMap.txt", tileset);
-    tileGO->AddComponent(tilemap);
-    RequestAddObject(tileGO);
 
     // Background music
     music = new Music(ASSETS "/audio/stageState.ogg");

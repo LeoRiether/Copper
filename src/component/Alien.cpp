@@ -22,12 +22,15 @@
 
 int Alien::alienCount = 0;
 
-Alien::Alien(GameObject& go, int nMinions) : Component(go), minions(nMinions) {
+Alien::Alien(GameObject& go, int nMinions, float delay)
+    : Component(go), minions(nMinions) {
     alienCount++;
     auto sprite = new Sprite{go, ASSETS "/img/alien.png"};
     associated.debugName = "Alien";
     go.AddComponent(sprite);
     go.AddComponent(new Collider{go});
+
+    restTimer.Update(delay);
 }
 
 Alien::~Alien() {

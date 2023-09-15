@@ -11,10 +11,13 @@ using std::weak_ptr;
 class PenguinBody : public Component {
    private:
     weak_ptr<GameObject> pcannon;
+    weak_ptr<GameObject> tileMap;
     Vec2 speed{0, 0};
     float linearSpeed{0};
     float angle{0};
     int hp{100};
+
+    void ReflectOnMapBorder();
 
    public:
     const char* DebugName() { return "PenguinBody"; }
@@ -22,7 +25,7 @@ class PenguinBody : public Component {
     static PenguinBody* player;
     inline GameObject& Associated() { return associated; }
 
-    PenguinBody(GameObject& associated);
+    PenguinBody(GameObject& associated, weak_ptr<GameObject> tileMap);
     ~PenguinBody();
 
     void Start();
