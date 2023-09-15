@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <random>
 #include <vector>
 
 #include "CType.h"
@@ -24,23 +25,6 @@
 
 #define MODULE "StageState"
 
-GameObject* StageState::CreatePenguin() {
-    auto& input = InputManager::Instance();
-    Vec2 objPos = Vec2{200, 0}.GetRotated(-PI + PI * (rng() % 1001) / 500.0) +
-                  Vec2{(float)input.MouseX(), (float)input.MouseY()};
-
-    auto go = new GameObject{};
-    auto sprite = new Sprite(*go, ASSETS "/img/penguinface.png");
-    go->box = Rect{objPos.x, objPos.y, (float)sprite->Width(),
-                   (float)sprite->Height()};
-
-    auto sound = new Sound(*go, ASSETS "/audio/boom.wav");
-
-    go->AddComponent(sprite);
-    go->AddComponent(sound);
-    return go;
-}
-
 GameObject* StageState::CreatePenguinBody() {
     auto go = new GameObject{};
     auto body = new PenguinBody{*go};
@@ -59,9 +43,8 @@ GameObject* StageState::CreateAlien(float x, float y) {
     return go;
 }
 GameObject* StageState::CreateAlien() {
-    auto& input = InputManager::Instance();
     Vec2 objPos = Vec2{200, 0}.GetRotated(-PI + PI * (rng() % 1001) / 500.0) +
-                  Vec2{(float)input.MouseX(), (float)input.MouseY()};
+                  Vec2{704, 640};
     return CreateAlien(objPos.x, objPos.y);
 }
 
@@ -76,6 +59,13 @@ void StageState::Start() {
     auto penguinBody = CreatePenguinBody();
     camera->Follow(penguinBody);
     RequestAddObject(penguinBody);
+
+    Alien::alienCount = 0;
+    std::uniform_int_distribution<int> distribution(1, 5);
+    int aliens = distribution(rng);
+    for (int i = 0; i < aliens; i++) {
+        RequestAddObject(CreateAlien());
+    }
 
     StartArray();
     ProcessAddRequests();
@@ -128,9 +118,10 @@ void StageState::Update(float dt) {
         return;
     }
 
-    if (input.KeyPress(SDL_SCANCODE_SPACE)) {
-        RequestAddObject(CreateAlien());
-    }
+    // Enable for a more challenging experience!
+    // if (input.KeyPress(SDL_SCANCODE_SPACE)) {
+    //     RequestAddObject(CreateAlien());
+    // }
 
     // Handle updates
     vector<GameObject*> collidableObjects;

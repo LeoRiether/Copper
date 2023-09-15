@@ -70,7 +70,7 @@ void Resources::ClearImages() {
     vector<string> keysToDelete;
     for (auto& [file, image] : images) {
         if (image.unique()) {
-            log2("freeing image %s", file.c_str());
+            info2("freeing image %s", file.c_str());
             keysToDelete.push_back(file);
         }
     }
@@ -83,7 +83,7 @@ void Resources::ClearMusic() {
     vector<string> keysToDelete;
     for (auto& [file, mus] : music) {
         if (mus.unique()) {
-            log2("freeing music %s", file.c_str());
+            info2("freeing music %s", file.c_str());
             keysToDelete.push_back(file);
         }
     }
@@ -96,7 +96,7 @@ void Resources::ClearSounds() {
     vector<string> keysToDelete;
     for (auto& [file, chunk] : sounds) {
         if (chunk.unique()) {
-            log2("freeing sound %s", file.c_str());
+            info2("freeing sound %s", file.c_str());
             keysToDelete.push_back(file);
         }
     }
@@ -109,7 +109,7 @@ void Resources::ClearFonts() {
     vector<string> keysToDelete;
     for (auto& [key, font] : fonts) {
         if (font.unique()) {
-            log2("freeing font %s", key.c_str());
+            info2("freeing font %s", key.c_str());
             keysToDelete.push_back(key);
         }
     }
