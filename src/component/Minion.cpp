@@ -7,7 +7,9 @@
 #include "Component.h"
 #include "Game.h"
 #include "GameObject.h"
+#include "Sound.h"
 #include "component/Bullet.h"
+#include "component/KeepSoundAlive.h"
 #include "util.h"
 
 #define MODULE "Minion"
@@ -53,4 +55,30 @@ void Minion::Shoot(Vec2 target) {
     go->box.y = associated.box.Center().y;
     go->AddComponent(bullet);
     associated.RequestAdd(go);
+}
+
+void Minion::NotifyCollision(GameObject& other) {
+    auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
+    if (!bullet || bullet->TargetsPlayer()) return;
+
+    // hp == 1 /shrug
+
+    // Create explosion sprite
+    auto explosion = new GameObject{};
+    auto sprite =
+        new Sprite{*explosion, ASSETS "/img/miniondeath.png", 4, .1, 4 * .1};
+    explosion->AddComponent(sprite);
+    explosion->box.SetCenter(associated.box.Center());
+    associated.RequestAdd(explosion);
+
+    // Create explosion sound
+    auto explosionSound = new GameObject{};
+    auto sound = new Sound{*explosionSound, ASSETS "/audio/boom.wav"};
+    auto keepalive = new KeepSoundAlive{*explosionSound};
+    sound->Play();
+    explosionSound->AddComponent(sound);
+    explosionSound->AddComponent(keepalive);
+    associated.RequestAdd(explosionSound);
+
+    associated.RequestDelete();
 }

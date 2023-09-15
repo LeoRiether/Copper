@@ -1,12 +1,8 @@
 #include "Game.h"
 
-#include <SDL2/SDL_mouse.h>
-
 #include "InputManager.h"
 #include "Resources.h"
-#include "SDL_mixer.h"
-#include "SDL_timer.h"
-#include "state/StageState.h"
+#include "SDL_include.h"
 #include "state/TitleState.h"
 
 #define MODULE "Game"

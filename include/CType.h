@@ -14,4 +14,5 @@ enum class CType {
     Collider,
     Text,
     TextBlinker,
+    EndStageDimmer,
 };

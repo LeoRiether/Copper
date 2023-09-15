@@ -35,7 +35,6 @@ class Alien : public Component {
     Minion* ClosestMinion(Vec2 target);
 
    public:
-    const char* debugName{"Alien"};
     static int alienCount;
 
     Alien(GameObject& go, int nMinions);
@@ -45,4 +44,5 @@ class Alien : public Component {
     void Update(float dt);
     void Render(Vec2 camera);
     bool Is(CType type);
+    void NotifyCollision(GameObject& other);
 };

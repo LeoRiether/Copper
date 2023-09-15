@@ -15,7 +15,9 @@ void EndState::LoadAssets() {
     // uhm, I'm doing everything in EndState::Start()...
 }
 
-void EndState::Update(float) {
+void EndState::Update(float dt) {
+    ProcessAddRequests();
+
     auto& input = InputManager::Instance();
     input.Update();
 
@@ -27,9 +29,11 @@ void EndState::Update(float) {
     if (input.KeyPress(SDL_SCANCODE_SPACE)) {
         // TODO: go back to title state
     }
+
+    UpdateArray(dt);
 }
 
-void EndState::Render() {}
+void EndState::Render() { RenderArray(); }
 
 void EndState::Start() {
     auto bgGO = new GameObject{};
@@ -43,6 +47,9 @@ void EndState::Start() {
     }
 
     bgMusic.Play();
+
+    bgGO->box.x = 0;
+    bgGO->box.y = 0;
     RequestAddObject(bgGO);
 }
 

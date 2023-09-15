@@ -5,10 +5,12 @@
 
 #include "Collider.h"
 #include "Game.h"
+#include "GameData.h"
 #include "GameObject.h"
 #include "InputManager.h"
 #include "Sound.h"
 #include "component/Bullet.h"
+#include "component/EndStateDimmer.h"
 #include "component/KeepSoundAlive.h"
 #include "component/PenguinCannon.h"
 #include "component/Sprite.h"
@@ -62,6 +64,7 @@ void PenguinBody::Update(float dt) {
 
     if (hp <= 0) {
         RequestDelete();
+        GameData::playerVictory = false;
 
         // Create explosion sprite
         auto explosion = new GameObject{};
@@ -79,6 +82,11 @@ void PenguinBody::Update(float dt) {
         explosionSound->AddComponent(sound);
         explosionSound->AddComponent(keepalive);
         associated.RequestAdd(explosionSound);
+
+        // Create end stage dimmer
+        auto dimmer = new GameObject{};
+        dimmer->AddComponent(new EndStateDimmer{*dimmer, 4});
+        associated.RequestAdd(dimmer);
     }
 }
 

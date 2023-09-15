@@ -28,8 +28,6 @@ class Text : public Component {
     SDL_Color color;
 
    public:
-    const char* debugName{"Text"};
-
     Text(GameObject& associated, string fontFile, int fontSize, TextStyle style,
          string text, SDL_Color color);
     ~Text();

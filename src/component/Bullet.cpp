@@ -40,6 +40,7 @@ bool Bullet::Is(CType type) { return type == CType::Bullet; }
 void Bullet::NotifyCollision(GameObject& other) {
     if (targetsPlayer && other.GetComponent(CType::PenguinBody))
         associated.RequestDelete();
-    if (!targetsPlayer && other.GetComponent(CType::Alien))
+    if (!targetsPlayer &&
+        (other.GetComponent(CType::Alien) || other.GetComponent(CType::Minion)))
         associated.RequestDelete();
 }

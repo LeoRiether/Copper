@@ -5,12 +5,17 @@
 #include "CType.h"
 #include "Collider.h"
 #include "Game.h"
+#include "GameData.h"
 #include "GameObject.h"
 #include "InputManager.h"
+#include "Sound.h"
 #include "component/Bullet.h"
+#include "component/EndStateDimmer.h"
+#include "component/KeepSoundAlive.h"
 #include "component/Minion.h"
 #include "component/PenguinBody.h"
 #include "component/Sprite.h"
+#include "state/EndState.h"
 #include "util.h"
 
 #define MODULE "Alien"
@@ -26,7 +31,7 @@ Alien::Alien(GameObject& go, int nMinions) : Component(go), minions(nMinions) {
 }
 
 Alien::~Alien() {
-    alienCount--;
+    // alienCount--; // done in Update
     minions.clear();
 }
 
@@ -77,6 +82,34 @@ void Alien::Update(float dt) {
 
     if (hp <= 0) {
         associated.RequestDelete();
+        alienCount--;
+
+        // Create explosion sprite
+        auto explosion = new GameObject{};
+        auto sprite = new Sprite{*explosion, ASSETS "/img/aliendeath.png", 4,
+                                 .15, 4 * .15};
+        explosion->AddComponent(sprite);
+        explosion->box.SetCenter(associated.box.Center());
+        associated.RequestAdd(explosion);
+
+        // Create explosion sound
+        auto explosionSound = new GameObject{};
+        auto sound = new Sound{*explosionSound, ASSETS "/audio/boom.wav"};
+        auto keepalive = new KeepSoundAlive{*explosionSound};
+        sound->Play();
+        explosionSound->AddComponent(sound);
+        explosionSound->AddComponent(keepalive);
+        associated.RequestAdd(explosionSound);
+
+        if (alienCount == 0) {
+            // Create end stage dimmer
+            auto dimmer = new GameObject{};
+            dimmer->AddComponent(new EndStateDimmer{*dimmer, 2});
+            associated.RequestAdd(dimmer);
+
+            GameData::playerVictory =
+                true;  // the aliens recognize the victory, how nice
+        }
     }
 }
 
@@ -84,20 +117,25 @@ void Alien::Render(Vec2) {}
 
 bool Alien::Is(CType type) { return type == CType::Alien; }
 
+void Alien::NotifyCollision(GameObject& other) {
+    auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
+    if (!bullet || bullet->TargetsPlayer()) return;
+
+    hp -= bullet->Damage();
+}
+
 Minion* Alien::ClosestMinion(Vec2 target) {
     float bestDist = std::numeric_limits<float>::max();
     Minion* bestMinion = nullptr;
     for (size_t i = 0; i < minions.size(); i++) {
+        if (minions[i].expired()) continue;  // RIP
+
         Vec2 pos = minions[i].lock()->box.Center();
         if ((target - pos).norm2() < bestDist) {
             bestDist = (target - pos).norm2();
             bestMinion =
                 (Minion*)minions[i].lock()->GetComponent(CType::Minion);
         }
-    }
-
-    if (!bestMinion) {
-        warn("didn't find any closest minion?");
     }
 
     return bestMinion;
@@ -108,6 +146,7 @@ void Alien::BulletHell() {
     Vec2 target = player ? player->Associated().box.Center()
                          : Vec2{(float)rng(), (float)rng()};
     auto minion = ClosestMinion(target);
+    if (!minion) return;
 
     Vec2 direction = (target - associated.box.Center());
 
