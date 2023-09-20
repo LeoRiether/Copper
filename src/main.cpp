@@ -8,7 +8,7 @@
 #include "util.h"
 
 #define MODULE "main"
-int main(int argc, char* argv[]) {
+int main(int, char*[]) {
     Game& game = Game::Instance();
     game.Run();
     return EXIT_SUCCESS;
