@@ -1,9 +1,9 @@
-bin/
-.cache/
+/bin/
+/.cache/
 Makefile
-penguin_debug
-penguin_release
-penguin.make
+copper_debug
+copper_release
+copper.make
 compile_commands.json
 .gdbinit
 vgcore.*

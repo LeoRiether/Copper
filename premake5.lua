@@ -8,7 +8,7 @@ workspace "mypremake"      -- Nome do seu workspace
     configurations { "debug", "release" } -- Configurações de saída
 
 -- Projeto -------------------------------------------------------------------------------------------------------------
-project "penguin"      -- Nome do seu projeto
+project "copper"      -- Nome do seu projeto
     location "./"      -- Pasta com o projeto
     kind "ConsoleApp"    -- Tipo de aplicação
 
