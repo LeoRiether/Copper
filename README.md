@@ -1,3 +1,3 @@
 # Copper
 
-[Link to the wiki](wiki)
+[Link to the docs](https://leoriether.github.io/Copper)
