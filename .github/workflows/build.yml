@@ -14,5 +14,7 @@ jobs:
     - uses: abel0b/setup-premake@v2.3
       with:
         version: "5.0.0-beta2"
+    - name: premake
+      run: premake5 gmake2
     - name: make
       run: make
