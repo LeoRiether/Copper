@@ -1,6 +1,6 @@
 #pragma once
 #include "SDL_include.h"
-#include "Vec2.h"
+#include "math/Vec2.h"
 
 constexpr int KEYS = 0x7F + 0x11A;  // A soma dos tamanhos dos blocos de teclas
 constexpr int BLOCK0_SIZE = 0x7F;

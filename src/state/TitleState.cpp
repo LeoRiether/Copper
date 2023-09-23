@@ -4,6 +4,7 @@
 #include "Game.h"
 #include "GameObject.h"
 #include "InputManager.h"
+#include "SDL_render.h"
 #include "SDL_scancode.h"
 #include "component/Text.h"
 #include "component/TextBlinker.h"
@@ -36,7 +37,11 @@ void TitleState::Update(float dt) {
     for (auto& go : objects) go->Update(dt);
 }
 
-void TitleState::Render() { RenderArray(); }
+void TitleState::Render() {
+    SDL_RenderClear(Game::Instance().Renderer());
+    RenderArray();
+    SDL_RenderPresent(Game::Instance().Renderer());
+}
 
 void TitleState::Start() {
     {

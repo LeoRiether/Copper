@@ -11,7 +11,6 @@
 #include "Game.h"
 #include "GameObject.h"
 #include "InputManager.h"
-#include "Rect.h"
 #include "SDL_scancode.h"
 #include "Sound.h"
 #include "TileSet.h"
@@ -20,6 +19,7 @@
 #include "component/KeepSoundAlive.h"
 #include "component/PenguinBody.h"
 #include "component/TileMap.h"
+#include "math/Rect.h"
 #include "state/TitleState.h"
 #include "util.h"
 

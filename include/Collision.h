@@ -1,8 +1,8 @@
 #include <algorithm>
 #include <cmath>
 
-#include "Rect.h"
-#include "Vec2.h"
+#include "math/Rect.h"
+#include "math/Vec2.h"
 
 class Collision {
    public:

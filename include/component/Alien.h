@@ -9,7 +9,7 @@
 #include "GameObject.h"
 #include "Minion.h"
 #include "Timer.h"
-#include "Vec2.h"
+#include "math/Vec2.h"
 
 using std::queue;
 using std::vector;

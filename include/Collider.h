@@ -3,9 +3,9 @@
 #include "CType.h"
 #include "Component.h"
 #include "GameObject.h"
-#include "Rect.h"
 #include "SDL_include.h"
-#include "Vec2.h"
+#include "math/Rect.h"
+#include "math/Vec2.h"
 
 class Collider : public Component {
    private:

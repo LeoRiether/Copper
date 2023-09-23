@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GameObject.h"
-#include "Vec2.h"
+#include "math/Vec2.h"
 
 class Camera {
    private:

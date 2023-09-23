@@ -10,8 +10,10 @@ using std::string;
 using std::unique_ptr;
 using std::vector;
 
-constexpr int SCREEN_WIDTH = 1024;
-constexpr int SCREEN_HEIGHT = 600;
+// constexpr int SCREEN_WIDTH = 1024;
+// constexpr int SCREEN_HEIGHT = 600;
+constexpr int SCREEN_WIDTH = 1920;
+constexpr int SCREEN_HEIGHT = 1080;
 
 class Game {
    private:

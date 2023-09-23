@@ -3,7 +3,7 @@
 
 #include "CType.h"
 #include "GameObject.h"
-#include "Vec2.h"
+#include "math/Vec2.h"
 using std::string;
 
 class GameObject;

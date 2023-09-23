@@ -4,7 +4,7 @@
 
 #include "Component.h"
 #include "GameObject.h"
-#include "Vec2.h"
+#include "math/Vec2.h"
 using std::string;
 
 class Bullet : public Component {

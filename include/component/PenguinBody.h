@@ -5,7 +5,7 @@
 #include "CType.h"
 #include "Component.h"
 #include "GameObject.h"
-#include "Vec2.h"
+#include "math/Vec2.h"
 using std::weak_ptr;
 
 class PenguinBody : public Component {

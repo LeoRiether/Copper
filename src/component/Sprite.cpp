@@ -6,7 +6,7 @@
 #include "GameObject.h"
 #include "Resources.h"
 #include "SDL_render.h"
-#include "Vec2.h"
+#include "math/Vec2.h"
 
 #define MODULE "Sprite"
 

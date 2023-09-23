@@ -4,8 +4,8 @@
 #include <vector>
 
 #include "Component.h"
-#include "Rect.h"
-#include "Vec2.h"
+#include "math/Rect.h"
+#include "math/Vec2.h"
 using std::string;
 using std::unique_ptr;
 using std::vector;
