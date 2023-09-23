@@ -4,17 +4,19 @@ on:
   push:
     branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "setup-ci" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - name: Install SDL2 
+      run: apt install -y libsdl2-dev
     - uses: abel0b/setup-premake@v2.3
+      name: Setup premake
       with:
         version: "5.0.0-beta2"
-    - name: premake
+    - name: Build
       run: premake5 gmake2
-    - name: make
       run: make
