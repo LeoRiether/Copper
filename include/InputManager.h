@@ -14,10 +14,10 @@ constexpr int ESCAPE_KEY = SDL_SCANCODE_ESCAPE;
 constexpr int LEFT_MOUSE_BUTTON = SDL_BUTTON_LEFT;
 constexpr int RIGHT_MOUSE_BUTTON = SDL_BUTTON_RIGHT;
 
-constexpr int MOVE_FORWARD_KEY = SDL_SCANCODE_W;
-constexpr int MOVE_BACKWARDS_KEY = SDL_SCANCODE_S;
-constexpr int ROTATE_CLOCKWISE_KEY = SDL_SCANCODE_D;
-constexpr int ROTATE_COUNTERCLOCKWISE_KEY = SDL_SCANCODE_A;
+constexpr int MOVE_UP_KEY = SDL_SCANCODE_W;
+constexpr int MOVE_LEFT_KEY = SDL_SCANCODE_A;
+constexpr int MOVE_DOWN_KEY = SDL_SCANCODE_S;
+constexpr int MOVE_RIGHT_KEY = SDL_SCANCODE_D;
 
 enum InputState { Up = false, Down = true };
 

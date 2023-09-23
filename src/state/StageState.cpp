@@ -72,12 +72,12 @@ void StageState::Start() {
     camera->Follow(penguinBody);
     RequestAddObject(penguinBody);
 
-    Alien::alienCount = 0;
-    std::uniform_int_distribution<int> distribution(1, 5);
-    int aliens = distribution(rng);
-    for (int i = 0; i < aliens; i++) {
-        RequestAddObject(CreateAlien());
-    }
+    // Alien::alienCount = 0;
+    // std::uniform_int_distribution<int> distribution(1, 5);
+    // int aliens = distribution(rng);
+    // for (int i = 0; i < aliens; i++) {
+    //     RequestAddObject(CreateAlien());
+    // }
 
     StartArray();
     ProcessAddRequests();

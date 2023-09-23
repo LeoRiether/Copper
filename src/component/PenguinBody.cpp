@@ -25,7 +25,9 @@ PenguinBody::PenguinBody(GameObject& associated, weak_ptr<GameObject> tileMap)
     : Component(associated), tileMap(tileMap) {
     PenguinBody::player = this;
 
-    auto sprite = new Sprite{associated, ASSETS "/img/penguin.png"};
+    auto sprite =
+        new Sprite{associated, ASSETS "/img/rotating-girl.png", 8, 0.1};
+    sprite->SetScale(Vec2{4, 4});
     associated.AddComponent(sprite);
     associated.AddComponent(new Collider{associated});
 }
@@ -33,35 +35,32 @@ PenguinBody::PenguinBody(GameObject& associated, weak_ptr<GameObject> tileMap)
 PenguinBody::~PenguinBody() { PenguinBody::player = nullptr; }
 
 void PenguinBody::Start() {
-    auto& state = Game::Instance().GetState();
-    auto go = new GameObject{};
-    auto cannon = new PenguinCannon{*go, state.GetObject(&associated)};
-    go->AddComponent(cannon);
-    associated.RequestAdd(go);
+    // auto& state = Game::Instance().GetState();
+    // auto go = new GameObject{};
+    // auto cannon = new PenguinCannon{*go, state.GetObject(&associated)};
+    // go->AddComponent(cannon);
+    // associated.RequestAdd(go);
 }
 
 void PenguinBody::Update(float dt) {
     auto& input = InputManager::Instance();
-    if (input.IsKeyDown(MOVE_FORWARD_KEY)) {
-        linearSpeed = std::min(linearSpeed + 1000.0f * dt, +400.0f);
+
+    Vec2 speed{0, 0};
+    if (input.IsKeyDown(MOVE_UP_KEY)) {
+        speed.y -= 300 * dt;
+    } else if (input.IsKeyDown(MOVE_DOWN_KEY)) {
+        speed.y += 300 * dt;
     }
-    if (input.IsKeyDown(MOVE_BACKWARDS_KEY)) {
-        linearSpeed = std::max(linearSpeed - 1000.0f * dt, -400.0f);
+    if (input.IsKeyDown(MOVE_RIGHT_KEY)) {
+        speed.x += 300 * dt;
+    } else if (input.IsKeyDown(MOVE_LEFT_KEY)) {
+        speed.x -= 300 * dt;
     }
 
-    float sign = linearSpeed >= 0 ? 1 : -1;
-    if (input.IsKeyDown(ROTATE_CLOCKWISE_KEY)) {
-        angle += 3 * dt * sign;
-    }
-    if (input.IsKeyDown(ROTATE_COUNTERCLOCKWISE_KEY)) {
-        angle -= 3 * dt * sign;
-    }
+    if (speed.x != 0 && speed.y != 0) speed = speed / sqrt(2);
 
-    speed = Vec2{linearSpeed, 0}.GetRotated(angle);
-
-    associated.box.x += speed.x * dt;
-    associated.box.y += speed.y * dt;
-    associated.angle = angle;
+    associated.box.x += speed.x;
+    associated.box.y += speed.y;
 
     ReflectOnMapBorder();
 
