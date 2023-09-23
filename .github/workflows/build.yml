@@ -17,6 +17,7 @@ jobs:
       name: Setup premake
       with:
         version: "5.0.0-beta2"
-    - name: Build
+    - name: Setup premake
       run: premake5 gmake2
+    - name: Make
       run: make
