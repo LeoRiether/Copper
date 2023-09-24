@@ -36,7 +36,7 @@ Game::Game(const char* title, int width, int height) {
                               SDL_WINDOWPOS_CENTERED, width, height, 0);
     if (!window) sdlfail("couldn't create window");
 
-    renderer = SDL_CreateRenderer(window, -1, 0 /* SDL_RENDERER_ACCELERATED */);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (!renderer) sdlfail("couldn't create renderer");
 
     frameStart = SDL_GetTicks();
@@ -71,7 +71,9 @@ void Game::Run() {
         SDL_RenderPresent(renderer);
 
         UpdateStateStack();
-        SDL_Delay(33);
+
+        int64_t deltaMs = (int64_t)SDL_GetTicks64() - frameStart;
+        SDL_Delay(std::max(0l, FRAME_MS - deltaMs));
     }
     stateStack.clear();
     Resources::ClearAll();
@@ -102,7 +104,7 @@ Game& Game::Instance() {
 }
 
 void Game::CalculateDeltaTime() {
-    uint32_t ticks = SDL_GetTicks();
+    int64_t ticks = SDL_GetTicks64();
     dt = float(ticks - frameStart) / 1000.0f;
     frameStart = ticks;
 }

@@ -37,11 +37,7 @@ void TitleState::Update(float dt) {
     for (auto& go : objects) go->Update(dt);
 }
 
-void TitleState::Render() {
-    SDL_RenderClear(Game::Instance().Renderer());
-    RenderArray();
-    SDL_RenderPresent(Game::Instance().Renderer());
-}
+void TitleState::Render() { RenderArray(); }
 
 void TitleState::Start() {
     {

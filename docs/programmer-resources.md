@@ -4,3 +4,4 @@
 - [SDL2 sprite batching and texture atlases](https://gamedev.stackexchange.com/questions/70876/sdl2-sprite-batching-and-texture-atlases)
 - [Tiger -- Spritesheet metadata tool](https://agersant.itch.io/tiger)
 - [Why Isometric? | Art, Code and Matrix Maths | A Devlog](https://www.youtube.com/watch?v=0fZXlxtMbC0)
+- [Integration Basics](https://gafferongames.com/post/integration_basics/)

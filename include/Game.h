@@ -12,8 +12,11 @@ using std::vector;
 
 // constexpr int SCREEN_WIDTH = 1024;
 // constexpr int SCREEN_HEIGHT = 600;
-constexpr int SCREEN_WIDTH = 1920;
-constexpr int SCREEN_HEIGHT = 1080;
+constexpr int SCREEN_WIDTH = 1280;
+constexpr int SCREEN_HEIGHT = 720;
+
+constexpr int FRAME_RATE = 75;
+constexpr int64_t FRAME_MS = 1000 / FRAME_RATE;
 
 class Game {
    private:
@@ -26,7 +29,7 @@ class Game {
     vector<State*> stateStackOperations;  // WARN: nullptr means "pop"
                                           // operation, sorry
 
-    uint32_t frameStart;
+    int64_t frameStart;
     float dt;
 
     Game(const char* title, int width, int height);
