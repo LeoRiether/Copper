@@ -8,6 +8,7 @@
 #include "Game.h"
 #include "GameObject.h"
 #include "Sound.h"
+#include "component/Animation.h"
 #include "component/Bullet.h"
 #include "component/KeepSoundAlive.h"
 #include "util.h"
@@ -21,7 +22,7 @@ Minion::Minion(GameObject& go, weak_ptr<GameObject> alienCenter,
     std::uniform_real_distribution<float> dist(1, 1.5);
     auto sprite = (Sprite*)go.GetComponent(CType::Sprite);
     float scale = dist(rng);
-    sprite->SetScale(scale, scale);
+    sprite->SetScale(scale);
     go.AddComponent(new Collider{go, Vec2<Cart>{scale, scale}});
 }
 
@@ -65,9 +66,10 @@ void Minion::NotifyCollision(GameObject& other) {
 
     // Create explosion sprite
     auto explosion = new GameObject{};
-    auto sprite =
-        new Sprite{*explosion, ASSETS "/img/miniondeath.png", 4, .1, 4 * .1};
+    auto sprite = new Sprite{*explosion, ASSETS "/img/miniondeath.png"};
+    auto anim = Animation::horizontal(*explosion, *sprite, 4, .1);
     explosion->AddComponent(sprite);
+    explosion->AddComponent(anim);
     explosion->box.SetCenter(associated.box.Center());
     associated.RequestAdd(explosion);
 

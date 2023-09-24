@@ -10,16 +10,8 @@
 
 #define MODULE "Sprite"
 
-Sprite::Sprite(GameObject& associated)
-    : Component(associated), texture(nullptr) {}
-
-Sprite::Sprite(GameObject& associated, const string& file, int frameCount,
-               float frameTime, float secondsToSelfDestruct)
-    : Component(associated),
-      texture(nullptr),
-      frameCount(frameCount),
-      frameTime(frameTime),
-      secondsToSelfDestruct(secondsToSelfDestruct) {
+Sprite::Sprite(GameObject& associated, const string& file)
+    : Component(associated) {
     Open(file);
 }
 
@@ -28,37 +20,23 @@ Sprite::~Sprite() {}
 void Sprite::Open(const string& file) {
     texture = Resources::Image(file);
 
-    int qt_status =
-        SDL_QueryTexture(texture->inner, nullptr, nullptr, &width, &height);
+    int qt_status = SDL_QueryTexture(texture->inner, nullptr, nullptr,
+                                     &sheetWidth, &sheetHeight);
     if (qt_status != 0)
         fail2("couldn't query texture " YELLOW "'%s'" RESET "! Reason: %s",
               file.c_str(), SDL_GetError());
 
-    SetClip(0, 0, width / frameCount, height);
+    SetClip(0, 0, sheetWidth, sheetHeight);
 }
 
 void Sprite::SetClip(int x, int y, int w, int h) {
     clipRect = SDL_Rect{x, y, w, h};
-    associated.box.w = w;
-    associated.box.h = h;
 }
+void Sprite::SetClip(SDL_Rect rect) { clipRect = rect; }
 
-void Sprite::Update(float) {
-    while (frameTimeElapsed.Get() >= frameTime) {
-        frameTimeElapsed.Restart();
-        SetFrame(currentFrame + 1 >= frameCount
-                     ? (currentFrame + 1 - frameCount)
-                     : (currentFrame + 1));
-    }
+void Sprite::Update(float) {}
 
-    if (secondsToSelfDestruct > 0) {
-        if (selfDestructCount.Get() >= secondsToSelfDestruct)
-            associated.RequestDelete();
-    }
-}
-
-void Sprite::Render(int x, int y) {
-    // TODO: render sprites centered at (x, y)
+void Sprite::RenderAt(int x, int y) {
     Game& game = Game::Instance();
     SDL_Rect destRect{x, y, int(clipRect.w * scale.x),
                       int(clipRect.h * scale.y)};
@@ -67,23 +45,8 @@ void Sprite::Render(int x, int y) {
 }
 
 void Sprite::Render(Vec2<Cart> camera) {
-    Render((int)(associated.box.x - camera.x),
-           (int)(associated.box.y - camera.y));
+    RenderAt((int)(associated.box.x - camera.x),
+             (int)(associated.box.y - camera.y));
 }
 
 bool Sprite::Is(CType type) { return type == CType::Sprite; }
-
-void Sprite::SetScale(float scaleX, float scaleY) {
-    SetScale(Vec2<Cart>{scaleX, scaleY});
-}
-void Sprite::SetScale(Vec2<Cart> s) { scale = s; }
-
-void Sprite::SetFrame(int frame) {
-    currentFrame = frame;
-    clipRect.x = 1ll * frame * width / frameCount;
-}
-void Sprite::SetFrameCount(int fc) {
-    frameCount = fc;
-    SetClip(0, 0, width / frameCount, height);
-}
-void Sprite::SetFrameTime(float ft) { frameTime = ft; }

@@ -9,6 +9,7 @@
 #include "GameObject.h"
 #include "InputManager.h"
 #include "Sound.h"
+#include "component/Animation.h"
 #include "component/Bullet.h"
 #include "component/EndStateDimmer.h"
 #include "component/KeepSoundAlive.h"
@@ -86,9 +87,10 @@ void Alien::Update(float dt) {
 
         // Create explosion sprite
         auto explosion = new GameObject{};
-        auto sprite = new Sprite{*explosion, ASSETS "/img/aliendeath.png", 4,
-                                 .15, 4 * .15};
+        auto sprite = new Sprite{*explosion, ASSETS "/img/aliendeath.png"};
+        auto animation = Animation::horizontal(*explosion, *sprite, 4, .15);
         explosion->AddComponent(sprite);
+        explosion->AddComponent(animation);
         explosion->box.SetCenter(associated.box.Center());
         associated.RequestAdd(explosion);
 

@@ -9,19 +9,19 @@ TileSet::TileSet(int tileWidth, int tileHeight, const string& file)
       tileSet(new Sprite(*go, file)),
       tileWidth(tileWidth),
       tileHeight(tileHeight) {
-    rows = tileSet->Height() / tileHeight;
-    columns = tileSet->Width() / tileWidth;
+    rows = tileSet->SheetHeight() / tileHeight;
+    columns = tileSet->SheetWidth() / tileWidth;
 
-    if (tileSet->Height() % tileHeight != 0) {
+    if (tileSet->SheetHeight() % tileHeight != 0) {
         warn2(
             "tileSet->Height (%d) is not divisible by tileHeight (%d) in " BLUE
             "%s" RESET,
-            tileSet->Height(), tileHeight, file.c_str());
+            tileSet->SheetHeight(), tileHeight, file.c_str());
     }
-    if (tileSet->Width() % tileWidth != 0) {
+    if (tileSet->SheetWidth() % tileWidth != 0) {
         warn2("tileSet->Width (%d) is not divisible by tileWidth (%d) in " BLUE
               "%s" RESET,
-              tileSet->Width(), tileWidth, file.c_str());
+              tileSet->SheetWidth(), tileWidth, file.c_str());
     }
 }
 
@@ -35,7 +35,7 @@ void TileSet::RenderTile(int index, float x, float y) {
 
     tileSet->SetClip((index % columns) * tileWidth,
                      (index / columns) * tileHeight, tileWidth, tileHeight);
-    tileSet->Render(x, y);
+    tileSet->RenderAt(x, y);
 }
 
 int TileSet::TileWidth() { return tileWidth; }

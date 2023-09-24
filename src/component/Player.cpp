@@ -11,6 +11,7 @@
 #include "GameObject.h"
 #include "InputManager.h"
 #include "Sound.h"
+#include "component/Animation.h"
 #include "component/Bullet.h"
 #include "component/EndStateDimmer.h"
 #include "component/KeepSoundAlive.h"
@@ -28,10 +29,10 @@ Player::Player(GameObject& associated, weak_ptr<GameObject> tileMap)
     : Component(associated), tileMap(tileMap) {
     Player::player = this;
 
-    auto sprite =
-        new Sprite{associated, ASSETS "/img/elements_east_walk.png", 6, 0.1};
-    sprite->SetScale(Vec2<Cart>{1, 1});
+    auto sprite = new Sprite{associated, ASSETS "/img/elements_east_walk.png"};
+    auto anim = Animation::horizontal(associated, *sprite, 6, 0.1);
     associated.AddComponent(sprite);
+    associated.AddComponent(anim);
     associated.AddComponent(new Collider{associated});
 }
 
@@ -48,9 +49,10 @@ void Player::Update(float dt) {
 
         // Create explosion sprite
         auto explosion = new GameObject{};
-        auto sprite = new Sprite{*explosion, ASSETS "/img/penguindeath.png", 5,
-                                 .15, 5 * .15};
+        auto sprite = new Sprite{*explosion, ASSETS "/img/penguindeath.png"};
+        auto anim = Animation::horizontal(*explosion, *sprite, 5, .15);
         explosion->AddComponent(sprite);
+        explosion->AddComponent(anim);
         explosion->box.SetCenter(associated.box.Center());
         associated.RequestAdd(explosion);
 

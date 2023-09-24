@@ -16,4 +16,5 @@ enum class CType {
     TextBlinker,
     EndStageDimmer,
     InfiniteBg,
+    Animation,
 };

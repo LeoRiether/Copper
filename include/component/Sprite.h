@@ -13,43 +13,30 @@ using std::string;
 class Sprite : public Component {
    private:
     shared_ptr<Texture> texture;
-    int width, height;
+    int sheetWidth, sheetHeight;
     Vec2<Cart> scale{1, 1};
-
-    int frameCount, currentFrame{0};
-    Timer frameTimeElapsed;
-    float frameTime;
-
-    Timer selfDestructCount;
-    float secondsToSelfDestruct{0};
-
     SDL_Rect clipRect;
 
    public:
     const char* DebugName() { return "Sprite"; }
 
-    Sprite(GameObject& associated);
-    Sprite(GameObject& associated, const string& file, int frameCount = 1,
-           float frameTime = 1, float secondsToSelfDestruct = 0);
+    Sprite(GameObject& associated, const string& file);
     ~Sprite();
 
     void Open(const string& file);
     void SetClip(int x, int y, int w, int h);
+    void SetClip(SDL_Rect rect);
 
-    inline int Width() { return width * scale.x / frameCount; }
-    inline int Height() { return height * scale.y; }
+    inline int SheetWidth() { return sheetWidth; }
+    inline int SheetHeight() { return sheetHeight; }
+    inline Vec2<Cart> Scale() { return scale; }
+    inline void SetScale(Vec2<Cart> s) { scale = s; }
+    inline void SetScale(float x) { scale = {x, x}; }
+
     inline bool IsOpen() { return texture != nullptr; }
 
     void Update(float dt);
-    void Render(int x, int y);
+    void RenderAt(int x, int y);
     void Render(Vec2<Cart> camera);
     bool Is(CType type);
-
-    inline Vec2<Cart> Scale() { return scale; }
-    void SetScale(float scaleX, float scaleY);
-    void SetScale(Vec2<Cart> scale);
-
-    void SetFrame(int frame);
-    void SetFrameCount(int frameCount);
-    void SetFrameTime(float frameTime);
 };

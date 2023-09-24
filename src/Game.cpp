@@ -36,7 +36,7 @@ Game::Game(const char* title, int width, int height) {
                               SDL_WINDOWPOS_CENTERED, width, height, 0);
     if (!window) sdlfail("couldn't create window");
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    renderer = SDL_CreateRenderer(window, -1, 0 /* SDL_RENDERER_ACCELERATED */);
     if (!renderer) sdlfail("couldn't create renderer");
 
     frameStart = SDL_GetTicks();

@@ -6,6 +6,7 @@
 
 #include "CType.h"
 #include "Collider.h"
+#include "component/Animation.h"
 #include "component/Sprite.h"
 
 #define MODULE "Bullet"
@@ -19,8 +20,11 @@ Bullet::Bullet(GameObject& associated, float angle, float speed, int damage,
       distanceLeft(maxDistance),
       damage(damage),
       targetsPlayer(targetsPlayer) {
-    auto sprite = new Sprite{associated, spritePath, spriteFrameCount, 0.1};
+    auto sprite = new Sprite{associated, spritePath};
+    auto animation =
+        Animation::horizontal(associated, *sprite, spriteFrameCount, 0.1);
     associated.AddComponent(sprite);
+    associated.AddComponent(animation);
     associated.angle = angle;
 
     associated.AddComponent(new Collider{associated});

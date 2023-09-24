@@ -16,7 +16,8 @@ release *args:
     ./copper_release {{args}}
 
 grind:
-    just make
+    premake5 gmake2
+    make
     valgrind ./copper_debug
 
 format:

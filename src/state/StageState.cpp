@@ -30,7 +30,7 @@ GameObject* StageState::CreatePlayer(weak_ptr<GameObject> tileMap) {
     auto go = new GameObject{};
     auto body = new Player{*go, tileMap};
     go->AddComponent(body);
-    // go->box.SetCenter(Vec2<Cart>{704, 640});
+    go->box.SetCenter(Vec2<Cart>{704, 640});
     return go;
 }
 
@@ -40,7 +40,8 @@ GameObject* StageState::CreateAlien(float x, float y) {
     auto go = new GameObject{};
     auto alien = new Alien{*go, 7, delay(rng)};
     auto sprite = (Sprite*)go->GetComponent(CType::Sprite);
-    go->box = Rect{x, y, (float)sprite->Width(), (float)sprite->Height()};
+    go->box =
+        Rect{x, y, (float)sprite->SheetWidth(), (float)sprite->SheetHeight()};
 
     go->AddComponent(alien);
     return go;
@@ -69,7 +70,7 @@ void StageState::Start() {
     ProcessAddRequests();
     started = true;
 
-    music->Play();
+    // music->Play();
 }
 
 void StageState::Pause() {}
@@ -84,7 +85,7 @@ void StageState::LoadAssets() {
     RequestAddObject(bgGO);
 
     // Background music
-    music = new Music(ASSETS "/audio/stageState.ogg");
+    // music = new Music(ASSETS "/audio/stageState.ogg");
 }
 
 void StageState::Update(float dt) {
