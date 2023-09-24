@@ -19,7 +19,7 @@ constexpr int MOVE_LEFT_KEY = SDL_SCANCODE_A;
 constexpr int MOVE_DOWN_KEY = SDL_SCANCODE_S;
 constexpr int MOVE_RIGHT_KEY = SDL_SCANCODE_D;
 
-enum InputState { Up = false, Down = true };
+enum class InputState { Up = false, Down = true };
 
 class InputManager {
    private:
@@ -47,6 +47,7 @@ class InputManager {
 
     int MouseX();
     int MouseY();
+    Vec2<Cart> Mouse();
 
     bool QuitRequested();
 };

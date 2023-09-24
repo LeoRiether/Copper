@@ -17,6 +17,7 @@
 #include "component/PenguinCannon.h"
 #include "component/Sprite.h"
 #include "component/TileMap.h"
+#include "math/Direction.h"
 #include "util.h"
 
 #define MODULE "Player"
@@ -39,26 +40,7 @@ Player::~Player() { Player::player = nullptr; }
 void Player::Start() {}
 
 void Player::Update(float dt) {
-    auto& input = InputManager::Instance();
-
-    Vec2<Cart> speed{0, 0};
-    if (input.IsKeyDown(MOVE_UP_KEY)) {
-        speed.y -= 300 * dt;
-    } else if (input.IsKeyDown(MOVE_DOWN_KEY)) {
-        speed.y += 300 * dt;
-    }
-    if (input.IsKeyDown(MOVE_RIGHT_KEY)) {
-        speed.x += 600 * dt;
-    } else if (input.IsKeyDown(MOVE_LEFT_KEY)) {
-        speed.x -= 600 * dt;
-    }
-
-    if (speed.x != 0 && speed.y != 0) speed = speed / sqrt(2);
-
-    associated.box.x += speed.x;
-    associated.box.y += speed.y;
-
-    ConstrainToTile();
+    UpdatePosition(dt);
 
     if (hp <= 0) {
         RequestDelete();
@@ -91,8 +73,8 @@ void Player::Update(float dt) {
 void Player::Render(Vec2<Cart> camera) {
     const auto& renderer = Game::Instance().Renderer();
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    for (int i = 1400; i < 1800; i += 10) {
-        for (int j = 100; j < 500; j += 10) {
+    for (int i = 1400; i < 2000; i += 10) {
+        for (int j = 100; j < 700; j += 10) {
             Vec2<Iso> iso{(float)i, (float)j};
             Vec2<Cart> cart = iso.toCart();
             SDL_Rect rect{(int)cart.x - (int)camera.x,
@@ -116,6 +98,13 @@ void Player::RequestDelete() {
     Player::player = nullptr;
 }
 
+void Player::UpdatePosition(float dt) {
+    float linearSpeed = 400;
+    Vec2<Cart> speed = Direction::fromInput().toVec() * linearSpeed * dt;
+    associated.box.x += speed.x;
+    associated.box.y += speed.y;
+}
+
 void Player::ConstrainToTile() {
     return;
     Vec2<Iso> iso = associated.box.Foot().toIso();
@@ -127,8 +116,8 @@ void Player::ConstrainToTile() {
             x = mx;
     };
 
-    clamp(1400, iso.x, 1800);
-    clamp(100, iso.y, 500);
+    clamp(1400, iso.x, 2000);
+    clamp(100, iso.y, 700);
 
     associated.box.SetFoot(iso.toCart());
 }

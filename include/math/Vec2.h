@@ -39,6 +39,10 @@ struct Vec2 {
 
     inline float angle() const { return std::atan2(y, x); }
 
+    inline float dot(const Vec2<CoordsSystem> rhs) const {
+        return x * rhs.x + y * rhs.y;
+    };
+
     Vec2<Iso> toIso() const;
     Vec2<Cart> toCart() const;
 };

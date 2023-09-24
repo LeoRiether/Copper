@@ -12,11 +12,9 @@ class Player : public Component {
    private:
     weak_ptr<GameObject> pcannon;
     weak_ptr<GameObject> tileMap;
-    Vec2<Cart> speed{0, 0};
-    float linearSpeed{0};
-    float angle{0};
     int hp{100};
 
+    void UpdatePosition(float dt);
     void ConstrainToTile();
 
    public:

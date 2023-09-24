@@ -37,22 +37,24 @@ void InputManager::Update() {
             case SDL_KEYDOWN:
                 if (!event.key.repeat) {
                     keyUpdate[mapkey(event.key.keysym.scancode)] = true;
-                    keyState[mapkey(event.key.keysym.scancode)] = Down;
+                    keyState[mapkey(event.key.keysym.scancode)] =
+                        InputState::Down;
                 }
                 break;
             case SDL_KEYUP:
                 if (!event.key.repeat) {
                     keyUpdate[mapkey(event.key.keysym.scancode)] = true;
-                    keyState[mapkey(event.key.keysym.scancode)] = Up;
+                    keyState[mapkey(event.key.keysym.scancode)] =
+                        InputState::Up;
                 }
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 mouseUpdate[event.button.button] = true;
-                mouseState[event.button.button] = Down;
+                mouseState[event.button.button] = InputState::Down;
                 break;
             case SDL_MOUSEBUTTONUP:
                 mouseUpdate[event.button.button] = true;
-                mouseState[event.button.button] = Up;
+                mouseState[event.button.button] = InputState::Up;
                 break;
             default:
                 break;
@@ -61,27 +63,31 @@ void InputManager::Update() {
 }
 
 bool InputManager::KeyPress(int key) {
-    return keyUpdate[mapkey(key)] && keyState[mapkey(key)] == Down;
+    return keyUpdate[mapkey(key)] && keyState[mapkey(key)] == InputState::Down;
 }
 
 bool InputManager::KeyRelease(int key) {
-    return keyUpdate[mapkey(key)] && keyState[mapkey(key)] == Up;
+    return keyUpdate[mapkey(key)] && keyState[mapkey(key)] == InputState::Up;
 }
 
-bool InputManager::IsKeyDown(int key) { return keyState[mapkey(key)] == Down; }
+bool InputManager::IsKeyDown(int key) {
+    return keyState[mapkey(key)] == InputState::Down;
+}
 
 bool InputManager::MousePress(int button) {
-    return mouseUpdate[button] && mouseState[button] == Down;
+    return mouseUpdate[button] && mouseState[button] == InputState::Down;
 }
 
 bool InputManager::MouseRelease(int button) {
-    return mouseUpdate[button] && mouseState[button] == Up;
+    return mouseUpdate[button] && mouseState[button] == InputState::Up;
 }
 
 bool InputManager::IsMouseDown(int button) {
-    return mouseState[button] == Down;
+    return mouseState[button] == InputState::Down;
 }
 
 int InputManager::MouseX() { return mouseX; }
 int InputManager::MouseY() { return mouseY; }
+Vec2<Cart> InputManager::Mouse() { return {(float)mouseX, (float)mouseY}; }
+
 bool InputManager::QuitRequested() { return quitRequested; }

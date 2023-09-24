@@ -4,8 +4,6 @@
 #include "Game.h"
 #include "GameObject.h"
 #include "InputManager.h"
-#include "SDL_render.h"
-#include "SDL_scancode.h"
 #include "component/Text.h"
 #include "component/TextBlinker.h"
 #include "state/StageState.h"
