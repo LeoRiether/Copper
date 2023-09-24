@@ -66,6 +66,7 @@ void Game::Run() {
         CalculateDeltaTime();
         state->Update(dt);
 
+        SDL_RenderClear(renderer);
         state->Render();
         SDL_RenderPresent(renderer);
 
@@ -95,8 +96,7 @@ Game& Game::Instance() {
     if (instance == nullptr) {
         // Mankai STEP BY STEP de susume!
         // STEP OUT saa, tobidase!
-        instance = new Game{"Leonardo Alves Riether - 190032413", SCREEN_WIDTH,
-                            SCREEN_HEIGHT};
+        instance = new Game{"COPPER", SCREEN_WIDTH, SCREEN_HEIGHT};
     }
     return *instance;
 }

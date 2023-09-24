@@ -117,6 +117,7 @@ void Player::RequestDelete() {
 }
 
 void Player::ConstrainToTile() {
+    return;
     Vec2<Iso> iso = associated.box.Foot().toIso();
 
     auto clamp = [&](float mn, float& x, float mx) {

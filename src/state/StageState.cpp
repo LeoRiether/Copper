@@ -30,7 +30,7 @@ GameObject* StageState::CreatePlayer(weak_ptr<GameObject> tileMap) {
     auto go = new GameObject{};
     auto body = new Player{*go, tileMap};
     go->AddComponent(body);
-    go->box.SetCenter(Vec2<Cart>{704, 640});
+    // go->box.SetCenter(Vec2<Cart>{704, 640});
     return go;
 }
 
