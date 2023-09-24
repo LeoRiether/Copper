@@ -29,8 +29,7 @@ Alien::Alien(GameObject& go, int nMinions, float delay)
     associated.debugName = "Alien";
     go.AddComponent(sprite);
     go.AddComponent(new Collider{go});
-
-    restTimer.Update(delay);
+    restTimer.Delay(delay);
 }
 
 Alien::~Alien() {
@@ -55,9 +54,7 @@ void Alien::Start() {
 void Alien::Update(float dt) {
     switch (state) {
         case Resting: {
-            restTimer.Update(dt);
             if (restTimer.Get() >= REST_TIME_S) {
-                restTimer.Restart();
                 state = Moving;
                 if (Player::player) {
                     destination = Player::player->Associated().box.Center();
@@ -70,6 +67,7 @@ void Alien::Update(float dt) {
             if (delta.norm() <= SPEEEED * dt) {
                 // Stop moving!
                 state = Resting;
+                restTimer.Restart();
                 BulletHell();
             } else {
                 speed = delta.normalize() * SPEEEED;

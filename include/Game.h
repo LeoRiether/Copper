@@ -44,6 +44,7 @@ class Game {
     void RequestPop();
     void RequestPush(State* state);
 
+    int64_t FrameStart();
     float DeltaTime();
     SDL_Renderer* Renderer();
     State& GetState();

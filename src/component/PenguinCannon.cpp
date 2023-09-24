@@ -15,13 +15,11 @@ PenguinCannon::PenguinCannon(GameObject& associated,
     associated.AddComponent(new Collider{associated});
 }
 
-void PenguinCannon::Update(float dt) {
+void PenguinCannon::Update(float) {
     if (pbody.expired()) {
         associated.RequestDelete();
         return;
     }
-
-    timer.Update(dt);
 
     auto& input = InputManager::Instance();
     auto pb = pbody.lock();

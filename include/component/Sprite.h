@@ -17,7 +17,8 @@ class Sprite : public Component {
     Vec2<Cart> scale{1, 1};
 
     int frameCount, currentFrame{0};
-    float timeElapsed{0}, frameTime;
+    Timer frameTimeElapsed;
+    float frameTime;
 
     Timer selfDestructCount;
     float secondsToSelfDestruct{0};

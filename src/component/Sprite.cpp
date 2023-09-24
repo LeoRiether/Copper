@@ -43,17 +43,15 @@ void Sprite::SetClip(int x, int y, int w, int h) {
     associated.box.h = h;
 }
 
-void Sprite::Update(float dt) {
-    timeElapsed += dt;
-    while (timeElapsed >= frameTime) {
-        timeElapsed -= frameTime;
+void Sprite::Update(float) {
+    while (frameTimeElapsed.Get() >= frameTime) {
+        frameTimeElapsed.Restart();
         SetFrame(currentFrame + 1 >= frameCount
                      ? (currentFrame + 1 - frameCount)
                      : (currentFrame + 1));
     }
 
     if (secondsToSelfDestruct > 0) {
-        selfDestructCount.Update(dt);
         if (selfDestructCount.Get() >= secondsToSelfDestruct)
             associated.RequestDelete();
     }

@@ -88,6 +88,8 @@ void Game::RequestPush(State* state) {
     stateStackOperations.emplace_back(state);
 }
 
+int64_t Game::FrameStart() { return frameStart; }
+
 float Game::DeltaTime() { return dt; }
 
 SDL_Renderer* Game::Renderer() { return renderer; }

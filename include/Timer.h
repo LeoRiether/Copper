@@ -1,15 +1,15 @@
 #pragma once
 
-// Literally just a float
+#include <cstdint>
+
 class Timer {
    private:
-    float time{0};
+    int64_t startTime;
 
    public:
     Timer();
 
-    void Update(float dt);
-
     void Restart();
+    void Delay(float t);
     float Get();
 };
