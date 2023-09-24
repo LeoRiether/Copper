@@ -109,13 +109,6 @@ void PenguinBody::RequestDelete() {
 }
 
 void PenguinBody::ReflectOnMapBorder() {
-    if (tileMap.expired()) {
-        warn("TileMap object not found?");
-        return;
-    }
-
-    auto map = (TileMap*)tileMap.lock()->GetComponent(CType::TileMap);
-
     auto& box = associated.box;
     if (box.x < 0) {
         box.x = 0;

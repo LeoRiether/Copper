@@ -59,26 +59,11 @@ StageState::~StageState() {
 void StageState::Start() {
     LoadAssets();
 
-    // Tilemap
-    auto tileGO = new GameObject;
-    tileGO->box = Rect{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-    auto tileset = new TileSet(DEFAULT_TILE_WIDTH, DEFAULT_TILE_HEIGHT,
-                               ASSETS "/img/tileset.png");
-    auto tilemap = new TileMap(*tileGO, ASSETS "/map/tileMap.txt", tileset);
-    tileGO->AddComponent(tilemap);
-    auto tileGO_weak = RequestAddObject(tileGO);
-
     // PenguinBody
-    auto penguinBody = CreatePenguinBody(tileGO_weak);
+    auto penguinBody =
+        CreatePenguinBody(shared_ptr<GameObject>(new GameObject{}));
     camera->Follow(penguinBody);
     RequestAddObject(penguinBody);
-
-    // Alien::alienCount = 0;
-    // std::uniform_int_distribution<int> distribution(1, 5);
-    // int aliens = distribution(rng);
-    // for (int i = 0; i < aliens; i++) {
-    //     RequestAddObject(CreateAlien());
-    // }
 
     StartArray();
     ProcessAddRequests();
@@ -95,8 +80,7 @@ void StageState::LoadAssets() {
     // Background
     auto bgGO = new GameObject;
     bgGO->box = Rect{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-    bgGO->AddComponent(new Sprite{*bgGO, ASSETS "/img/ocean.jpg"});
-    bgGO->AddComponent(new CameraFollower{*bgGO});
+    bgGO->AddComponent(new Sprite{*bgGO, ASSETS "/img/isobg.png"});
     RequestAddObject(bgGO);
 
     // Background music
@@ -108,6 +92,8 @@ void StageState::Update(float dt) {
     // render
     ProcessAddRequests();
 
+    // Camera update could be done after GameObject updates, but here it misses the object's position
+    // by a frame, which gives it a cool effect I think
     camera->Update(dt);
 
     auto& input = InputManager::Instance();
