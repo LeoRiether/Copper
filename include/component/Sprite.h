@@ -17,6 +17,8 @@ class Sprite : public Component {
     Vec2<Cart> scale{1, 1};
     SDL_Rect clipRect;
 
+    bool hasShadow{false};
+
    public:
     const char* DebugName() { return "Sprite"; }
 
@@ -32,11 +34,12 @@ class Sprite : public Component {
     inline Vec2<Cart> Scale() { return scale; }
     inline void SetScale(Vec2<Cart> s) { scale = s; }
     inline void SetScale(float x) { scale = {x, x}; }
+    inline void SetHasShadow(bool flag) { hasShadow = flag; }
 
     inline bool IsOpen() { return texture != nullptr; }
 
     void Update(float dt);
-    void RenderAt(int x, int y);
     void Render(Vec2<Cart> camera);
+    void RenderAt(int x, int y);
     bool Is(CType type);
 };

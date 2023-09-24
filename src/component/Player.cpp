@@ -30,6 +30,7 @@ Player::Player(GameObject& associated, weak_ptr<GameObject> tileMap)
     Player::player = this;
 
     auto sprite = new Sprite{associated, ASSETS "/img/elements_east_walk.png"};
+    sprite->SetHasShadow(true);
     auto anim = Animation::horizontal(associated, *sprite, 6, 0.1);
     associated.AddComponent(sprite);
     associated.AddComponent(anim);

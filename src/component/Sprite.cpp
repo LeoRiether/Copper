@@ -38,6 +38,22 @@ void Sprite::Update(float) {}
 
 void Sprite::RenderAt(int x, int y) {
     Game& game = Game::Instance();
+
+    if (hasShadow) {
+        int shadowX = x;
+        int shadowY = y + clipRect.h * scale.y - 20;
+
+        SDL_Rect destRect{shadowX, shadowY, int(clipRect.w * scale.x),
+                          int(clipRect.w * scale.x * 0.5)};
+        SDL_Point rotationPoint{destRect.w / 2, 0};
+        SDL_SetTextureColorMod(texture->inner, 0, 0, 0);
+        SDL_SetTextureAlphaMod(texture->inner, 128);
+        SDL_RenderCopyEx(game.Renderer(), texture->inner, &clipRect, &destRect,
+                         0, &rotationPoint, SDL_FLIP_VERTICAL);
+        SDL_SetTextureAlphaMod(texture->inner, 255);
+        SDL_SetTextureColorMod(texture->inner, 255, 255, 255);
+    }
+
     SDL_Rect destRect{x, y, int(clipRect.w * scale.x),
                       int(clipRect.h * scale.y)};
     SDL_RenderCopyEx(game.Renderer(), texture->inner, &clipRect, &destRect,

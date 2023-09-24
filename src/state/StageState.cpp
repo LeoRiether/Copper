@@ -81,7 +81,7 @@ void StageState::LoadAssets() {
     // Background
     auto bgGO = new GameObject;
     bgGO->box = Rect{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-    bgGO->AddComponent(new InfiniteBg{*bgGO, ASSETS "/img/isogrid.png"});
+    bgGO->AddComponent(new InfiniteBg{*bgGO, ASSETS "/img/isobg.png"});
     RequestAddObject(bgGO);
 
     // Background music
