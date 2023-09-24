@@ -42,9 +42,9 @@ int& TileMap::At(int x, int y, int z) {
 
 void TileMap::Update(float dt) { UNUSED(dt); }
 
-void TileMap::Render() { Render(Vec2{0, 0}); }
+void TileMap::Render() { Render(Vec2<Cart>{0, 0}); }
 
-void TileMap::Render(Vec2 cameraPosition) {
+void TileMap::Render(Vec2<Cart> cameraPosition) {
     for (int z = 0; z < depth; z++) {
         RenderLayer(z, cameraPosition.x * (z * 0.8f + 1),
                     cameraPosition.y * (z * 0.8f + 1));

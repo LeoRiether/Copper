@@ -20,8 +20,8 @@ class Minion : public Component {
            float arcOffsetRad = 0);
 
     void Update(float dt);
-    void Render(Vec2 camera);
+    void Render(Vec2<Cart> camera);
     bool Is(CType type);
-    void Shoot(Vec2 target);
+    void Shoot(Vec2<Cart> target);
     void NotifyCollision(GameObject& other);
 };

@@ -34,7 +34,7 @@ void GameObject::Update(float dt) {
     if (collider) collider->Update(dt);
 }
 
-void GameObject::Render(Vec2 camera) {
+void GameObject::Render(Vec2<Cart> camera) {
     for (auto& component : components) {
         component->Render(camera);
     }

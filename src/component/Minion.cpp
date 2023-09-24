@@ -22,7 +22,7 @@ Minion::Minion(GameObject& go, weak_ptr<GameObject> alienCenter,
     auto sprite = (Sprite*)go.GetComponent(CType::Sprite);
     float scale = dist(rng);
     sprite->SetScale(scale, scale);
-    go.AddComponent(new Collider{go, Vec2{scale, scale}});
+    go.AddComponent(new Collider{go, Vec2<Cart>{scale, scale}});
 }
 
 void Minion::Update(float dt) {
@@ -35,16 +35,16 @@ void Minion::Update(float dt) {
     associated.angle = arc;
 
     Rect centerBox = alienCenter.lock()->box;
-    Vec2 center = centerBox.Center();
-    Vec2 pos = center + Vec2{RADIUS, 0}.GetRotated(arc);
+    Vec2<Cart> center = centerBox.Center();
+    Vec2<Cart> pos = center + Vec2<Cart>{RADIUS, 0}.GetRotated(arc);
     associated.box.SetCenter(pos);
 }
 
-void Minion::Render(Vec2) {}
+void Minion::Render(Vec2<Cart>) {}
 
 bool Minion::Is(CType type) { return type == CType::Minion; }
 
-void Minion::Shoot(Vec2 target) {
+void Minion::Shoot(Vec2<Cart> target) {
     float angle = (target - associated.box.Center()).angle();
     int damage = (rng() % 10) + 5;
 

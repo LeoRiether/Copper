@@ -14,7 +14,7 @@ class Sprite : public Component {
    private:
     shared_ptr<Texture> texture;
     int width, height;
-    Vec2 scale{1, 1};
+    Vec2<Cart> scale{1, 1};
 
     int frameCount, currentFrame{0};
     float timeElapsed{0}, frameTime;
@@ -41,12 +41,12 @@ class Sprite : public Component {
 
     void Update(float dt);
     void Render(int x, int y);
-    void Render(Vec2 camera);
+    void Render(Vec2<Cart> camera);
     bool Is(CType type);
 
-    inline Vec2 Scale() { return scale; }
+    inline Vec2<Cart> Scale() { return scale; }
     void SetScale(float scaleX, float scaleY);
-    void SetScale(Vec2 scale);
+    void SetScale(Vec2<Cart> scale);
 
     void SetFrame(int frame);
     void SetFrameCount(int frameCount);

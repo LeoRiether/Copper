@@ -3,10 +3,22 @@
 #include <cmath>
 inline const float PI = acos(-1);
 
+// Isometric coordinate system
+struct Iso {};
+
+// Cartesian coordinate system
+struct Cart {};
+
+template <class CoordsSystem>
 struct Vec2 {
     float x, y;
 
-    Vec2 GetRotated(float theta) const;
+    inline Vec2 GetRotated(float theta) const {
+        const float cost = std::cos(theta);
+        const float sint = std::sin(theta);
+        return Vec2{x * cost - y * sint, x * sint + y * cost};
+    }
+
     inline Vec2 operator+(const Vec2& rhs) const {
         return Vec2{x + rhs.x, y + rhs.y};
     }
@@ -26,4 +38,19 @@ struct Vec2 {
     inline Vec2 normalize() const { return *this / norm(); }
 
     inline float angle() const { return std::atan2(y, x); }
+
+    Vec2<Iso> toIso() const;
+    Vec2<Cart> toCart() const;
 };
+
+template <>
+Vec2<Iso> Vec2<Iso>::toIso() const;
+
+template <>
+Vec2<Iso> Vec2<Cart>::toIso() const;
+
+template <>
+Vec2<Cart> Vec2<Iso>::toCart() const;
+
+template <>
+Vec2<Cart> Vec2<Cart>::toCart() const;

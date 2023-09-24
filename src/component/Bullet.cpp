@@ -33,7 +33,7 @@ void Bullet::Update(float dt) {
     if (distanceLeft <= 0) associated.RequestDelete();
 }
 
-void Bullet::Render(Vec2) {}
+void Bullet::Render(Vec2<Cart>) {}
 
 bool Bullet::Is(CType type) { return type == CType::Bullet; }
 

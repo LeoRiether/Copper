@@ -1,9 +1,21 @@
 #include "math/Vec2.h"
 
-#include <cmath>
+template <>
+Vec2<Iso> Vec2<Iso>::toIso() const {
+    return {x, y};
+}
 
-Vec2 Vec2::GetRotated(float theta) const {
-    const float cost = std::cos(theta);
-    const float sint = std::sin(theta);
-    return Vec2{x * cost - y * sint, x * sint + y * cost};
+template <>
+Vec2<Iso> Vec2<Cart>::toIso() const {
+    return {(x - y) / 2.0f, (x + y) / 4.0f};
+}
+
+template <>
+Vec2<Cart> Vec2<Iso>::toCart() const {
+    return {x + 2.0f * y, -x + 2.0f * y};
+}
+
+template <>
+Vec2<Cart> Vec2<Cart>::toCart() const {
+    return {x, y};
 }

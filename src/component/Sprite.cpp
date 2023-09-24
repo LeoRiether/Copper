@@ -68,7 +68,7 @@ void Sprite::Render(int x, int y) {
                      associated.angle * 180 / PI, nullptr, SDL_FLIP_NONE);
 }
 
-void Sprite::Render(Vec2 camera) {
+void Sprite::Render(Vec2<Cart> camera) {
     Render((int)(associated.box.x - camera.x),
            (int)(associated.box.y - camera.y));
 }
@@ -76,9 +76,9 @@ void Sprite::Render(Vec2 camera) {
 bool Sprite::Is(CType type) { return type == CType::Sprite; }
 
 void Sprite::SetScale(float scaleX, float scaleY) {
-    SetScale(Vec2{scaleX, scaleY});
+    SetScale(Vec2<Cart>{scaleX, scaleY});
 }
-void Sprite::SetScale(Vec2 s) { scale = s; }
+void Sprite::SetScale(Vec2<Cart> s) { scale = s; }
 
 void Sprite::SetFrame(int frame) {
     currentFrame = frame;

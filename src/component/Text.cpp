@@ -29,7 +29,7 @@ Text::~Text() {}
 
 void Text::Update(float) {}
 
-void Text::Render(Vec2 camera) {
+void Text::Render(Vec2<Cart> camera) {
     auto& game = Game::Instance();
     SDL_Rect clipRect{0, 0, (int)associated.box.w, (int)associated.box.h};
     SDL_Rect destRect{int(associated.box.x - camera.x),

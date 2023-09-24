@@ -4,7 +4,7 @@
 
 #define MODULE "State"
 
-State::State() { camera->SetSpeed(Vec2{250, 250}); }
+State::State() { camera->SetSpeed(Vec2<Cart>{250, 250}); }
 
 State::~State() {
     objects.clear();

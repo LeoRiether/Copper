@@ -33,6 +33,6 @@ void TextBlinker::Update(float dt) {
     text->SetColor(color);
 }
 
-void TextBlinker::Render(Vec2) {}
+void TextBlinker::Render(Vec2<Cart>) {}
 
 bool TextBlinker::Is(CType type) { return type == CType::TextBlinker; }

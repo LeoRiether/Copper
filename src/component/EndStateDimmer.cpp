@@ -17,7 +17,7 @@ void EndStateDimmer::Update(float dt) {
     }
 }
 
-void EndStateDimmer::Render(Vec2) {
+void EndStateDimmer::Render(Vec2<Cart>) {
     float opacity = 255.0f * timer / secondsToDeath;
 
     auto renderer = Game::Instance().Renderer();

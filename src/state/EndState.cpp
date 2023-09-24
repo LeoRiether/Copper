@@ -63,7 +63,7 @@ void EndState::Start() {
                                     Text::Blended, "ESC . Sair",
                                     colorFromHex("#F0A029")});
         text->AddComponent(new TextBlinker{*text, 1.5});
-        text->box.SetCenter(Vec2{SCREEN_WIDTH / 2.0f, 0});
+        text->box.SetCenter(Vec2<Cart>{SCREEN_WIDTH / 2.0f, 0});
         text->box.y = SCREEN_HEIGHT - 120;
         RequestAddObject(text);
     }
@@ -73,7 +73,7 @@ void EndState::Start() {
                                     Text::Blended, "Espaco . Jogar de novo",
                                     colorFromHex("#F0A029")});
         text->AddComponent(new TextBlinker{*text, 1.5});
-        text->box.SetCenter(Vec2{SCREEN_WIDTH / 2.0f, 0});
+        text->box.SetCenter(Vec2<Cart>{SCREEN_WIDTH / 2.0f, 0});
         text->box.y = SCREEN_HEIGHT - 180;
         RequestAddObject(text);
     }

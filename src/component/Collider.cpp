@@ -3,7 +3,7 @@
 #include "CType.h"
 #include "Game.h"
 
-Collider::Collider(GameObject& associated, Vec2 scale, Vec2 offset)
+Collider::Collider(GameObject& associated, Vec2<Cart> scale, Vec2<Cart> offset)
     : Component(associated), scale(scale), offset(offset) {}
 
 void Collider::Update(float) {
@@ -17,26 +17,29 @@ void Collider::Update(float) {
     box.y += offset.y;
 }
 
-void Collider::Render(Vec2 camera) {
+void Collider::Render(Vec2<Cart> camera) {
 #ifdef DEBUG
-    Vec2 center(box.Center());
+    Vec2<Cart> center(box.Center());
     SDL_Point points[5];
 
-    Vec2 point = (Vec2{box.x, box.y} - center).GetRotated(associated.angle) +
-                 center - camera;
+    Vec2<Cart> point =
+        (Vec2<Cart>{box.x, box.y} - center).GetRotated(associated.angle) +
+        center - camera;
     points[0] = {(int)point.x, (int)point.y};
     points[4] = {(int)point.x, (int)point.y};
 
-    point = (Vec2{box.x + box.w, box.y} - center).GetRotated(associated.angle) +
+    point = (Vec2<Cart>{box.x + box.w, box.y} - center)
+                .GetRotated(associated.angle) +
             center - camera;
     points[1] = {(int)point.x, (int)point.y};
 
-    point = (Vec2{box.x + box.w, box.y + box.h} - center)
+    point = (Vec2<Cart>{box.x + box.w, box.y + box.h} - center)
                 .GetRotated(associated.angle) +
             center - camera;
     points[2] = {(int)point.x, (int)point.y};
 
-    point = (Vec2{box.x, box.y + box.h} - center).GetRotated(associated.angle) +
+    point = (Vec2<Cart>{box.x, box.y + box.h} - center)
+                .GetRotated(associated.angle) +
             center - camera;
     points[3] = {(int)point.x, (int)point.y};
 
@@ -48,5 +51,5 @@ void Collider::Render(Vec2 camera) {
 
 bool Collider::Is(CType type) { return type == CType::Collider; }
 
-void Collider::SetScale(Vec2 s) { scale = s; }
-void Collider::SetOffset(Vec2 o) { offset = o; }
+void Collider::SetScale(Vec2<Cart> s) { scale = s; }
+void Collider::SetOffset(Vec2<Cart> o) { offset = o; }

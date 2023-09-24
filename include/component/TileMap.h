@@ -28,7 +28,7 @@ class TileMap : public Component {
     int& At(int x, int y, int z);
     void Update(float dt);
     void Render();
-    void Render(Vec2 cameraPosition);
+    void Render(Vec2<Cart> cameraPosition);
     void RenderLayer(int layer, int cameraX = 0, int cameraY = 0);
     bool Is(CType type);
 

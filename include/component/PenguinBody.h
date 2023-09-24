@@ -12,7 +12,7 @@ class PenguinBody : public Component {
    private:
     weak_ptr<GameObject> pcannon;
     weak_ptr<GameObject> tileMap;
-    Vec2 speed{0, 0};
+    Vec2<Cart> speed{0, 0};
     float linearSpeed{0};
     float angle{0};
     int hp{100};
@@ -30,7 +30,7 @@ class PenguinBody : public Component {
 
     void Start();
     void Update(float dt);
-    void Render(Vec2 camera);
+    void Render(Vec2<Cart> camera);
     bool Is(CType type);
     void NotifyCollision(GameObject& other);
     void RequestDelete();

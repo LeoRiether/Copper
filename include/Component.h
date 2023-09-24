@@ -19,7 +19,7 @@ class Component {
     virtual const char* DebugName() { return "<unnamed>"; }
 
     virtual void Update(float dt) = 0;
-    virtual void Render(Vec2 camera) = 0;
+    virtual void Render(Vec2<Cart> camera) = 0;
 
     virtual bool Is(CType type) = 0;
 

@@ -22,17 +22,17 @@ class Alien : public Component {
     enum AlienState { Resting, Moving };
     constexpr static float REST_TIME_S = 1.5f;
 
-    Vec2 speed{0, 0};
+    Vec2<Cart> speed{0, 0};
     int hp{30};
 
     AlienState state{Resting};
     Timer restTimer;
-    Vec2 destination;
+    Vec2<Cart> destination;
 
     vector<weak_ptr<GameObject>> minions{};
 
     void BulletHell();
-    Minion* ClosestMinion(Vec2 target);
+    Minion* ClosestMinion(Vec2<Cart> target);
 
    public:
     static int alienCount;
@@ -42,7 +42,7 @@ class Alien : public Component {
 
     void Start();
     void Update(float dt);
-    void Render(Vec2 camera);
+    void Render(Vec2<Cart> camera);
     bool Is(CType type);
     void NotifyCollision(GameObject& other);
 };

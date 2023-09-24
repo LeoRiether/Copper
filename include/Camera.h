@@ -5,7 +5,7 @@
 
 class Camera {
    private:
-    Vec2 pos{0, 0}, speed{0, 0};
+    Vec2<Cart> pos{0, 0}, speed{0, 0};
     GameObject* focus = nullptr;
 
    public:
@@ -14,7 +14,7 @@ class Camera {
     void Unfollow();
     void Update(float dt);
 
-    inline Vec2 Pos() { return pos; }
-    inline Vec2 Speed() { return speed; }
-    inline void SetSpeed(const Vec2 s) { speed = s; }
+    inline Vec2<Cart> Pos() { return pos; }
+    inline Vec2<Cart> Speed() { return speed; }
+    inline void SetSpeed(const Vec2<Cart> s) { speed = s; }
 };

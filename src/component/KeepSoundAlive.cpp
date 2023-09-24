@@ -15,5 +15,5 @@ void KeepSoundAlive::Update(float) {
     }
 }
 
-void KeepSoundAlive::Render(Vec2) {}
+void KeepSoundAlive::Render(Vec2<Cart>) {}
 bool KeepSoundAlive::Is(CType _type) { return _type == CType::KeepSoundAlive; }

@@ -35,5 +35,5 @@ bool Sound::IsOpen() { return chunk != nullptr; }
 bool Sound::IsPlaying() { return channel != -1 && Mix_Playing(channel); }
 
 void Sound::Update(float) {}
-void Sound::Render(Vec2) {}
+void Sound::Render(Vec2<Cart>) {}
 bool Sound::Is(CType type) { return type == CType::Sound; }

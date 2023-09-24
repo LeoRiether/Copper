@@ -28,7 +28,7 @@ void PenguinCannon::Update(float dt) {
 
     associated.box.SetCenter(pb->box.Center());
 
-    auto mouse = Vec2{(float)input.MouseX(), (float)input.MouseY()};
+    auto mouse = Vec2<Cart>{(float)input.MouseX(), (float)input.MouseY()};
     associated.angle = (mouse - associated.box.Center()).angle();
 
     if (input.IsMouseDown(LEFT_MOUSE_BUTTON) && timer.Get() >= SHOOT_DELAY_S) {
@@ -37,7 +37,7 @@ void PenguinCannon::Update(float dt) {
     }
 }
 
-void PenguinCannon::Render(Vec2) {}
+void PenguinCannon::Render(Vec2<Cart>) {}
 
 bool PenguinCannon::Is(CType type) { return type == CType::PenguinCannon; }
 
@@ -52,7 +52,7 @@ void PenguinCannon::Shoot() {
     go->AddComponent(bullet);
 
     // distância do centro do canhão para spawnar a bullet :)
-    Vec2 distanceOffset = Vec2{60.0f, 0}.GetRotated(angle);
+    Vec2<Cart> distanceOffset = Vec2<Cart>{60.0f, 0}.GetRotated(angle);
     go->box.SetCenter(associated.box.Center() + distanceOffset);
 
     associated.RequestAdd(go);

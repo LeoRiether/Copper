@@ -27,7 +27,7 @@ PenguinBody::PenguinBody(GameObject& associated, weak_ptr<GameObject> tileMap)
 
     auto sprite =
         new Sprite{associated, ASSETS "/img/rotating-girl.png", 8, 0.1};
-    sprite->SetScale(Vec2{4, 4});
+    sprite->SetScale(Vec2<Cart>{4, 4});
     associated.AddComponent(sprite);
     associated.AddComponent(new Collider{associated});
 }
@@ -45,7 +45,7 @@ void PenguinBody::Start() {
 void PenguinBody::Update(float dt) {
     auto& input = InputManager::Instance();
 
-    Vec2 speed{0, 0};
+    Vec2<Cart> speed{0, 0};
     if (input.IsKeyDown(MOVE_UP_KEY)) {
         speed.y -= 300 * dt;
     } else if (input.IsKeyDown(MOVE_DOWN_KEY)) {
@@ -92,7 +92,7 @@ void PenguinBody::Update(float dt) {
     }
 }
 
-void PenguinBody::Render(Vec2) {}
+void PenguinBody::Render(Vec2<Cart>) {}
 
 bool PenguinBody::Is(CType type) { return type == CType::PenguinBody; }
 

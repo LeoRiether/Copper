@@ -12,6 +12,6 @@ class EndStateDimmer : public Component {
     EndStateDimmer(GameObject& associated, float secondsToDeath);
 
     void Update(float dt);
-    void Render(Vec2 camera);
+    void Render(Vec2<Cart> camera);
     bool Is(CType type);
 };

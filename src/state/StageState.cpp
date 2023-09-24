@@ -29,7 +29,7 @@ GameObject* StageState::CreatePenguinBody(weak_ptr<GameObject> tileMap) {
     auto go = new GameObject{};
     auto body = new PenguinBody{*go, tileMap};
     go->AddComponent(body);
-    go->box.SetCenter(Vec2{704, 640});
+    go->box.SetCenter(Vec2<Cart>{704, 640});
     return go;
 }
 
@@ -45,8 +45,9 @@ GameObject* StageState::CreateAlien(float x, float y) {
     return go;
 }
 GameObject* StageState::CreateAlien() {
-    Vec2 objPos = Vec2{200, 0}.GetRotated(-PI + PI * (rng() % 1001) / 500.0) +
-                  Vec2{704, 640};
+    Vec2<Cart> objPos =
+        Vec2<Cart>{200, 0}.GetRotated(-PI + PI * (rng() % 1001) / 500.0) +
+        Vec2<Cart>{704, 640};
     return CreateAlien(objPos.x, objPos.y);
 }
 

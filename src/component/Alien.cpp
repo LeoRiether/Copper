@@ -67,7 +67,7 @@ void Alien::Update(float dt) {
             break;
         }
         case Moving: {
-            Vec2 delta = destination - associated.box.Center();
+            Vec2<Cart> delta = destination - associated.box.Center();
             if (delta.norm() <= SPEEEED * dt) {
                 // Stop moving!
                 state = Resting;
@@ -116,7 +116,7 @@ void Alien::Update(float dt) {
     }
 }
 
-void Alien::Render(Vec2) {}
+void Alien::Render(Vec2<Cart>) {}
 
 bool Alien::Is(CType type) { return type == CType::Alien; }
 
@@ -127,13 +127,13 @@ void Alien::NotifyCollision(GameObject& other) {
     hp -= bullet->Damage();
 }
 
-Minion* Alien::ClosestMinion(Vec2 target) {
+Minion* Alien::ClosestMinion(Vec2<Cart> target) {
     float bestDist = std::numeric_limits<float>::max();
     Minion* bestMinion = nullptr;
     for (size_t i = 0; i < minions.size(); i++) {
         if (minions[i].expired()) continue;  // RIP
 
-        Vec2 pos = minions[i].lock()->box.Center();
+        Vec2<Cart> pos = minions[i].lock()->box.Center();
         if ((target - pos).norm2() < bestDist) {
             bestDist = (target - pos).norm2();
             bestMinion =
@@ -146,16 +146,16 @@ Minion* Alien::ClosestMinion(Vec2 target) {
 
 void Alien::BulletHell() {
     auto player = PenguinBody::player;
-    Vec2 target = player ? player->Associated().box.Center()
-                         : Vec2{(float)rng(), (float)rng()};
+    Vec2<Cart> target = player ? player->Associated().box.Center()
+                               : Vec2<Cart>{(float)rng(), (float)rng()};
     auto minion = ClosestMinion(target);
     if (!minion) return;
 
-    Vec2 direction = (target - associated.box.Center());
+    Vec2<Cart> direction = (target - associated.box.Center());
 
     const float delta = 7.0f * PI / 180.0f;
     for (int i = -3; i <= 3; i++) {
-        Vec2 associatedTarget =
+        Vec2<Cart> associatedTarget =
             direction.GetRotated(delta * i) + associated.box.Center();
         minion->Shoot(associatedTarget);
     }

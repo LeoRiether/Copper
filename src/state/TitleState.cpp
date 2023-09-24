@@ -56,7 +56,7 @@ void TitleState::Start() {
                                   Text::Blended, "Aperte espaco para continuar",
                                   colorFromHex("#F0A029")});
         go->AddComponent(new TextBlinker{*go, 1.0f});
-        go->box.SetCenter(Vec2{SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 100});
+        go->box.SetCenter(Vec2<Cart>{SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 100});
         RequestAddObject(go);
     }
 }
