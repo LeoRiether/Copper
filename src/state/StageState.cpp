@@ -16,6 +16,7 @@
 #include "TileSet.h"
 #include "component/Alien.h"
 #include "component/CameraFollower.h"
+#include "component/InfiniteBg.h"
 #include "component/KeepSoundAlive.h"
 #include "component/Player.h"
 #include "component/TileMap.h"
@@ -79,7 +80,7 @@ void StageState::LoadAssets() {
     // Background
     auto bgGO = new GameObject;
     bgGO->box = Rect{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-    bgGO->AddComponent(new Sprite{*bgGO, ASSETS "/img/isobg.png"});
+    bgGO->AddComponent(new InfiniteBg{*bgGO, ASSETS "/img/isogrid.png"});
     RequestAddObject(bgGO);
 
     // Background music

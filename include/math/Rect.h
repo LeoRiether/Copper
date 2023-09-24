@@ -22,4 +22,10 @@ struct Rect {
         x = foot.x - w / 2;
         y = foot.y - h;
     }
+
+    /** Assumes the width of the rect is the width of the tile, then finds the
+     * center of that tile  */
+    inline Vec2<Cart> IsoBaseCenter() const {
+        return {x + w / 2, y + h - w / 4};
+    }
 };
