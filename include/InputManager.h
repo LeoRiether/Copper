@@ -28,7 +28,6 @@ class InputManager {
     InputState keyState[KEYS];
     int keyUpdate[KEYS];
     bool quitRequested;
-    int updateCounter;
     int mouseX, mouseY;
 
     InputManager();

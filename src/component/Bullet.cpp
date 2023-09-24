@@ -38,7 +38,7 @@ void Bullet::Render(Vec2<Cart>) {}
 bool Bullet::Is(CType type) { return type == CType::Bullet; }
 
 void Bullet::NotifyCollision(GameObject& other) {
-    if (targetsPlayer && other.GetComponent(CType::PenguinBody))
+    if (targetsPlayer && other.GetComponent(CType::Player))
         associated.RequestDelete();
     if (!targetsPlayer &&
         (other.GetComponent(CType::Alien) || other.GetComponent(CType::Minion)))

@@ -7,12 +7,12 @@ Vec2<Iso> Vec2<Iso>::toIso() const {
 
 template <>
 Vec2<Iso> Vec2<Cart>::toIso() const {
-    return {(x - y) / 2.0f, (x + y) / 4.0f};
+    return {x + 2.0f * y, -x + 2.0f * y};
 }
 
 template <>
 Vec2<Cart> Vec2<Iso>::toCart() const {
-    return {x + 2.0f * y, -x + 2.0f * y};
+    return {(x - y) / 2.0f, (x + y) / 4.0f};
 }
 
 template <>

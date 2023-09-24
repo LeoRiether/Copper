@@ -17,7 +17,7 @@
 #include "component/Alien.h"
 #include "component/CameraFollower.h"
 #include "component/KeepSoundAlive.h"
-#include "component/PenguinBody.h"
+#include "component/Player.h"
 #include "component/TileMap.h"
 #include "math/Rect.h"
 #include "state/TitleState.h"
@@ -25,9 +25,9 @@
 
 #define MODULE "StageState"
 
-GameObject* StageState::CreatePenguinBody(weak_ptr<GameObject> tileMap) {
+GameObject* StageState::CreatePlayer(weak_ptr<GameObject> tileMap) {
     auto go = new GameObject{};
-    auto body = new PenguinBody{*go, tileMap};
+    auto body = new Player{*go, tileMap};
     go->AddComponent(body);
     go->box.SetCenter(Vec2<Cart>{704, 640});
     return go;
@@ -59,9 +59,8 @@ StageState::~StageState() {
 void StageState::Start() {
     LoadAssets();
 
-    // PenguinBody
-    auto penguinBody =
-        CreatePenguinBody(shared_ptr<GameObject>(new GameObject{}));
+    // Player
+    auto penguinBody = CreatePlayer(shared_ptr<GameObject>(new GameObject{}));
     camera->Follow(penguinBody);
     RequestAddObject(penguinBody);
 
@@ -92,10 +91,6 @@ void StageState::Update(float dt) {
     // render
     ProcessAddRequests();
 
-    // Camera update could be done after GameObject updates, but here it misses the object's position
-    // by a frame, which gives it a cool effect I think
-    camera->Update(dt);
-
     auto& input = InputManager::Instance();
     input.Update();
 
@@ -121,6 +116,8 @@ void StageState::Update(float dt) {
         if (go->GetComponent(CType::Collider))
             collidableObjects.push_back(go.get());
     }
+
+    camera->Update(dt);
 
     // Handle collisions
     size_t n = collidableObjects.size();

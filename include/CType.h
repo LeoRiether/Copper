@@ -9,7 +9,7 @@ enum class CType {
     Alien,
     Minion,
     Bullet,
-    PenguinBody,
+    Player,
     PenguinCannon,
     Collider,
     Text,

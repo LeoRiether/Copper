@@ -8,7 +8,7 @@
 #include "math/Vec2.h"
 using std::weak_ptr;
 
-class PenguinBody : public Component {
+class Player : public Component {
    private:
     weak_ptr<GameObject> pcannon;
     weak_ptr<GameObject> tileMap;
@@ -17,16 +17,16 @@ class PenguinBody : public Component {
     float angle{0};
     int hp{100};
 
-    void ReflectOnMapBorder();
+    void ConstrainToTile();
 
    public:
-    const char* DebugName() { return "PenguinBody"; }
+    const char* DebugName() { return "Player"; }
 
-    static PenguinBody* player;
+    static Player* player;
     inline GameObject& Associated() { return associated; }
 
-    PenguinBody(GameObject& associated, weak_ptr<GameObject> tileMap);
-    ~PenguinBody();
+    Player(GameObject& associated, weak_ptr<GameObject> tileMap);
+    ~Player();
 
     void Start();
     void Update(float dt);

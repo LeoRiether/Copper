@@ -13,7 +13,7 @@
 #include "component/EndStateDimmer.h"
 #include "component/KeepSoundAlive.h"
 #include "component/Minion.h"
-#include "component/PenguinBody.h"
+#include "component/Player.h"
 #include "component/Sprite.h"
 #include "state/EndState.h"
 #include "util.h"
@@ -59,9 +59,8 @@ void Alien::Update(float dt) {
             if (restTimer.Get() >= REST_TIME_S) {
                 restTimer.Restart();
                 state = Moving;
-                if (PenguinBody::player) {
-                    destination =
-                        PenguinBody::player->Associated().box.Center();
+                if (Player::player) {
+                    destination = Player::player->Associated().box.Center();
                 }
             }
             break;
@@ -145,7 +144,7 @@ Minion* Alien::ClosestMinion(Vec2<Cart> target) {
 }
 
 void Alien::BulletHell() {
-    auto player = PenguinBody::player;
+    auto player = Player::player;
     Vec2<Cart> target = player ? player->Associated().box.Center()
                                : Vec2<Cart>{(float)rng(), (float)rng()};
     auto minion = ClosestMinion(target);

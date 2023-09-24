@@ -1,4 +1,6 @@
-#include "component/PenguinBody.h"
+#include "component/Player.h"
+
+#include <SDL2/SDL_render.h>
 
 #include <algorithm>
 #include <cmath>
@@ -17,32 +19,26 @@
 #include "component/TileMap.h"
 #include "util.h"
 
-#define MODULE "PenguinBody"
+#define MODULE "Player"
 
-PenguinBody* PenguinBody::player;
+Player* Player::player;
 
-PenguinBody::PenguinBody(GameObject& associated, weak_ptr<GameObject> tileMap)
+Player::Player(GameObject& associated, weak_ptr<GameObject> tileMap)
     : Component(associated), tileMap(tileMap) {
-    PenguinBody::player = this;
+    Player::player = this;
 
     auto sprite =
-        new Sprite{associated, ASSETS "/img/rotating-girl.png", 8, 0.1};
-    sprite->SetScale(Vec2<Cart>{4, 4});
+        new Sprite{associated, ASSETS "/img/elements_east_walk.png", 6, 0.1};
+    sprite->SetScale(Vec2<Cart>{1, 1});
     associated.AddComponent(sprite);
     associated.AddComponent(new Collider{associated});
 }
 
-PenguinBody::~PenguinBody() { PenguinBody::player = nullptr; }
+Player::~Player() { Player::player = nullptr; }
 
-void PenguinBody::Start() {
-    // auto& state = Game::Instance().GetState();
-    // auto go = new GameObject{};
-    // auto cannon = new PenguinCannon{*go, state.GetObject(&associated)};
-    // go->AddComponent(cannon);
-    // associated.RequestAdd(go);
-}
+void Player::Start() {}
 
-void PenguinBody::Update(float dt) {
+void Player::Update(float dt) {
     auto& input = InputManager::Instance();
 
     Vec2<Cart> speed{0, 0};
@@ -52,9 +48,9 @@ void PenguinBody::Update(float dt) {
         speed.y += 300 * dt;
     }
     if (input.IsKeyDown(MOVE_RIGHT_KEY)) {
-        speed.x += 300 * dt;
+        speed.x += 600 * dt;
     } else if (input.IsKeyDown(MOVE_LEFT_KEY)) {
-        speed.x -= 300 * dt;
+        speed.x -= 600 * dt;
     }
 
     if (speed.x != 0 && speed.y != 0) speed = speed / sqrt(2);
@@ -62,7 +58,7 @@ void PenguinBody::Update(float dt) {
     associated.box.x += speed.x;
     associated.box.y += speed.y;
 
-    ReflectOnMapBorder();
+    ConstrainToTile();
 
     if (hp <= 0) {
         RequestDelete();
@@ -92,38 +88,46 @@ void PenguinBody::Update(float dt) {
     }
 }
 
-void PenguinBody::Render(Vec2<Cart>) {}
+void Player::Render(Vec2<Cart> camera) {
+    const auto& renderer = Game::Instance().Renderer();
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    for (int i = 1400; i < 1800; i += 10) {
+        for (int j = 100; j < 500; j += 10) {
+            Vec2<Iso> iso{(float)i, (float)j};
+            Vec2<Cart> cart = iso.toCart();
+            SDL_Rect rect{(int)cart.x - (int)camera.x,
+                          (int)cart.y - (int)camera.y, 3, 3};
+            SDL_RenderFillRect(renderer, &rect);
+        }
+    }
+}
 
-bool PenguinBody::Is(CType type) { return type == CType::PenguinBody; }
+bool Player::Is(CType type) { return type == CType::Player; }
 
-void PenguinBody::NotifyCollision(GameObject& other) {
+void Player::NotifyCollision(GameObject& other) {
     auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
     if (!bullet || !bullet->TargetsPlayer()) return;
 
     hp -= bullet->Damage();
 }
 
-void PenguinBody::RequestDelete() {
+void Player::RequestDelete() {
     associated.RequestDelete();
-    PenguinBody::player = nullptr;
+    Player::player = nullptr;
 }
 
-void PenguinBody::ReflectOnMapBorder() {
-    auto& box = associated.box;
-    if (box.x < 0) {
-        box.x = 0;
-        angle = PI - angle;
-    }
-    if (box.x + box.w >= 1408) {
-        box.x = 1408 - box.w;
-        angle = PI - angle;
-    }
-    if (box.y < 0) {
-        box.y = 0;
-        angle = 2 * PI - angle;
-    }
-    if (box.y + box.h >= 1280) {
-        box.y = 1280 - box.h;
-        angle = 2 * PI - angle;
-    }
+void Player::ConstrainToTile() {
+    Vec2<Iso> iso = associated.box.Foot().toIso();
+
+    auto clamp = [&](float mn, float& x, float mx) {
+        if (x < mn)
+            x = mn;
+        else if (x > mx)
+            x = mx;
+    };
+
+    clamp(1400, iso.x, 1800);
+    clamp(100, iso.y, 500);
+
+    associated.box.SetFoot(iso.toCart());
 }
