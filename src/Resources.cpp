@@ -11,10 +11,7 @@
 hashmap<string, shared_ptr<Texture>> Resources::images;
 hashmap<string, shared_ptr<MixMusic>> Resources::music;
 hashmap<string, shared_ptr<SoundChunk>> Resources::sounds;
-hashmap<string, shared_ptr<Font>> Resources::fonts;
-
-// Bjarne help us all
-using MyFont = Font;
+hashmap<string, shared_ptr<MyFont>> Resources::fonts;
 
 shared_ptr<Texture> Resources::Image(const string& file) {
     auto it = images.find(file);
@@ -53,7 +50,7 @@ shared_ptr<SoundChunk> Resources::Sound(const string& file) {
     return it->second;
 }
 
-shared_ptr<Font> Resources::Font(const string& file, int ptsize) {
+shared_ptr<MyFont> Resources::Font(const string& file, int ptsize) {
     auto it = fonts.find(fontkey(file, ptsize));
     if (it == fonts.end()) {
         log2("loading font %s", file.c_str());

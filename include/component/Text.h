@@ -18,7 +18,7 @@ class Text : public Component {
     enum TextStyle { Solid, Shaded, Blended };
 
    private:
-    shared_ptr<Font> font;
+    shared_ptr<MyFont> font;
     unique_ptr<Texture> texture;
 
     string text;

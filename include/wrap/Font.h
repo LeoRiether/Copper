@@ -3,7 +3,7 @@
 #include "SDL_include.h"
 
 // Wraps a TTF_Font and provides RAII semantics
-struct Font {
+struct MyFont {
     TTF_Font* inner;
-    ~Font() { TTF_CloseFont(inner); }
+    ~MyFont() { TTF_CloseFont(inner); }
 };

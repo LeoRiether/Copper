@@ -26,13 +26,13 @@ class Resources {
     static hashmap<string, shared_ptr<Texture>> images;
     static hashmap<string, shared_ptr<MixMusic>> music;
     static hashmap<string, shared_ptr<SoundChunk>> sounds;
-    static hashmap<string, shared_ptr<Font>> fonts;
+    static hashmap<string, shared_ptr<MyFont>> fonts;
 
    public:
     static shared_ptr<Texture> Image(const string& file);
     static shared_ptr<MixMusic> Music(const string& file);
     static shared_ptr<SoundChunk> Sound(const string& file);
-    static shared_ptr<Font> Font(const string& file, int ptsize);
+    static shared_ptr<MyFont> Font(const string& file, int ptsize);
 
     static void ClearImages();
     static void ClearMusic();
