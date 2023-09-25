@@ -20,18 +20,21 @@ InfiniteBg::InfiniteBg(GameObject& associated, const string& file)
 void InfiniteBg::Update(float) {}
 
 void InfiniteBg::Render(Vec2<Cart> camera) {
-    int offX = int(-camera.x) % SCREEN_WIDTH;
-    if (offX < 0) offX += SCREEN_WIDTH;
+    // Don't change these, I found the formulas by magic
+    int offX = int(-camera.x + width) % (2 * width);
+    if (offX < 0) offX += 2 * width;
+    offX -= width;
 
-    int offY = int(-camera.y) % SCREEN_HEIGHT;
-    if (offY < 0) offY += SCREEN_HEIGHT;
+    int offY = int(-camera.y + height) % (2 * height);
+    if (offY < 0) offY += 2 * height;
+    offY -= height;
 
     Game& game = Game::Instance();
 
     // Always draw 16 copies of the background
     SDL_Rect clipRect{0, 0, width, height};
-    for (int i = -2; i < 2; i++) {
-        for (int j = -2; j < 2; j++) {
+    for (int i = -1; i <= 1; i++) {
+        for (int j = -1; j <= 1; j++) {
             SDL_Rect destRect{offX + width * j, offY + height * i, width,
                               height};
             SDL_RenderCopyEx(game.Renderer(), texture->inner, &clipRect,
