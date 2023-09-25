@@ -11,7 +11,7 @@ struct Cart {};
 
 template <class CoordsSystem>
 struct Vec2 {
-    float x, y;
+    float x{0}, y{0};
 
     inline Vec2 GetRotated(float theta) const {
         const float cost = std::cos(theta);

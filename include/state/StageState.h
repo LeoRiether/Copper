@@ -14,16 +14,12 @@
 using std::shared_ptr;
 using std::unique_ptr;
 using std::vector;
-using std::weak_ptr;
 
 class StageState : public State {
    private:
     Music* music;
 
-    GameObject* CreatePenguin();
-    GameObject* CreatePlayer(weak_ptr<GameObject> tileMap);
-    GameObject* CreateAlien(float x, float y);
-    GameObject* CreateAlien();
+    GameObject* CreatePlayer();
 
    public:
     ~StageState();

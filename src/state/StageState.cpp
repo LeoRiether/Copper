@@ -26,31 +26,12 @@
 
 #define MODULE "StageState"
 
-GameObject* StageState::CreatePlayer(weak_ptr<GameObject> tileMap) {
+GameObject* StageState::CreatePlayer() {
     auto go = new GameObject{};
-    auto body = new Player{*go, tileMap};
+    auto body = new Player{*go};
     go->AddComponent(body);
     go->box.SetCenter(Vec2<Cart>{704, 640});
     return go;
-}
-
-GameObject* StageState::CreateAlien(float x, float y) {
-    std::uniform_real_distribution<float> delay(0, 1);
-
-    auto go = new GameObject{};
-    auto alien = new Alien{*go, 7, delay(rng)};
-    auto sprite = (Sprite*)go->GetComponent(CType::Sprite);
-    go->box =
-        Rect{x, y, (float)sprite->SheetWidth(), (float)sprite->SheetHeight()};
-
-    go->AddComponent(alien);
-    return go;
-}
-GameObject* StageState::CreateAlien() {
-    Vec2<Cart> objPos =
-        Vec2<Cart>{200, 0}.GetRotated(-PI + PI * (rng() % 1001) / 500.0) +
-        Vec2<Cart>{704, 640};
-    return CreateAlien(objPos.x, objPos.y);
 }
 
 StageState::~StageState() {
@@ -62,12 +43,11 @@ void StageState::Start() {
     LoadAssets();
 
     // Player
-    auto penguinBody = CreatePlayer(shared_ptr<GameObject>(new GameObject{}));
-    camera->Follow(penguinBody);
-    RequestAddObject(penguinBody);
+    auto player = CreatePlayer();
+    camera->Follow(player);
+    RequestAddObject(player);
 
     StartArray();
-    ProcessAddRequests();
     started = true;
 
     // music->Play();
@@ -85,7 +65,7 @@ void StageState::LoadAssets() {
     RequestAddObject(bgGO);
 
     // Background music
-    // music = new Music(ASSETS "/audio/stageState.ogg");
+    music = new Music(ASSETS "/audio/stageState.ogg");
 }
 
 void StageState::Update(float dt) {
@@ -104,11 +84,6 @@ void StageState::Update(float dt) {
         Game::Instance().RequestPop();
         return;
     }
-
-    // Enable for a more challenging experience!
-    // if (input.KeyPress(SDL_SCANCODE_SPACE)) {
-    //     RequestAddObject(CreateAlien());
-    // }
 
     // Handle updates
     vector<GameObject*> collidableObjects;

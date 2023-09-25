@@ -56,7 +56,7 @@ project "copper"      -- Nome do seu projeto
 
     -- Filtro para configurações no modo debug.
     filter "configurations:debug"
-        buildoptions { "-Wall", "-Wextra", "-O0" }
+        buildoptions { "-Wall", "-Wextra", "-ggdb", "-O0" }
         defines { "DEBUG" } -- Definições de flags para uso no modo debug 'equivalente a usar -D'.
         symbols "On" -- 'equivalente a usar -g'
         runtime "Debug"

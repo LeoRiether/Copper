@@ -6,6 +6,15 @@
 
 #define MODULE "Animation"
 
+Keyframe GridKeyframe::At(int x, int y) {
+    const int frameWidth = sheetWidth / columns;
+    const int frameHeight = sheetHeight / rows;
+    return Keyframe{
+        SDL_Rect{x * frameWidth, y * frameHeight, frameWidth, frameHeight},
+        frameTime,
+    };
+}
+
 Animation::Animation(GameObject& associated) : Component(associated) {}
 
 Animation* Animation::horizontal(GameObject& associated, Sprite& sprite,
@@ -40,16 +49,29 @@ void Animation::AddKeyframes(const string& animationName, const Keyframes& kf) {
     animations.emplace_back(kf);
 }
 
+void Animation::Play(int id) {
+    currentAnimation = id;
+    currentFrame = 0;
+    Update(0);
+}
+
 void Animation::Play(const string& animationName) {
     auto id = nameToId.find(animationName);
     if (id == nameToId.end()) {
         fail2("animation " YELLOW "%s" RESET " does not exist!",
               animationName.c_str());
     }
+    Play(id->second);
+}
 
-    currentAnimation = id->second;
-    currentFrame = 0;
-    Update(0);
+void Animation::SoftPlay(const string& animationName) {
+    auto id = nameToId.find(animationName);
+    if (id == nameToId.end()) {
+        fail2("animation " YELLOW "%s" RESET " does not exist!",
+              animationName.c_str());
+    }
+
+    if (id->second != currentAnimation) Play(id->second);
 }
 
 void Animation::Update(float) {
@@ -74,7 +96,3 @@ void Animation::Update(float) {
 }
 
 bool Animation::Is(CType type) { return type == CType::Animation; }
-
-void Animation::Log() {
-    log2("[%d] frame = %d", currentAnimation, currentFrame);
-}

@@ -25,53 +25,53 @@
 
 Player* Player::player;
 
-Player::Player(GameObject& associated, weak_ptr<GameObject> tileMap)
-    : Component(associated), tileMap(tileMap) {
+Player::Player(GameObject& associated) : Component(associated) {
     Player::player = this;
 
-    auto sprite = new Sprite{associated, ASSETS "/img/elements_east_walk.png"};
+    auto sprite = new Sprite{associated, ASSETS "/img/unicorn_atlas.png"};
     sprite->SetHasShadow(true);
-    auto anim = Animation::horizontal(associated, *sprite, 6, 0.1);
     associated.AddComponent(sprite);
-    associated.AddComponent(anim);
+
+    {
+        auto anim = new Animation{associated};
+        GridKeyframe grid{24, 12, sprite->SheetWidth(), sprite->SheetHeight(),
+                          0.1};
+
+        auto row = [&](int i, int startJ, int frames) {
+            Keyframes kf;
+            for (int j = startJ; j < startJ + frames; j++)
+                kf.push_back(grid.At(j, i));
+            return kf;
+        };
+
+        anim->AddKeyframes("E", row(0, 0, 6));
+        anim->AddKeyframes("NE", row(0, 6, 6));
+        anim->AddKeyframes("N", row(0, 12, 6));
+        anim->AddKeyframes("NW", row(0, 18, 6));
+        anim->AddKeyframes("W", row(1, 0, 6));
+        anim->AddKeyframes("SW", row(1, 6, 6));
+        anim->AddKeyframes("SE", row(1, 12, 6));
+        anim->AddKeyframes("S", row(1, 18, 6));
+        anim->AddKeyframes("idle_E", row(0, 0, 1));
+        anim->AddKeyframes("idle_NE", row(0, 6, 1));
+        anim->AddKeyframes("idle_N", row(0, 12, 1));
+        anim->AddKeyframes("idle_NW", row(0, 18, 1));
+        anim->AddKeyframes("idle_W", row(1, 0, 1));
+        anim->AddKeyframes("idle_SW", row(1, 6, 1));
+        anim->AddKeyframes("idle_SE", row(1, 12, 1));
+        anim->AddKeyframes("idle_S", row(1, 18, 1));
+        anim->Play("idle_S");  // just to kickstart the associated.box...
+        associated.AddComponent(anim);
+    }
+
     associated.AddComponent(new Collider{associated});
 }
 
 Player::~Player() { Player::player = nullptr; }
 
-void Player::Start() {}
+void Player::Start() { lastDirection = Direction{NoneX, Down}; }
 
-void Player::Update(float dt) {
-    UpdatePosition(dt);
-
-    if (hp <= 0) {
-        RequestDelete();
-        GameData::playerVictory = false;
-
-        // Create explosion sprite
-        auto explosion = new GameObject{};
-        auto sprite = new Sprite{*explosion, ASSETS "/img/penguindeath.png"};
-        auto anim = Animation::horizontal(*explosion, *sprite, 5, .15);
-        explosion->AddComponent(sprite);
-        explosion->AddComponent(anim);
-        explosion->box.SetCenter(associated.box.Center());
-        associated.RequestAdd(explosion);
-
-        // Create explosion sound
-        auto explosionSound = new GameObject{};
-        auto sound = new Sound{*explosionSound, ASSETS "/audio/boom.wav"};
-        auto keepalive = new KeepSoundAlive{*explosionSound};
-        sound->Play();
-        explosionSound->AddComponent(sound);
-        explosionSound->AddComponent(keepalive);
-        associated.RequestAdd(explosionSound);
-
-        // Create end stage dimmer
-        auto dimmer = new GameObject{};
-        dimmer->AddComponent(new EndStateDimmer{*dimmer, 4});
-        associated.RequestAdd(dimmer);
-    }
-}
+void Player::Update(float dt) { UpdatePosition(dt); }
 
 void Player::Render(Vec2<Cart> camera) {
     const auto& renderer = Game::Instance().Renderer();
@@ -89,12 +89,7 @@ void Player::Render(Vec2<Cart> camera) {
 
 bool Player::Is(CType type) { return type == CType::Player; }
 
-void Player::NotifyCollision(GameObject& other) {
-    auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
-    if (!bullet || !bullet->TargetsPlayer()) return;
-
-    hp -= bullet->Damage();
-}
+void Player::NotifyCollision(GameObject&) {}
 
 void Player::RequestDelete() {
     associated.RequestDelete();
@@ -102,10 +97,18 @@ void Player::RequestDelete() {
 }
 
 void Player::UpdatePosition(float dt) {
-    float linearSpeed = 400;
-    Vec2<Cart> speed = Direction::fromInput().toVec() * linearSpeed * dt;
-    associated.box.x += speed.x;
-    associated.box.y += speed.y;
+    auto direction = Direction::fromInput();
+    auto anim = (Animation*)associated.GetComponent(CType::Animation);
+    if (direction.x == NoneX && direction.y == NoneY) {
+        anim->SoftPlay("idle_" + lastDirection.toString());
+    } else {
+        const float linearSpeed = 400;
+        Vec2<Cart> speed = direction.toVec() * linearSpeed * dt;
+        associated.box.x += speed.x;
+        associated.box.y += speed.y;
+        anim->SoftPlay(direction.toString());
+        lastDirection = direction;
+    }
 }
 
 void Player::ConstrainToTile() {

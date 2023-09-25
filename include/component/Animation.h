@@ -21,6 +21,15 @@ struct Keyframe {
 
 using Keyframes = vector<Keyframe>;
 
+/** Mostly just helps to build Keyframes from uniform grid sprites */
+struct GridKeyframe {
+    int columns, rows;
+    int sheetWidth, sheetHeight;
+    float frameTime;
+
+    Keyframe At(int x, int y);
+};
+
 class Animation : public Component {
    private:
     Timer timer;
@@ -28,7 +37,8 @@ class Animation : public Component {
     hashmap<string, int> nameToId;
     int currentAnimation{0}, currentFrame{0};
 
-    void AddKeyframes(const string& animationName, const Keyframes& kf);
+    /** Play animation from start, given the ID instead of name */
+    void Play(int id);
 
    public:
     const char* DebugName() { return "Animation"; }
@@ -40,13 +50,17 @@ class Animation : public Component {
     static Animation* horizontal(GameObject& associated, Sprite& sprite,
                                  int frames, float frameTime);
 
+    /** Play animation from start */
     void Play(const string& animationName);
+
+    /** Play animation if it's not already playing */
+    void SoftPlay(const string& animationName);
+
+    void AddKeyframes(const string& animationName, const Keyframes& kf);
 
     void Update(float dt);
     inline void Render(Vec2<Cart>) {
         // it's the sprite that's rendered
     }
     bool Is(CType type);
-
-    void Log();
 };

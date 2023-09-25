@@ -2,6 +2,9 @@
 
 #include "Game.h"
 #include "InputManager.h"
+#include "util.h"
+
+#define MODULE "Camera"
 
 void Camera::Follow(GameObject* newFocus) { focus = newFocus; }
 

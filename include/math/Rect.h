@@ -3,7 +3,7 @@
 #include "math/Vec2.h"
 
 struct Rect {
-    float x, y, w, h;
+    float x{0}, y{0}, w{0}, h{0};
 
     bool Contains(const Vec2<Cart> p);
 

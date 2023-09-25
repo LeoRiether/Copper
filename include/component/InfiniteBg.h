@@ -10,7 +10,7 @@ using std::string;
 
 class InfiniteBg : public Component {
    private:
-    std::shared_ptr<Texture> texture;
+    shared_ptr<Texture> texture;
     int width, height;
 
    public:
