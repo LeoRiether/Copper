@@ -1,11 +1,11 @@
 name: Release
 
 on:
-  # `push` and `pull_request` just for testing
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main", "setup-ci" ]
+  # disabled for now!
+  # push:
+  #   branches: [ "main" ]
+  # pull_request:
+  #   branches: [ "main", "setup-ci" ]
 
 jobs:
   build:

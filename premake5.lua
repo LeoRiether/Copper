@@ -2,8 +2,8 @@
 -- Workspace -----------------------------------------------------------------------------------------------------------
 workspace "mypremake"      -- Nome do seu workspace
     architecture "x86_64"  -- x86_64 para LINUX - x32 para arquiteturas de 32 bits - x64 para arquiteturas de 64 bits	
-    -- toolset "clang"     -- Compilador
-    toolset "gcc"
+    toolset "clang"     -- Compilador
+    -- toolset "gcc"
     -- gccprefix "x86_64-w64-mingw32-"
     language "C++"         -- Linguagem
     cppdialect "C++17"     -- Versão da linguagem 'equivalente a usar -std=c++17'
