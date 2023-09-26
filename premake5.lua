@@ -33,12 +33,12 @@ project "copper"      -- Nome do seu projeto
     -- Ao incluir um diretório, não é preciso especificar o caminho todo a partir do diretório raiz. 
     -- Assim, é possível escrever '#include "myclass.hpp"' ao invés de '#include "include/myclass.hpp"'.
     -- OBSERVAÇÃO: deve-se atualizar o diretório da pasta include da SDL aqui.
-    includedirs { "%{prj.location}/include", "%{prj.location}/src", "/usr/include/SDL2" }
+    includedirs { "%{prj.location}/include", "%{prj.location}/src", "/usr/include/SDL2", "./" }
 
     -- Diretório onde as bibliotecas a serem linkadas se encontram.
     -- OBSERVAÇÃO: deve-se atualizar o diretório da pasta lib da SDL aqui.
     -- Costuma não ser necessário no Linux. Remova se causar problemas.
-    libdirs { "/usr/lib" }
+    libdirs { "/usr/lib", "./" }
 
     -- Aqui são linkados as diversas bibliotecas necessárias.
     links
