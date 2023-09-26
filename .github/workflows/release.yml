@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  # `push` and `pull_request` just for testing
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main", "setup-ci" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Download SDL2
+      uses: albin-johansson/download-sdl2@latest
+      with:
+        sources_destination: .
+        binaries_destination: .
+    - name: Download SDL2_ttf
+      uses: albin-johansson/download-sdl2-ttf@latest
+      with:
+        sources_destination: .
+        binaries_destination: .
+    - name: Download SDL2_mixer
+      uses: albin-johansson/download-sdl2-mixer@latest
+      with:
+        sources_destination: .
+        binaries_destination: .
+    - name: Download SDL2_image
+      uses: albin-johansson/download-sdl2-image@latest
+      with:
+        sources_destination: .
+        binaries_destination: .
+    - uses: abel0b/setup-premake@v2.3
+      name: Setup premake
+      with:
+        version: "5.0.0-beta2"
+    - name: Setup premake
+      run: premake5 gmake2
+    - name: Make
+      run: make
