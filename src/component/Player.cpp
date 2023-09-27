@@ -69,9 +69,136 @@ Player::Player(GameObject& associated) : Component(associated) {
 
 Player::~Player() { Player::player = nullptr; }
 
-void Player::Start() { lastDirection = Direction{NoneX, Down}; }
+void Player::Start() {
+    direction = Direction{NoneX, Down};
+    ChangeState(Idle);
+}
 
-void Player::Update(float dt) { UpdatePosition(dt); }
+// TODO: maybe only transition on the next update?
+void Player::ChangeState(State newState) {
+    // Transition out of old state
+    switch (state) {
+        case Idle: {
+            break;
+        }
+        case Walking: {
+            break;
+        }
+        case Dashing: {
+            dashState.timeout.Restart();
+            break;
+        }
+    }
+
+    // Transition into new state
+    state = newState;
+    switch (newState) {
+        case Idle: {
+            auto anim = (Animation*)associated.GetComponent(CType::Animation);
+            anim->SoftPlay("idle_" + direction.toString());
+            break;
+        }
+        case Walking: {
+            auto anim = (Animation*)associated.GetComponent(CType::Animation);
+            anim->SoftPlay(direction.toString());
+            break;
+        }
+        case Dashing: {
+            dashState.timeSinceStart.Restart();
+            break;
+        }
+    }
+}
+
+void Player::MaybeChangeState(State newState) {
+    if (state != newState) ChangeState(newState);
+}
+
+void Player::Update(float dt) {
+    UpdateState();
+    UpdatePosition(dt);
+}
+
+void Player::UpdateState() {
+    auto& input = InputManager::Instance();
+
+    auto checkDashEvent = [&]() {
+        if (dashState.timeout.Get() >= DASH_TIMEOUT &&
+            input.KeyPress(DASH_KEY)) {
+            ChangeState(Dashing);
+        }
+    };
+
+    switch (state) {
+        case Idle: {
+            auto currentDirection = Direction::fromInput();
+            if (!currentDirection.isNone()) {
+                direction = currentDirection;
+                ChangeState(Walking);
+            }
+            checkDashEvent();
+            break;
+        }
+        case Walking: {
+            auto currentDirection = Direction::fromInput();
+            if (currentDirection.isNone()) {
+                ChangeState(Idle);
+            } else if (direction != currentDirection) {
+                // Force the right animation to play.
+                // Not sure if this is the best way to do it
+                direction = currentDirection;
+                ChangeState(Walking);
+            } else {
+                direction = currentDirection;
+            }
+            checkDashEvent();
+            break;
+        }
+        case Dashing: {
+            if (dashState.timeSinceStart.Get() >= DASH_DURATION) {
+                ChangeState(Idle);
+            }
+            break;
+        }
+    }
+}
+
+void Player::UpdatePosition(float dt) {
+    switch (state) {
+        case Idle: {
+            break;
+        }
+        case Walking: {
+            const float linearSpeed = 400;
+            Vec2<Cart> speed = direction.toVec() * linearSpeed * dt;
+            associated.box.OffsetBy(speed);
+            break;
+        }
+        case Dashing: {
+            const float linearSpeed = 800;
+            Vec2<Cart> speed = direction.toVec() * linearSpeed * dt;
+            associated.box.OffsetBy(speed);
+            break;
+        }
+    }
+}
+
+void Player::ConstrainToTile() {
+    return;
+    Vec2<Iso> iso = associated.box.Foot().toIso();
+
+    auto clamp = [&](float mn, float& x, float mx) {
+        if (x < mn)
+            x = mn;
+        else if (x > mx)
+            x = mx;
+    };
+
+    clamp(1400, iso.x, 2000);
+    clamp(100, iso.y, 700);
+
+    associated.box.SetFoot(iso.toCart());
+}
 
 void Player::Render(Vec2<Cart> camera) {
     const auto& renderer = Game::Instance().Renderer();
@@ -94,36 +221,4 @@ void Player::NotifyCollision(GameObject&) {}
 void Player::RequestDelete() {
     associated.RequestDelete();
     Player::player = nullptr;
-}
-
-void Player::UpdatePosition(float dt) {
-    auto direction = Direction::fromInput();
-    auto anim = (Animation*)associated.GetComponent(CType::Animation);
-    if (direction.x == NoneX && direction.y == NoneY) {
-        anim->SoftPlay("idle_" + lastDirection.toString());
-    } else {
-        const float linearSpeed = 400;
-        Vec2<Cart> speed = direction.toVec() * linearSpeed * dt;
-        associated.box.x += speed.x;
-        associated.box.y += speed.y;
-        anim->SoftPlay(direction.toString());
-        lastDirection = direction;
-    }
-}
-
-void Player::ConstrainToTile() {
-    return;
-    Vec2<Iso> iso = associated.box.Foot().toIso();
-
-    auto clamp = [&](float mn, float& x, float mx) {
-        if (x < mn)
-            x = mn;
-        else if (x > mx)
-            x = mx;
-    };
-
-    clamp(1400, iso.x, 2000);
-    clamp(100, iso.y, 700);
-
-    associated.box.SetFoot(iso.toCart());
 }

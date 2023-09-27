@@ -28,4 +28,9 @@ struct Rect {
     inline Vec2<Cart> IsoBaseCenter() const {
         return {x + w / 2, y + h - w / 4};
     }
+
+    inline void OffsetBy(Vec2<Cart> delta) {
+        x += delta.x;
+        y += delta.y;
+    }
 };

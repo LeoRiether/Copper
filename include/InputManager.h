@@ -19,6 +19,8 @@ constexpr int MOVE_LEFT_KEY = SDL_SCANCODE_A;
 constexpr int MOVE_DOWN_KEY = SDL_SCANCODE_S;
 constexpr int MOVE_RIGHT_KEY = SDL_SCANCODE_D;
 
+constexpr int DASH_KEY = SDL_SCANCODE_SPACE;
+
 enum class InputState { Up = false, Down = true };
 
 class InputManager {

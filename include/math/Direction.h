@@ -27,4 +27,9 @@ struct Direction {
     Vec2<Cart> toVec();
 
     string toString();
+
+    bool isNone();
+
+    bool operator==(Direction& rhs) const;
+    bool operator!=(Direction& rhs) const;
 };

@@ -50,3 +50,10 @@ string Direction::toString() {
     string ystr = y == Up ? "N" : y == Down ? "S" : "";
     return ystr + xstr;
 }
+
+bool Direction::isNone() { return x == NoneX && y == NoneY; }
+
+bool Direction::operator==(Direction& rhs) const {
+    return x == rhs.x && y == rhs.y;
+}
+bool Direction::operator!=(Direction& rhs) const { return !(*this == rhs); }
