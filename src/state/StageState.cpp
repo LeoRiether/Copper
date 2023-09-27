@@ -47,6 +47,17 @@ void StageState::Start() {
     camera->Follow(player);
     RequestAddObject(player);
 
+    // Barril
+    {
+        auto barrel = new GameObject{};
+        auto sprite = new Sprite{*barrel, ASSETS "/img/Barris.png"};
+        sprite->SetScale(0.2);
+        barrel->AddComponent(sprite);
+        barrel->box = {0, 0, (float)sprite->SheetWidth() * sprite->Scale().x,
+                       (float)sprite->SheetHeight() * sprite->Scale().y};
+        RequestAddObject(barrel);
+    }
+
     StartArray();
     started = true;
 
