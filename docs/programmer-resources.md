@@ -7,3 +7,4 @@
 - [Integration Basics](https://gafferongames.com/post/integration_basics/)
 - [How can I add a shadow to a texture in SDL2? (SDL_SetTextureColorMod)](https://stackoverflow.com/questions/63346483/how-i-can-add-a-shadow-to-a-texture-on-sdl2)
 - [Parallel Realities SDL2 Tutorials](https://parallelrealities.co.uk/tutorials/)
+- [8 Directional Fox Character](https://hormelz.itch.io/8-directional-fox-character)
