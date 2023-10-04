@@ -22,6 +22,12 @@ Text::Text(GameObject& associated, string fontFile, int fontSize,
       fontFile(std::move(fontFile)),
       fontSize(fontSize),
       color(color) {
+    if (text.empty()) {
+        warn(
+            "constructor called with empty text. This will probably not work "
+            "because the texture will be empty as well");
+    }
+
     RemakeTexture();
 }
 
@@ -41,6 +47,11 @@ void Text::Render(Vec2<Cart> camera) {
 bool Text::Is(CType type) { return type == CType::Text; }
 
 void Text::SetText(string t) {
+    if (t.empty()) {
+        warn(
+            "SetText called with empty text. This will probably not work "
+            "because the texture will be empty as well");
+    }
     text = std::move(t);
     RemakeTexture();
 }

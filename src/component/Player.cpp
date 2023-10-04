@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <string>
 
 #include "Collider.h"
 #include "Game.h"
@@ -17,6 +18,7 @@
 #include "component/KeepSoundAlive.h"
 #include "component/PenguinCannon.h"
 #include "component/Sprite.h"
+#include "component/Text.h"
 #include "component/TileMap.h"
 #include "math/Direction.h"
 #include "util.h"
@@ -201,6 +203,7 @@ void Player::ConstrainToTile() {
 }
 
 void Player::Render(Vec2<Cart> camera) {
+    // Isometric square on the ground
     const auto& renderer = Game::Instance().Renderer();
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     for (int i = 1400; i < 2000; i += 10) {
@@ -212,6 +215,20 @@ void Player::Render(Vec2<Cart> camera) {
             SDL_RenderFillRect(renderer, &rect);
         }
     }
+
+    // Cartesian player position
+    static GameObject* text;
+    if (text == nullptr) {
+        text = new GameObject{};
+        text->AddComponent(new Text{*text, ASSETS "/font/Call me maybe.ttf", 30,
+                                    Text::Blended, "?",
+                                    SDL_Color{255, 255, 0, 255}});
+    }
+    auto textComponent = (Text*)text->GetComponent(CType::Text);
+    textComponent->SetText(std::to_string(associated.box.x) + ", " +
+                           std::to_string(associated.box.y));
+    text->box.SetFoot({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 10});
+    textComponent->Render(Vec2<Cart>{0, 0});
 }
 
 bool Player::Is(CType type) { return type == CType::Player; }

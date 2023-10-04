@@ -55,6 +55,7 @@ void StageState::Start() {
         barrel->AddComponent(sprite);
         barrel->box = {0, 0, (float)sprite->SheetWidth() * sprite->Scale().x,
                        (float)sprite->SheetHeight() * sprite->Scale().y};
+        barrel->box.SetFoot(Vec2<Cart>{870, 600});
         RequestAddObject(barrel);
     }
 
