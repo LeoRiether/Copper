@@ -9,3 +9,4 @@ compile_commands.json
 .gdbinit
 vgcore.*
 
+/scripts/venv/
