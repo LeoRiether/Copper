@@ -1,5 +1,9 @@
 #include "state/State.h"
 
+#include <algorithm>
+#include <fstream>
+#include <tuple>
+
 #include "util.h"
 
 #define MODULE "State"
@@ -58,7 +62,25 @@ void State::UpdateArray(float dt) {
 }
 
 void State::RenderArray() {
+    ZSort();
     for (auto& go : objects) {
         go->Render(camera->Pos());
+    }
+}
+
+// Currently (experimentally!!) doing a Shell Sort by <layer, box.y+box.h>
+void State::ZSort() {
+    auto key = [](const GameObject& go) {
+        return std::tuple{go.renderLayer, go.box.y + go.box.h};
+    };
+
+    const size_t n = objects.size();
+    for (size_t gap : {102, 45, 20, 9, 4, 1}) {
+        for (size_t i = gap; i < n; i++) {
+            for (size_t j = i;
+                 j >= gap && key(*objects[j]) < key(*objects[j - gap]);
+                 j -= gap)
+                std::swap(objects[j], objects[j - gap]);
+        }
     }
 }

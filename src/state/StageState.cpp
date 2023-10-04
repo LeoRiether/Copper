@@ -56,6 +56,7 @@ void StageState::Start() {
         barrel->box = {0, 0, (float)sprite->SheetWidth() * sprite->Scale().x,
                        (float)sprite->SheetHeight() * sprite->Scale().y};
         barrel->box.SetFoot(Vec2<Cart>{870, 600});
+        barrel->AddComponent(new Collider{*barrel});
         RequestAddObject(barrel);
     }
 
@@ -74,6 +75,7 @@ void StageState::LoadAssets() {
     auto bgGO = new GameObject;
     bgGO->box = Rect{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
     bgGO->AddComponent(new InfiniteBg{*bgGO, ASSETS "/img/isobg.png"});
+    bgGO->renderLayer = -1;
     RequestAddObject(bgGO);
 
     // Background music

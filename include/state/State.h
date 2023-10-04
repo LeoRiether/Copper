@@ -29,6 +29,9 @@ class State {
     virtual void UpdateArray(float dt);
     virtual void RenderArray();
 
+    /* Sorts objects by some notion of depth */
+    void ZSort();
+
    public:
     State();
     virtual ~State();

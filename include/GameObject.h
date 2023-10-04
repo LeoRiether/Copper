@@ -23,6 +23,7 @@ class GameObject {
    public:
     Rect box;
     double angle{0};
+    int renderLayer{0};
     const char* debugName;
 
     GameObject();
