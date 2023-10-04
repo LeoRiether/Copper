@@ -60,6 +60,19 @@ void StageState::Start() {
         RequestAddObject(barrel);
     }
 
+    // Escavadeira
+    {
+        auto go = new GameObject{};
+        auto sprite = new Sprite{*go, ASSETS "/img/Escavadeira.png"};
+        sprite->SetScale(0.2);
+        go->AddComponent(sprite);
+        go->box = {0, 0, (float)sprite->SheetWidth() * sprite->Scale().x,
+                   (float)sprite->SheetHeight() * sprite->Scale().y};
+        go->box.SetFoot(Vec2<Cart>{1200, 700});
+        go->AddComponent(new Collider{*go});
+        RequestAddObject(go);
+    }
+
     StartArray();
     started = true;
 
