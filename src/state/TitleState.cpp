@@ -40,7 +40,9 @@ void TitleState::Render() { RenderArray(); }
 void TitleState::Start() {
     {
         auto bgGO = new GameObject{};
-        bgGO->AddComponent(new Sprite{*bgGO, ASSETS "/img/title.jpg"});
+        auto sprite = new Sprite{*bgGO, ASSETS "/img/splashscreen.png"};
+        sprite->SetScale((float)SCREEN_WIDTH / sprite->SheetWidth());
+        bgGO->AddComponent(sprite);
         RequestAddObject(bgGO);
     }
 
@@ -48,9 +50,9 @@ void TitleState::Start() {
         auto go = new GameObject{};
         go->AddComponent(new Text{*go, ASSETS "/font/Call me maybe.ttf", 70,
                                   Text::Blended, "Aperte espaco para continuar",
-                                  colorFromHex("#F0A029")});
+                                  colorFromHex("e23400")});
         go->AddComponent(new TextBlinker{*go, 1.0f});
-        go->box.SetCenter(Vec2<Cart>{SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 100});
+        go->box.SetFoot(Vec2<Cart>{SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 64});
         RequestAddObject(go);
     }
 }

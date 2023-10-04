@@ -22,7 +22,7 @@ Text::Text(GameObject& associated, string fontFile, int fontSize,
       fontFile(std::move(fontFile)),
       fontSize(fontSize),
       color(color) {
-    if (text.empty()) {
+    if (this->text.empty()) {
         warn(
             "constructor called with empty text. This will probably not work "
             "because the texture will be empty as well");

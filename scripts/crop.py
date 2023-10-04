@@ -23,7 +23,6 @@ def crop_image(path):
     with Image.open(path) as image:
         bounding_box = image.getbbox()
         width, height = image.size
-        print(f"bbox = {bounding_box}, size = {width},{height}")
         if bounding_box != (0, 0, width, height):
             print(f"{Fore.GREEN}Cropping{Style.RESET_ALL} {path}")
             *name, ext = path.split(".")
