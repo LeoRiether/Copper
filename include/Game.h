@@ -15,7 +15,7 @@ using std::vector;
 constexpr int SCREEN_WIDTH = 1280;
 constexpr int SCREEN_HEIGHT = 720;
 
-constexpr int FRAME_RATE = 60;
+constexpr int FRAME_RATE = 120;
 constexpr int64_t FRAME_MS = 1000 / FRAME_RATE;
 
 class Game {

@@ -3,7 +3,7 @@ import os
 from colorama import Fore, Style
 
 EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp"]
-
+IGNORE = ['unicorn_atlas.png']
 
 def parse_args():
     from argparse import ArgumentParser
@@ -43,7 +43,8 @@ def main():
             print(f"{Fore.YELLOW}Dir{Style.RESET_ALL} {root}")
             for file in files:
                 is_image = any(file.endswith(ext) for ext in EXTENSIONS)
-                if ".untrimmed" not in file and is_image:
+                not_ignored = all(file != entry for entry in IGNORE)
+                if ".untrimmed" not in file and is_image and not_ignored:
                     crop_image(os.path.join(root, file))
 
 
