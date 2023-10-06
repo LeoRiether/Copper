@@ -2,7 +2,7 @@ name: Release
 
 on:
   # disabled for now!
-  # push:
+  push:
   #   branches: [ "main" ]
   # pull_request:
   #   branches: [ "main", "setup-ci" ]
