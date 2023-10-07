@@ -20,8 +20,6 @@ class Sprite : public Component {
     bool hasShadow{false};
 
    public:
-    const char* DebugName() { return "Sprite"; }
-
     Sprite(GameObject& associated, const string& file);
     ~Sprite();
 

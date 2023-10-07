@@ -40,8 +40,6 @@ class Player : public Component {
     void ConstrainToTile();
 
    public:
-    const char* DebugName() { return "Player"; }
-
     static Player* player;
     inline GameObject& Associated() { return associated; }
     Player(GameObject& associated);

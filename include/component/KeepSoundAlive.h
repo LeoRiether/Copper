@@ -9,8 +9,6 @@ class KeepSoundAlive : public Component {
     GameObject& go;
 
    public:
-    const char* DebugName() { return "KeepSoundAlive"; }
-
     KeepSoundAlive(GameObject& go);
     ~KeepSoundAlive();
 

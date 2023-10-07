@@ -41,8 +41,6 @@ class Animation : public Component {
     void Play(int id);
 
    public:
-    const char* DebugName() { return "Animation"; }
-
     Animation(GameObject& associated);
 
     /** Constructs an animation by dividing a spritesheet into `frames`

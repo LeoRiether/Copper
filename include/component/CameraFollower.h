@@ -8,8 +8,6 @@ class CameraFollower : public Component {
     GameObject& go;
 
    public:
-    const char* DebugName() { return "CameraFollower"; }
-
     CameraFollower(GameObject& go);
 
     void Update(float dt);

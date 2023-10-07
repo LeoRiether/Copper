@@ -16,8 +16,6 @@ class InfiniteBg : public Component {
    public:
     InfiniteBg(GameObject& associated, const string& file);
 
-    inline const char* DebugName() { return "InfiniteBg"; }
-
     virtual void Update(float dt);
     virtual void Render(Vec2<Cart> camera);
 

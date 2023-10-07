@@ -9,3 +9,4 @@
 - [Parallel Realities SDL2 Tutorials](https://parallelrealities.co.uk/tutorials/)
 - [8 Directional Fox Character](https://hormelz.itch.io/8-directional-fox-character)
 - [Hitboxes and Hurtboxes](https://ratcasket.itch.io/hitboxes-and-hurtboxes)
+- [Collision resolution idea](https://gamedev.stackexchange.com/a/5915)

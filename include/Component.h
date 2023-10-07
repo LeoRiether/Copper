@@ -16,7 +16,6 @@ class Component {
     Component(GameObject& associated);
     virtual ~Component();
     virtual void Start();
-    virtual const char* DebugName() { return "<unnamed>"; }
 
     virtual void Update(float dt) = 0;
     virtual void Render(Vec2<Cart> camera) = 0;

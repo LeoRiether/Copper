@@ -136,9 +136,6 @@ void StageState::Update(float dt) {
                                        collidableObjects[j]->angle)) {
                 collidableObjects[i]->NotifyCollision(*collidableObjects[j]);
                 collidableObjects[j]->NotifyCollision(*collidableObjects[i]);
-                // log2("%s colliding with %s",
-                //      collidableObjects[i]->Components().back()->DebugName(),
-                //      collidableObjects[j]->Components().back()->DebugName());
             }
         }
     }

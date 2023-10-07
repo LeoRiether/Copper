@@ -12,8 +12,6 @@ class Collider : public Component {
     Vec2<Cart> scale, offset;
 
    public:
-    const char* DebugName() { return "Collider"; }
-
     Collider(GameObject& associated, Vec2<Cart> scale = {1, 1},
              Vec2<Cart> offset = {0, 0});
 

@@ -16,8 +16,6 @@ class Bullet : public Component {
     bool targetsPlayer;
 
    public:
-    const char* DebugName() { return "Bullet"; }
-
     Bullet(GameObject& associated, float angle, float speed, int damage,
            float maxDistance, int spriteFrameCount, const string& sprite,
            bool targetsPlayer);

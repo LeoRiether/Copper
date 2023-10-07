@@ -16,8 +16,6 @@ class PenguinCannon : public Component {
     constexpr static float SHOOT_DELAY_S = 0.3;
 
    public:
-    const char* DebugName() { return "PenguinCannon"; }
-
     PenguinCannon(GameObject& associated, weak_ptr<GameObject> penguinBody);
 
     void Update(float dt);

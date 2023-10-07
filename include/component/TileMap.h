@@ -18,8 +18,6 @@ class TileMap : public Component {
     int width, height, depth;
 
    public:
-    const char* DebugName() { return "TileMap"; }
-
     TileMap(GameObject& associated, const string& file, TileSet* tileSet);
 
     void Load(const string& file);

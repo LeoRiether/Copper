@@ -19,8 +19,6 @@ class Sound : public Component {
     int channel;
 
    public:
-    const char* DebugName() { return "Sound"; }
-
     Sound(GameObject& associated);
     Sound(GameObject& associated, const string& file);
     ~Sound();

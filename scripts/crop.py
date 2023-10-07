@@ -3,7 +3,7 @@ import os
 from colorama import Fore, Style
 
 EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp"]
-IGNORE = ['unicorn_atlas.png']
+IGNORE = ['unicorn_atlas.png', 'spaghetti_atlas.png']
 
 def parse_args():
     from argparse import ArgumentParser
