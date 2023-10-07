@@ -13,11 +13,13 @@ void EnemyDistancer::Update(Enemy& self, float dt) {
     self.direction = Direction::approxFromVec(distVec);
 
     const float stop2 = self.stopDistance * self.stopDistance;
-    if (distVec.norm2() > stop2) {
+    if (distVec.norm2() > stop2 && (walkingTime >= 0.3 || walkingTime == 0)) {
         anim->SoftPlay("idle_" + (-self.direction).toString());
+        walkingTime = 0;
         return;
     }
 
     anim->SoftPlay(self.direction.toString());
     self.associated.box.OffsetBy(distVec.normalize() * 300 * dt);
+    walkingTime += dt;
 }
