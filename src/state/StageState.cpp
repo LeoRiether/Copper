@@ -16,6 +16,7 @@
 #include "TileSet.h"
 #include "component/Alien.h"
 #include "component/CameraFollower.h"
+#include "component/Enemy.h"
 #include "component/InfiniteBg.h"
 #include "component/KeepSoundAlive.h"
 #include "component/Player.h"
@@ -34,6 +35,14 @@ GameObject* StageState::CreatePlayer() {
     return go;
 }
 
+GameObject* StageState::CreateEnemy() {
+    auto go = new GameObject{};
+    auto body = new Enemy{*go};
+    go->AddComponent(body);
+    go->box.SetFoot(Vec2<Cart>{1000, 400});
+    return go;
+}
+
 StageState::~StageState() {
     delete music;
     objects.clear();
@@ -46,6 +55,10 @@ void StageState::Start() {
     auto player = CreatePlayer();
     camera->Follow(player);
     RequestAddObject(player);
+
+    // Enemy
+    auto enemy = CreateEnemy();
+    RequestAddObject(enemy);
 
     // Barril
     {

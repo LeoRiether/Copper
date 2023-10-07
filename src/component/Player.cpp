@@ -203,18 +203,19 @@ void Player::ConstrainToTile() {
 }
 
 void Player::Render(Vec2<Cart> camera) {
-    // Isometric square on the ground
-    const auto& renderer = Game::Instance().Renderer();
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    for (int i = 1400; i < 2000; i += 10) {
-        for (int j = 100; j < 700; j += 10) {
-            Vec2<Iso> iso{(float)i, (float)j};
-            Vec2<Cart> cart = iso.toCart();
-            SDL_Rect rect{(int)cart.x - (int)camera.x,
-                          (int)cart.y - (int)camera.y, 3, 3};
-            SDL_RenderFillRect(renderer, &rect);
+    auto drawAnIsometricSquareOnTheGround = [&]() {
+        const auto& renderer = Game::Instance().Renderer();
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+        for (int i = 1400; i < 2000; i += 10) {
+            for (int j = 100; j < 700; j += 10) {
+                Vec2<Iso> iso{(float)i, (float)j};
+                Vec2<Cart> cart = iso.toCart();
+                SDL_Rect rect{(int)cart.x - (int)camera.x,
+                              (int)cart.y - (int)camera.y, 3, 3};
+                SDL_RenderFillRect(renderer, &rect);
+            }
         }
-    }
+    };
 
     // Cartesian player position
     static GameObject* text;

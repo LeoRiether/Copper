@@ -17,4 +17,5 @@ enum class CType {
     EndStageDimmer,
     InfiniteBg,
     Animation,
+    Enemy,
 };

@@ -20,6 +20,7 @@ class StageState : public State {
     Music* music;
 
     GameObject* CreatePlayer();
+    GameObject* CreateEnemy();
 
    public:
     ~StageState();
