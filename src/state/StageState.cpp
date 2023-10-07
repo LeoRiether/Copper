@@ -16,11 +16,13 @@
 #include "TileSet.h"
 #include "component/Alien.h"
 #include "component/CameraFollower.h"
-#include "component/Enemy.h"
 #include "component/InfiniteBg.h"
 #include "component/KeepSoundAlive.h"
 #include "component/Player.h"
 #include "component/TileMap.h"
+#include "component/enemy/Enemy.h"
+#include "component/enemy/EnemyDistancer.h"
+#include "component/enemy/EnemyFollower.h"
 #include "math/Rect.h"
 #include "state/TitleState.h"
 #include "util.h"
@@ -35,9 +37,19 @@ GameObject* StageState::CreatePlayer() {
     return go;
 }
 
-GameObject* StageState::CreateEnemy() {
+GameObject* StageState::CreateEnemyFollower() {
     auto go = new GameObject{};
     auto body = new Enemy{*go};
+    (*body).WithStopDistance(100).WithBehavior(new EnemyFollower);
+    go->AddComponent(body);
+    go->box.SetFoot(Vec2<Cart>{1000, 400});
+    return go;
+}
+
+GameObject* StageState::CreateEnemyDistancer() {
+    auto go = new GameObject{};
+    auto body = new Enemy{*go};
+    (*body).WithStopDistance(300).WithBehavior(new EnemyDistancer);
     go->AddComponent(body);
     go->box.SetFoot(Vec2<Cart>{1000, 400});
     return go;
@@ -56,9 +68,9 @@ void StageState::Start() {
     camera->Follow(player);
     RequestAddObject(player);
 
-    // Enemy
-    auto enemy = CreateEnemy();
-    RequestAddObject(enemy);
+    // Enemies
+    RequestAddObject(CreateEnemyFollower());
+    RequestAddObject(CreateEnemyDistancer());
 
     // Barril
     {

@@ -10,9 +10,9 @@ class GameObject;
 
 class Component {
    protected:
+   public:
     GameObject& associated;
 
-   public:
     Component(GameObject& associated);
     virtual ~Component();
     virtual void Start();

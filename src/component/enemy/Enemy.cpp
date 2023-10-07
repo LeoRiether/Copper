@@ -1,4 +1,6 @@
-#include "component/Enemy.h"
+#include "component/enemy/Enemy.h"
+
+#include <algorithm>
 
 #include "Collider.h"
 #include "component/Animation.h"
@@ -51,22 +53,24 @@ Enemy::Enemy(GameObject& associated) : Component(associated) {
 }
 
 void Enemy::Update(float dt) {
-    if (!Player::player) return;
-
-    auto anim = (Animation*)associated.GetComponent(CType::Animation);
-    auto playerPos = Player::player->Associated().box.Foot();
-    auto enemyPos = associated.box.Foot();
-    auto distVec = playerPos - enemyPos;
-    if (distVec.norm() <= 100) {
-        anim->SoftPlay("idle_" + direction.toString());
+    if (!behavior) {
+        warn("unset behavior!");
         return;
     }
 
-    direction = Direction::approxFromVec(distVec);
-    anim->SoftPlay(direction.toString());
-    associated.box.OffsetBy(distVec.normalize() * 300 * dt);
+    behavior->Update(*this, dt);
 }
 
 void Enemy::Render(Vec2<Cart>) {}
 
 bool Enemy::Is(CType type) { return type == CType::Enemy; }
+
+Enemy& Enemy::WithStopDistance(float value) {
+    stopDistance = value;
+    return *this;
+}
+
+Enemy& Enemy::WithBehavior(EnemyBehavior* value) {
+    behavior = unique_ptr<EnemyBehavior>(value);
+    return *this;
+}

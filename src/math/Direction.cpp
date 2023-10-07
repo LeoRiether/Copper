@@ -57,3 +57,19 @@ bool Direction::operator==(Direction& rhs) const {
     return x == rhs.x && y == rhs.y;
 }
 bool Direction::operator!=(Direction& rhs) const { return !(*this == rhs); }
+
+Direction Direction::operator-() const {
+    Direction res = *this;
+
+    if (res.x == Left)
+        res.x = Right;
+    else if (res.x == Right)
+        res.x = Left;
+
+    if (res.y == Down)
+        res.y = Up;
+    else if (res.y == Up)
+        res.y = Down;
+
+    return res;
+}

@@ -32,4 +32,5 @@ struct Direction {
 
     bool operator==(Direction& rhs) const;
     bool operator!=(Direction& rhs) const;
+    Direction operator-() const;
 };
