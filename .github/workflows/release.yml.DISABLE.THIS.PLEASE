@@ -1,12 +1,9 @@
 name: Release
 
 on:
-  # disabled for now!
-  push:
-    branches: [ "wtf" ]
-  #   branches: [ "main" ]
-  # pull_request:
-  #   branches: [ "main", "setup-ci" ]
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main", "setup-ci" ]
 
 jobs:
   build:
