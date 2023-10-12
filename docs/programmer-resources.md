@@ -10,3 +10,5 @@
 - [8 Directional Fox Character](https://hormelz.itch.io/8-directional-fox-character)
 - [Hitboxes and Hurtboxes](https://ratcasket.itch.io/hitboxes-and-hurtboxes)
 - [Collision resolution idea](https://gamedev.stackexchange.com/a/5915)
+- [How to Code Melee Attacks in Godot: Hitboxes and Hurtboxes](https://www.youtube.com/watch?v=JWjzSn95bM0)
+- [How to Make Attack Feel Great: animations, particles, and other cool tricks](https://www.youtube.com/watch?v=_qxl7CalhDM)
