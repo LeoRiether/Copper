@@ -1,5 +1,6 @@
 #include "Consts.h"
 
+#include <exception>
 #include <fstream>
 #include <string>
 
@@ -22,13 +23,23 @@ void Consts::Load() {
         }
 
         string equals, value;
-        reader >> equals >> value;
+        reader >> equals;
+        getline(reader, value);
 
         string key = section == "" ? token : (section + "." + token);
-        Consts::values[key] = Consts::Value{
-            std::stof(value),
-            std::stoi(value),
-        };
+
+        Consts::Value x;
+        try {
+            x.f = std::stof(value);
+        } catch (std::exception e) {
+        }
+        try {
+            x.i = std::stoi(value);
+        } catch (std::exception e) {
+        }
+        x.s = value;
+
+        Consts::values[key] = x;
     }
 }
 
@@ -43,3 +54,4 @@ Consts::Value& Consts::Get(const string& key) {
 
 int& Consts::GetInt(const string& key) { return Consts::Get(key).i; }
 float& Consts::GetFloat(const string& key) { return Consts::Get(key).f; }
+string& Consts::GetString(const string& key) { return Consts::Get(key).s; }

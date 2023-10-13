@@ -13,12 +13,14 @@ class Consts {
     struct Value {
         float f;
         int i;
+        string s;
     };
 
     static void Load();
 
     static int& GetInt(const string& key);
     static float& GetFloat(const string& key);
+    static string& GetString(const string& key);
 
    private:
     static hashmap<string, Value> values;
