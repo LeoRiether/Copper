@@ -8,6 +8,7 @@
 #include "CType.h"
 #include "Collider.h"
 #include "Collision.h"
+#include "Consts.h"
 #include "Game.h"
 #include "GameObject.h"
 #include "InputManager.h"

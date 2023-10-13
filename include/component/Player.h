@@ -4,6 +4,7 @@
 
 #include "CType.h"
 #include "Component.h"
+#include "Consts.h"
 #include "GameObject.h"
 #include "Timer.h"
 #include "math/Direction.h"
@@ -27,6 +28,7 @@ class Player : public Component {
     };
 
    private:
+    float& walkingSpeed{Consts::GetFloat("player.walking_speed")};
     Direction direction;
     DashState dashState;
 

@@ -171,14 +171,12 @@ void Player::UpdatePosition(float dt) {
             break;
         }
         case Walking: {
-            const float linearSpeed = 400;
-            Vec2<Cart> speed = direction.toVec() * linearSpeed * dt;
+            Vec2<Cart> speed = direction.toVec() * walkingSpeed * dt;
             associated.box.OffsetBy(speed);
             break;
         }
         case Dashing: {
-            const float linearSpeed = 800;
-            Vec2<Cart> speed = direction.toVec() * linearSpeed * dt;
+            Vec2<Cart> speed = direction.toVec() * walkingSpeed * 2.5 * dt;
             associated.box.OffsetBy(speed);
             break;
         }

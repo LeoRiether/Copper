@@ -1,5 +1,6 @@
 #include "Game.h"
 
+#include "Consts.h"
 #include "InputManager.h"
 #include "Resources.h"
 #include "SDL_include.h"
@@ -40,6 +41,8 @@ Game::Game(const char* title, int width, int height) {
     if (!renderer) sdlfail("couldn't create renderer");
 
     frameStart = SDL_GetTicks();
+
+    Consts::Load();
 
     log("initialized");
 }
