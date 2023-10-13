@@ -6,7 +6,6 @@
 #include <vector>
 
 #include "CType.h"
-#include "Collider.h"
 #include "Collision.h"
 #include "Consts.h"
 #include "Game.h"
@@ -17,7 +16,9 @@
 #include "TileSet.h"
 #include "component/Alien.h"
 #include "component/CameraFollower.h"
+#include "component/Collider.h"
 #include "component/InfiniteBg.h"
+#include "component/IsoCollider.h"
 #include "component/KeepSoundAlive.h"
 #include "component/Player.h"
 #include "component/TileMap.h"
@@ -95,7 +96,11 @@ void StageState::Start() {
         go->box = {0, 0, (float)sprite->SheetWidth() * sprite->Scale().x,
                    (float)sprite->SheetHeight() * sprite->Scale().y};
         go->box.SetFoot(Vec2<Cart>{1200, 700});
-        go->AddComponent(new Collider{*go});
+        auto collider = new IsoCollider{*go};
+        collider->offset =
+            Rect{3117.04f * sprite->Scale().x, 654.915f * sprite->Scale().y,
+                 1273.49f * sprite->Scale().x, 1273.49f * sprite->Scale().y};
+        go->AddComponent(collider);
         RequestAddObject(go);
     }
 

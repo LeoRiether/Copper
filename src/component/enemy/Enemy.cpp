@@ -2,8 +2,8 @@
 
 #include <algorithm>
 
-#include "Collider.h"
 #include "component/Animation.h"
+#include "component/Collider.h"
 #include "component/Player.h"
 #include "component/Sprite.h"
 #include "math/Direction.h"

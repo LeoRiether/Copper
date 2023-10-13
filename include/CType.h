@@ -18,4 +18,5 @@ enum class CType {
     InfiniteBg,
     Animation,
     Enemy,
+    IsoCollider,
 };

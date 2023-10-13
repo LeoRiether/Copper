@@ -3,9 +3,9 @@
 #include <algorithm>
 #include <memory>
 
-#include "Collider.h"
 #include "Component.h"
 #include "Game.h"
+#include "component/Collider.h"
 #include "component/TileMap.h"
 #include "util.h"
 

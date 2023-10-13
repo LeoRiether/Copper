@@ -3,13 +3,13 @@
 #include <random>
 
 #include "CType.h"
-#include "Collider.h"
 #include "Component.h"
 #include "Game.h"
 #include "GameObject.h"
 #include "Sound.h"
 #include "component/Animation.h"
 #include "component/Bullet.h"
+#include "component/Collider.h"
 #include "component/KeepSoundAlive.h"
 #include "util.h"
 

@@ -1,11 +1,11 @@
 #include "state/ViewerState.h"
 
-#include "Collider.h"
 #include "Consts.h"
 #include "Game.h"
 #include "InputManager.h"
 #include "SDL_render.h"
 #include "SDL_scancode.h"
+#include "component/Collider.h"
 #include "component/Sprite.h"
 #include "util.h"
 
@@ -116,8 +116,9 @@ void ViewerState::Render() {
             auto toIso = to.toIso();
             left = Vec2<Iso>{fromIso.x, std::min(fromIso.y, toIso.y)}.toCart();
             right = Vec2<Iso>{toIso.x, std::max(fromIso.y, toIso.y)}.toCart();
-            dragRect = {toIso.x - pivot.x, toIso.y - pivot.y,
-                        fromIso.x - toIso.x, fromIso.y - toIso.y};
+            dragRect = {(toIso.x - pivot.x) / zoom, (toIso.y - pivot.y) / zoom,
+                        (fromIso.x - toIso.x) / zoom,
+                        (fromIso.y - toIso.y) / zoom};
         } else {
             auto pivot = image.lock()->box.TopLeft().toIso();
             left = {from.x, std::max(from.y, to.y)};

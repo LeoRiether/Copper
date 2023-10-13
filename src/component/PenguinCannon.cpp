@@ -1,9 +1,9 @@
 #include "component/PenguinCannon.h"
 
-#include "Collider.h"
 #include "Component.h"
 #include "InputManager.h"
 #include "component/Bullet.h"
+#include "component/Collider.h"
 #include "component/Sprite.h"
 #include "util.h"
 

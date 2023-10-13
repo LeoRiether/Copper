@@ -5,8 +5,8 @@
 #include <iterator>
 
 #include "CType.h"
-#include "Collider.h"
 #include "component/Animation.h"
+#include "component/Collider.h"
 #include "component/Sprite.h"
 
 #define MODULE "Bullet"

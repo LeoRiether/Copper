@@ -6,7 +6,6 @@
 #include <cmath>
 #include <string>
 
-#include "Collider.h"
 #include "Game.h"
 #include "GameData.h"
 #include "GameObject.h"
@@ -14,6 +13,7 @@
 #include "Sound.h"
 #include "component/Animation.h"
 #include "component/Bullet.h"
+#include "component/Collider.h"
 #include "component/EndStateDimmer.h"
 #include "component/KeepSoundAlive.h"
 #include "component/PenguinCannon.h"
