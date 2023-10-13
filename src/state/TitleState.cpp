@@ -48,10 +48,10 @@ void TitleState::Start() {
 
     {
         auto go = new GameObject{};
-        go->AddComponent(new Text{*go, ASSETS "/font/Call me maybe.ttf", 70,
-                                  Text::Blended, "Aperte espaco para continuar",
+        go->AddComponent(new Text{*go, ASSETS "/font/Call me maybe.ttf", 120,
+                                  Text::Blended, "COPPER",
                                   colorFromHex("e23400")});
-        go->AddComponent(new TextBlinker{*go, 1.0f});
+        go->AddComponent(new TextBlinker{*go, 3.0f});
         go->box.SetFoot(Vec2<Cart>{SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 64});
         RequestAddObject(go);
     }
