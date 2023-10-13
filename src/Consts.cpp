@@ -25,6 +25,7 @@ void Consts::Load() {
         string equals, value;
         reader >> equals;
         getline(reader, value);
+        while (!value.empty() && value[0] == ' ') value.erase(value.begin());
 
         string key = section == "" ? token : (section + "." + token);
 
