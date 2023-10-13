@@ -23,6 +23,13 @@ struct Rect {
         y = foot.y - h;
     }
 
+    inline Vec2<Cart> TopLeft() const { return {x, y}; }
+
+    inline void SetTopLeft(Vec2<Cart> topleft) {
+        x = topleft.x;
+        y = topleft.y;
+    }
+
     /** Assumes the width of the rect is the width of the tile, then finds the
      * center of that tile  */
     inline Vec2<Cart> IsoBaseCenter() const {

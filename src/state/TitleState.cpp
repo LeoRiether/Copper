@@ -7,6 +7,7 @@
 #include "component/Text.h"
 #include "component/TextBlinker.h"
 #include "state/StageState.h"
+#include "state/ViewerState.h"
 #include "util.h"
 
 #define MODULE "TitleState"
@@ -30,6 +31,11 @@ void TitleState::Update(float dt) {
     if (input.KeyPress(SDL_SCANCODE_SPACE)) {
         log("pushing StageState");
         Game::Instance().RequestPush(new StageState{});
+    }
+
+    if (input.KeyPress(SDL_SCANCODE_V)) {
+        Game::Instance().RequestPush(new ViewerState{});
+        return;
     }
 
     for (auto& go : objects) go->Update(dt);
