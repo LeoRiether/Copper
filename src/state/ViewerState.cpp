@@ -111,7 +111,7 @@ void ViewerState::Render() {
         Vec2<Cart> left, right;
         if (mode == "iso") {
             auto pivot = image.lock()->box.TopLeft().toIso();
-            to.x = from.x;
+            // to.x = from.x;
             auto fromIso = from.toIso();
             auto toIso = to.toIso();
             left = Vec2<Iso>{fromIso.x, std::min(fromIso.y, toIso.y)}.toCart();
