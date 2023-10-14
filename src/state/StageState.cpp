@@ -106,6 +106,28 @@ void StageState::Start() {
         RequestAddObject(go);
     }
 
+    // Escavadeira 2
+    {
+        auto go = new GameObject{};
+        auto sprite = new Sprite{*go, ASSETS "/img/Escavadeira.png"};
+        sprite->SetScale(0.2);
+        go->AddComponent(sprite);
+        go->box = {0, 0, (float)sprite->SheetWidth() * sprite->Scale().x,
+                   (float)sprite->SheetHeight() * sprite->Scale().y};
+        go->box.SetFoot(Vec2<Cart>{1200, 700});
+        auto collider = new IsoCollider{*go};
+        collider->offset = Rect{1555.78, 134.273, 754.746, 754.746};
+        collider->offset.x *= sprite->Scale().x;
+        collider->offset.y *= sprite->Scale().y;
+        collider->offset.w *= sprite->Scale().x;
+        collider->offset.h *= sprite->Scale().y;
+        go->AddComponent(collider);
+        Vec2<Cart> center = go->box.Center();
+        go->box.SetCenter(
+            (center.toIso() + Vec2<Iso>{collider->offset.w, 0}).toCart());
+        RequestAddObject(go);
+    }
+
     StartArray();
     started = true;
 

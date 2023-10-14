@@ -4,6 +4,8 @@
 #include <fstream>
 #include <tuple>
 
+#include "CType.h"
+#include "component/IsoCollider.h"
 #include "util.h"
 
 #define MODULE "State"
@@ -71,6 +73,15 @@ void State::RenderArray() {
 // Currently (experimentally!!) doing a Shell Sort by <layer, box.y+box.h>
 void State::ZSort() {
     auto key = [](const GameObject& go) {
+        auto isoCollider = (IsoCollider*)go.GetComponent(CType::IsoCollider);
+        if (isoCollider) {
+            Vec2<Cart> centerCart =
+                isoCollider->box
+                    .Center();  // it's actually a Vec2<Iso>!! Sorry :(
+            Vec2<Iso> centerIso = {centerCart.x, centerCart.y};
+            return std::tuple{go.renderLayer, centerIso.toCart().y};
+        }
+
         return std::tuple{go.renderLayer, go.box.y + go.box.h};
     };
 

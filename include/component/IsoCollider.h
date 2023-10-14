@@ -8,13 +8,10 @@
 #include "math/Vec2.h"
 
 class IsoCollider : public Component {
-   private:
-    Rect box;
-
    public:
     IsoCollider(GameObject& associated);
 
-    Rect offset;
+    Rect offset, box;
 
     void Update(float dt);
     void Render(Vec2<Cart> camera);

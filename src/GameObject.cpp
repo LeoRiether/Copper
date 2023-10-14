@@ -40,7 +40,7 @@ void GameObject::Render(Vec2<Cart> camera) {
     }
 }
 
-bool GameObject::IsDead() { return isDead; }
+bool GameObject::IsDead() const { return isDead; }
 
 void GameObject::RequestDelete() { isDead = true; }
 void GameObject::RequestAdd(GameObject* go) {
@@ -61,7 +61,7 @@ void GameObject::RemoveComponent(Component* cmp) {
 }
 
 // Should return an std::optional<Component*>, really
-Component* GameObject::GetComponent(CType type) {
+Component* GameObject::GetComponent(CType type) const {
     for (const auto& component : components) {
         if (component->Is(type)) return component.get();
     }

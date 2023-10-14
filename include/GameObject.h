@@ -34,11 +34,11 @@ class GameObject {
 
     void Update(float dt);
     void Render(Vec2<Cart> cameraPosition);
-    bool IsDead();
+    bool IsDead() const;
     void RequestDelete();
     void RequestAdd(GameObject* go);
     void AddComponent(Component* cmp);
     void RemoveComponent(Component* cmp);
-    Component* GetComponent(CType type);
+    Component* GetComponent(CType type) const;
     void NotifyCollision(GameObject& other);
 };
