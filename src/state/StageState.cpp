@@ -97,9 +97,11 @@ void StageState::Start() {
                    (float)sprite->SheetHeight() * sprite->Scale().y};
         go->box.SetFoot(Vec2<Cart>{1200, 700});
         auto collider = new IsoCollider{*go};
-        collider->offset =
-            Rect{3117.04f * sprite->Scale().x, 654.915f * sprite->Scale().y,
-                 1273.49f * sprite->Scale().x, 1273.49f * sprite->Scale().y};
+        collider->offset = Rect{1555.78, 134.273, 754.746, 754.746};
+        collider->offset.x *= sprite->Scale().x;
+        collider->offset.y *= sprite->Scale().y;
+        collider->offset.w *= sprite->Scale().x;
+        collider->offset.h *= sprite->Scale().y;
         go->AddComponent(collider);
         RequestAddObject(go);
     }
