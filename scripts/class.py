@@ -39,9 +39,9 @@ def main():
 {includes}
 
 class {classname} {inherit}{{
-  public:
+   public:
 
-  private:
+   private:
 
 }};
 
@@ -52,6 +52,7 @@ class {classname} {inherit}{{
         fcpp.write(
             f"""#include "{classpath}.h"
 
+#define MODULE "{classname}"
 
 """
         )

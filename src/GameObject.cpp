@@ -68,6 +68,14 @@ Component* GameObject::GetComponent(CType type) const {
     return nullptr;
 }
 
+vector<Component*> GameObject::GetAllComponents(CType type) const {
+    vector<Component*> res;
+    for (const auto& component : components) {
+        if (component->Is(type)) res.emplace_back(component.get());
+    }
+    return res;
+}
+
 void GameObject::NotifyCollision(GameObject& other) {
     for (auto& component : components) {
         component->NotifyCollision(other);

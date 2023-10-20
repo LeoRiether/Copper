@@ -21,6 +21,7 @@
 #include "component/Text.h"
 #include "component/TileMap.h"
 #include "math/Direction.h"
+#include "state/StageState.h"
 #include "util.h"
 
 #define MODULE "Player"
@@ -224,8 +225,9 @@ void Player::Render(Vec2<Cart> camera) {
                                     SDL_Color{255, 255, 0, 255}});
     }
     auto textComponent = (Text*)text->GetComponent(CType::Text);
-    textComponent->SetText(std::to_string(associated.box.x) + ", " +
-                           std::to_string(associated.box.y));
+    auto pos = associated.box.Foot().toIso();
+    textComponent->SetText(std::to_string(pos.x) + ", " +
+                           std::to_string(pos.y));
     text->box.SetFoot({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 10});
     textComponent->Render(Vec2<Cart>{0, 0});
 }

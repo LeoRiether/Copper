@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <bitset>
 #include <cmath>
 
 #include "math/Rect.h"
@@ -30,20 +31,3 @@ class Collision {
         return Vec2<Cart>{p.x * cs - p.y * sn, p.x * sn + p.y * cs};
     }
 };
-
-// Aqui estão três operadores que sua classe Vec2<Cart> deve precisar, se já não
-// tiver. Se sua classe tiver métodos para Mag, Norm, Dot e/ou Rotate, você pode
-// substituir os usos desses métodos por usos dos seus, mas garanta que deem
-// resultados corretos.
-
-// Vec2<Cart> operator+(const Vec2<Cart>& rhs) const {
-//    return Vec2<Cart>(x + rhs.x, y + rhs.y);
-// }
-
-// Vec2<Cart> operator-(const Vec2<Cart>& rhs) const {
-//    return Vec2<Cart>(x - rhs.x, y - rhs.y);
-// }
-
-// Vec2<Cart> operator*(const float rhs) const {
-//    return Vec2<Cart>(x * rhs, y * rhs);
-// }

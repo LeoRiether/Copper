@@ -6,7 +6,6 @@
 #include <vector>
 
 #include "CType.h"
-#include "Collision.h"
 #include "Consts.h"
 #include "Game.h"
 #include "GameObject.h"
@@ -17,6 +16,7 @@
 #include "component/Alien.h"
 #include "component/CameraFollower.h"
 #include "component/Collider.h"
+#include "component/EndStateDimmer.h"
 #include "component/InfiniteBg.h"
 #include "component/IsoCollider.h"
 #include "component/KeepSoundAlive.h"
@@ -26,6 +26,8 @@
 #include "component/enemy/EnemyDistancer.h"
 #include "component/enemy/EnemyFollower.h"
 #include "math/Rect.h"
+#include "physics/Collision.h"
+#include "physics/CollisionEngine.h"
 #include "state/TitleState.h"
 #include "util.h"
 
@@ -83,7 +85,16 @@ void StageState::Start() {
         barrel->box = {0, 0, (float)sprite->SheetWidth() * sprite->Scale().x,
                        (float)sprite->SheetHeight() * sprite->Scale().y};
         barrel->box.SetFoot(Vec2<Cart>{870, 600});
-        barrel->AddComponent(new Collider{*barrel});
+        auto collider1 = new IsoCollider{*barrel};
+        collider1->tags.set(tag::Terrain);
+        collider1->offset = Rect{834.04, 113.16, 338.208, 336.592};
+        collider1->ScaleToSprite();
+        auto collider2 = new IsoCollider{*barrel};
+        collider2->tags.set(tag::Terrain);
+        collider2->offset = Rect{640.039, 192.361, 245.905, 420.495};
+        collider2->ScaleToSprite();
+        barrel->AddComponent(collider1);
+        barrel->AddComponent(collider2);
         RequestAddObject(barrel);
     }
 
@@ -97,11 +108,9 @@ void StageState::Start() {
                    (float)sprite->SheetHeight() * sprite->Scale().y};
         go->box.SetFoot(Vec2<Cart>{1200, 700});
         auto collider = new IsoCollider{*go};
+        collider->tags.set(tag::Terrain);
         collider->offset = Rect{1555.78, 134.273, 754.746, 754.746};
-        collider->offset.x *= sprite->Scale().x;
-        collider->offset.y *= sprite->Scale().y;
-        collider->offset.w *= sprite->Scale().x;
-        collider->offset.h *= sprite->Scale().y;
+        collider->ScaleToSprite();
         go->AddComponent(collider);
         RequestAddObject(go);
     }
@@ -116,11 +125,9 @@ void StageState::Start() {
                    (float)sprite->SheetHeight() * sprite->Scale().y};
         go->box.SetFoot(Vec2<Cart>{1200, 700});
         auto collider = new IsoCollider{*go};
+        collider->tags.set(tag::Terrain);
         collider->offset = Rect{1555.78, 134.273, 754.746, 754.746};
-        collider->offset.x *= sprite->Scale().x;
-        collider->offset.y *= sprite->Scale().y;
-        collider->offset.w *= sprite->Scale().x;
-        collider->offset.h *= sprite->Scale().y;
+        collider->ScaleToSprite();
         go->AddComponent(collider);
         Vec2<Cart> center = go->box.Center();
         go->box.SetCenter(
@@ -168,34 +175,13 @@ void StageState::Update(float dt) {
     }
 
     // Handle updates
-    vector<GameObject*> collidableObjects;
     for (auto& go : objects) {
         go->Update(dt);
-
-        if (go->GetComponent(CType::Collider))
-            collidableObjects.push_back(go.get());
     }
-
+    CollisionEngine::Solve(objects);
     camera->Update(dt);
 
-    // Handle collisions
-    size_t n = collidableObjects.size();
-    for (size_t i = 0; i < n; i++) {
-        auto collider_i =
-            (Collider*)collidableObjects[i]->GetComponent(CType::Collider);
-        for (size_t j = i + 1; j < n; j++) {
-            auto collider_j =
-                (Collider*)collidableObjects[j]->GetComponent(CType::Collider);
-            if (Collision::IsColliding(collider_i->box, collider_j->box,
-                                       collidableObjects[i]->angle,
-                                       collidableObjects[j]->angle)) {
-                collidableObjects[i]->NotifyCollision(*collidableObjects[j]);
-                collidableObjects[j]->NotifyCollision(*collidableObjects[i]);
-            }
-        }
-    }
-
-    // swap-remove dead objects
+    // Swap-remove dead objects
     for (size_t i = 0; i < objects.size();) {
         if (objects[i]->IsDead()) {
             if (camera->Focus() == objects[i].get()) camera->Unfollow();

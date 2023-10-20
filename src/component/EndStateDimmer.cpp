@@ -19,6 +19,7 @@ void EndStateDimmer::Update(float dt) {
 
 void EndStateDimmer::Render(Vec2<Cart>) {
     float opacity = 255.0f * timer / secondsToDeath;
+    opacity = 200.0f;
 
     auto renderer = Game::Instance().Renderer();
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);  // ?

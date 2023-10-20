@@ -2,6 +2,10 @@
 
 #include "CType.h"
 #include "Game.h"
+#include "component/Sprite.h"
+#include "util.h"
+
+#define MODULE "IsoCollider"
 
 IsoCollider::IsoCollider(GameObject& associated) : Component(associated) {}
 
@@ -35,6 +39,24 @@ void IsoCollider::Render(Vec2<Cart> camera) {
                            SDL_ALPHA_OPAQUE);
     SDL_RenderDrawLines(Game::Instance().Renderer(), points, 5);
 #endif  // DEBUG
+}
+
+void IsoCollider::ScaleToSprite() {
+    auto sprite = (Sprite*)associated.GetComponent(CType::Sprite);
+    if (!sprite) {
+        fail("no Sprite component found");
+    }
+    offset.x *= sprite->Scale().x;
+    offset.y *= sprite->Scale().y;
+    offset.w *= sprite->Scale().x;
+    offset.h *= sprite->Scale().y;
+}
+
+void IsoCollider::ExpandBy(float pixels) {
+    offset.x -= pixels;
+    offset.y -= pixels;
+    offset.w += pixels;
+    offset.h += pixels;
 }
 
 bool IsoCollider::Is(CType type) { return type == CType::IsoCollider; }

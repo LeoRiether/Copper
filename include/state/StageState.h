@@ -8,6 +8,7 @@
 #include "Music.h"
 #include "SDL_include.h"
 #include "State.h"
+#include "component/IsoCollider.h"
 #include "component/Sprite.h"
 #include "math/Vec2.h"
 

@@ -40,5 +40,6 @@ class GameObject {
     void AddComponent(Component* cmp);
     void RemoveComponent(Component* cmp);
     Component* GetComponent(CType type) const;
+    vector<Component*> GetAllComponents(CType type) const;
     void NotifyCollision(GameObject& other);
 };

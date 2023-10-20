@@ -1,4 +1,4 @@
-#include "Collision.h"
+#include "physics/Collision.h"
 
 bool Collision::IsColliding(const Rect& a, const Rect& b, float angleOfA,
                             float angleOfB) {

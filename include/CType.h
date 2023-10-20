@@ -19,4 +19,5 @@ enum class CType {
     Animation,
     Enemy,
     IsoCollider,
+    RigidBody,
 };
