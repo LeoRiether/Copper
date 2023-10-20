@@ -1,6 +1,6 @@
 #include "component/KeepSoundAlive.h"
 
-#include "Sound.h"
+#include "component/Sound.h"
 
 #define MODULE "KeepSoundAlive"
 

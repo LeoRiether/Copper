@@ -1,4 +1,4 @@
-#include "Sound.h"
+#include "component/Sound.h"
 
 #include "Resources.h"
 
