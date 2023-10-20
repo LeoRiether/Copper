@@ -10,10 +10,6 @@
 #include "Game.h"
 #include "GameObject.h"
 #include "InputManager.h"
-#include "SDL_scancode.h"
-#include "Sound.h"
-#include "TileSet.h"
-#include "component/Alien.h"
 #include "component/CameraFollower.h"
 #include "component/Collider.h"
 #include "component/EndStateDimmer.h"
@@ -21,7 +17,7 @@
 #include "component/IsoCollider.h"
 #include "component/KeepSoundAlive.h"
 #include "component/Player.h"
-#include "component/TileMap.h"
+#include "component/Sound.h"
 #include "component/enemy/Enemy.h"
 #include "component/enemy/EnemyDistancer.h"
 #include "component/enemy/EnemyFollower.h"
@@ -111,6 +107,7 @@ void StageState::Start() {
         collider->tags.set(tag::Terrain);
         collider->offset = Rect{1555.78, 134.273, 754.746, 754.746};
         collider->ScaleToSprite();
+        collider->ExpandBy(5);
         go->AddComponent(collider);
         RequestAddObject(go);
     }
@@ -132,6 +129,7 @@ void StageState::Start() {
         Vec2<Cart> center = go->box.Center();
         go->box.SetCenter(
             (center.toIso() + Vec2<Iso>{collider->offset.w, 0}).toCart());
+        collider->ExpandBy(5);
         RequestAddObject(go);
     }
 

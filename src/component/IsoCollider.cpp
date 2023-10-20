@@ -55,8 +55,8 @@ void IsoCollider::ScaleToSprite() {
 void IsoCollider::ExpandBy(float pixels) {
     offset.x -= pixels;
     offset.y -= pixels;
-    offset.w += pixels;
-    offset.h += pixels;
+    offset.w += 2 * pixels;
+    offset.h += 2 * pixels;
 }
 
 bool IsoCollider::Is(CType type) { return type == CType::IsoCollider; }
