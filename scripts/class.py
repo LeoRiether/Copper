@@ -1,5 +1,6 @@
 import os
 
+
 def parse_args():
     from argparse import ArgumentParser
 
@@ -24,11 +25,20 @@ def main():
         print(f"\033[91merror!\033[0m file src/{classpath}.cpp already exists")
         return
 
+    includes = ""
+    inherit = ""
+
+    if classpath.startswith("component/"):
+        includes += '#include "Component.h"'
+        inherit = ": public Component "
+
     with open(f"include/{classpath}.h", "w") as fh:
         fh.write(
             f"""#pragma once
 
-class {classname} {{
+{includes}
+
+class {classname} {inherit}{{
   public:
 
   private:
