@@ -172,6 +172,10 @@ void StageState::Update(float dt) {
         return;
     }
 
+    if (input.KeyPress(SDL_SCANCODE_C)) {
+        Consts::GetInt("debug.show_colliders") ^= 1;
+    }
+
     // Handle updates
     for (auto& go : objects) {
         go->Update(dt);

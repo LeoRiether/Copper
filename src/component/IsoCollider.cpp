@@ -1,6 +1,7 @@
 #include "component/IsoCollider.h"
 
 #include "CType.h"
+#include "Consts.h"
 #include "Game.h"
 #include "component/Sprite.h"
 #include "util.h"
@@ -19,26 +20,28 @@ void IsoCollider::Update(float) {
 }
 
 void IsoCollider::Render(Vec2<Cart> camera) {
-#ifdef DEBUG
-    SDL_Point points[5];
+    static int& showColliders = Consts::GetInt("debug.show_colliders");
 
-    Vec2<Cart> point = Vec2<Iso>{box.x, box.y}.toCart() - camera;
-    points[0] = {(int)point.x, (int)point.y};
-    points[4] = {(int)point.x, (int)point.y};
+    if (showColliders) {
+        SDL_Point points[5];
 
-    point = Vec2<Iso>{box.x + box.w, box.y}.toCart() - camera;
-    points[1] = {(int)point.x, (int)point.y};
+        Vec2<Cart> point = Vec2<Iso>{box.x, box.y}.toCart() - camera;
+        points[0] = {(int)point.x, (int)point.y};
+        points[4] = {(int)point.x, (int)point.y};
 
-    point = Vec2<Iso>{box.x + box.w, box.y + box.h}.toCart() - camera;
-    points[2] = {(int)point.x, (int)point.y};
+        point = Vec2<Iso>{box.x + box.w, box.y}.toCart() - camera;
+        points[1] = {(int)point.x, (int)point.y};
 
-    point = Vec2<Iso>{box.x, box.y + box.h}.toCart() - camera;
-    points[3] = {(int)point.x, (int)point.y};
+        point = Vec2<Iso>{box.x + box.w, box.y + box.h}.toCart() - camera;
+        points[2] = {(int)point.x, (int)point.y};
 
-    SDL_SetRenderDrawColor(Game::Instance().Renderer(), 0, 255, 0,
-                           SDL_ALPHA_OPAQUE);
-    SDL_RenderDrawLines(Game::Instance().Renderer(), points, 5);
-#endif  // DEBUG
+        point = Vec2<Iso>{box.x, box.y + box.h}.toCart() - camera;
+        points[3] = {(int)point.x, (int)point.y};
+
+        SDL_SetRenderDrawColor(Game::Instance().Renderer(), 0, 255, 0,
+                               SDL_ALPHA_OPAQUE);
+        SDL_RenderDrawLines(Game::Instance().Renderer(), points, 5);
+    }
 }
 
 void IsoCollider::ScaleToSprite() {
