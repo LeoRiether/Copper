@@ -1,19 +1,16 @@
 #include "physics/CollisionEngine.h"
 
 #include "CType.h"
-#include "component/IsoCollider.h"
-#include "component/Player.h"
 #include "physics/IsoSolver.h"
 #include "util.h"
 
 #define MODULE "CollisionEngine"
 
-void CollisionEngine::Solve(const vector<shared_ptr<GameObject>>& objects) {
-    static vector<IsoCollider*> terrainColliders;
-    terrainColliders.clear();
+vector<IsoCollider*> CollisionEngine::terrainColliders;
+GameObject* CollisionEngine::player;
 
-    static GameObject* player;
-    player = Player::player ? &Player::player->Associated() : nullptr;
+void CollisionEngine::Solve(const vector<shared_ptr<GameObject>>& objects) {
+    ClearState();
 
     for (auto& obj : objects) {
         auto isoColliders = obj->GetAllComponents(CType::IsoCollider);
@@ -38,4 +35,9 @@ void CollisionEngine::Solve(const vector<shared_ptr<GameObject>>& objects) {
         }
         player->box.SetFoot(pos);
     }
+}
+
+void CollisionEngine::ClearState() {
+    terrainColliders.clear();
+    player = Player::player ? &Player::player->Associated() : nullptr;
 }

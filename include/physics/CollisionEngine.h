@@ -4,6 +4,8 @@
 #include <vector>
 
 #include "GameObject.h"
+#include "component/IsoCollider.h"
+#include "component/Player.h"
 
 using std::shared_ptr;
 using std::vector;
@@ -12,4 +14,10 @@ using std::vector;
 class CollisionEngine {
    public:
     static void Solve(const vector<shared_ptr<GameObject>>& objects);
+
+   private:
+    static vector<IsoCollider*> terrainColliders;
+    static GameObject* player;
+
+    static void ClearState();
 };
