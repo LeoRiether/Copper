@@ -56,7 +56,7 @@ jobs:
             base-devel
             git
             make
-            mingw-w64-premake
+            mingw-w64-x86_64-premake
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-harfbuzz
             mingw-w64-x86_64-SDL2
