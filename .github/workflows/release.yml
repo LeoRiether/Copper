@@ -54,6 +54,7 @@ jobs:
          update: true
          install: >-
             base-devel
+            glib2-devel
             git
             make
             mingw-w64-x86_64-premake
