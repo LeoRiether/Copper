@@ -20,3 +20,5 @@
 - [Collision Detection: How Unity Does It](https://www.youtube.com/watch?v=B0aGFBo_Ki0)
 - [(!) Indie Game Devlog 18 : Comparing 2 custom Collision Methods](https://www.youtube.com/watch?v=KP7Nj3U4uuM)
 - [Writing a Physics Engine from scratch - collision detection optimization](https://www.youtube.com/watch?v=9IULfQH7E90)
+- [Circle-Rectangle collision detection](https://stackoverflow.com/a/402019)
+- [The Pain of Compiling an SDL game written in C for Windows](https://anna-singleton.github.io/posts/compiling-sdl-c-windows/)

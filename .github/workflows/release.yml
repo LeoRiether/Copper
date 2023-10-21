@@ -1,0 +1,84 @@
+name: Release
+
+# Thank you Anna!
+# https://anna-singleton.github.io/posts/compiling-sdl-c-windows/
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - run: sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-gfx-dev
+    - uses: actions/checkout@v3
+    - name: make
+      run: make
+    - name: Zip Release
+      uses: TheDoctor0/zip-release@0.6.2
+      with:
+        type: 'zip'
+        filename: 'release-linux.zip'
+        path: res/ game
+    - uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "$"
+        automatic_release_tag: "latest-linux"
+        prerelease: false
+        title: "Latest Linux Build"
+        files: |
+          release-linux.zip
+  build-windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v3
+      
+      - name: setup msys2
+        uses: msys2/setup-msys2@v2
+        with:
+         update: true
+         install: >-
+            base-devel
+            git
+            make
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-harfbuzz
+            mingw-w64-x86_64-SDL2
+            mingw-w64-x86_64-SDL2_ttf
+            mingw-w64-x86_64-SDL2_gfx
+            mingw-w64-x86_64-SDL2_image
+
+      - uses: abel0b/setup-premake@v2.3
+        name: Setup premake
+        with:
+          version: "5.0.0-beta2"
+      - name: Generate makefile 
+        run: premake5 gmake2
+
+      - name: Build
+        run: make config=release
+
+      - name: move libs to current directory for packing
+        run: mv libs/* .
+
+      - name: zip and upload game
+        uses: TheDoctor0/zip-release@0.6.2
+        with:
+          type: 'zip'
+          filename: 'release-windows.zip'
+          path: assets/ *.dll copper_release
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "$"
+          automatic_release_tag: "latest-windows"
+          prerelease: false
+          title: "Latest Windows Build"
+          files: |
+            release-windows.zip 
