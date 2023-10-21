@@ -12,21 +12,21 @@ using std::unique_ptr;
 class EnemyBehavior;
 
 class Enemy : public Component {
-   public:
-    //////////////////////////////
-    //        Components        //
-    //////////////////////////////
-    float stopDistance{300};
-    unique_ptr<EnemyBehavior> behavior;
+public:
+  //////////////////////////////
+  //        Components        //
+  //////////////////////////////
+  float stopDistance{300};
+  unique_ptr<EnemyBehavior> behavior;
 
-    Direction direction;
+  Direction direction;
 
-    Enemy(GameObject& associated);
+  Enemy(GameObject &associated);
 
-    void Update(float dt);
-    void Render(Vec2<Cart> camera);
-    bool Is(CType type);
+  void Update(float dt);
+  void Render(Vec2<Cart> camera);
+  bool Is(CType type);
 
-    Enemy& WithStopDistance(float value);
-    Enemy& WithBehavior(EnemyBehavior* value);
+  Enemy &WithStopDistance(float value);
+  Enemy &WithBehavior(EnemyBehavior *value);
 };

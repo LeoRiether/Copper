@@ -3,13 +3,13 @@
 #include <cstdint>
 
 class Timer {
-   private:
-    int64_t startTime;
+private:
+  int64_t startTime;
 
-   public:
-    Timer();
+public:
+  Timer();
 
-    void Restart();
-    void Delay(float t);
-    float Get();
+  void Restart();
+  void Delay(float t);
+  float Get();
 };

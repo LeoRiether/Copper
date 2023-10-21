@@ -5,7 +5,7 @@
 class Enemy;
 
 class EnemyBehavior {
-   public:
-    virtual ~EnemyBehavior() {}
-    virtual void Update(Enemy&, float) {}
+public:
+  virtual ~EnemyBehavior() {}
+  virtual void Update(Enemy &, float) {}
 };

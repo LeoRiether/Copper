@@ -2,7 +2,7 @@
 #include "SDL_include.h"
 #include "math/Vec2.h"
 
-constexpr int KEYS = 0x7F + 0x11A;  // A soma dos tamanhos dos blocos de teclas
+constexpr int KEYS = 0x7F + 0x11A; // A soma dos tamanhos dos blocos de teclas
 constexpr int BLOCK0_SIZE = 0x7F;
 constexpr int BLOCK1_START = 0x3FFFFF81;
 
@@ -20,36 +20,37 @@ constexpr int MOVE_DOWN_KEY = SDL_SCANCODE_S;
 constexpr int MOVE_RIGHT_KEY = SDL_SCANCODE_D;
 
 constexpr int DASH_KEY = SDL_SCANCODE_SPACE;
+constexpr int NEXT_KEY = SDL_SCANCODE_N;
 
 enum class InputState { Up = false, Down = true };
 
 class InputManager {
-   private:
-    InputState mouseState[6];
-    int mouseUpdate[6];
-    InputState keyState[KEYS];
-    int keyUpdate[KEYS];
-    bool quitRequested;
-    int mouseX, mouseY;
+private:
+  InputState mouseState[6];
+  int mouseUpdate[6];
+  InputState keyState[KEYS];
+  int keyUpdate[KEYS];
+  bool quitRequested;
+  int mouseX, mouseY;
 
-    InputManager();
-    ~InputManager();
+  InputManager();
+  ~InputManager();
 
-   public:
-    static InputManager& Instance();
+public:
+  static InputManager &Instance();
 
-    void Update();
-    bool KeyPress(int key);
-    bool KeyRelease(int key);
-    bool IsKeyDown(int key);
+  void Update();
+  bool KeyPress(int key);
+  bool KeyRelease(int key);
+  bool IsKeyDown(int key);
 
-    bool MousePress(int button);
-    bool MouseRelease(int button);
-    bool IsMouseDown(int button);
+  bool MousePress(int button);
+  bool MouseRelease(int button);
+  bool IsMouseDown(int button);
 
-    int MouseX();
-    int MouseY();
-    Vec2<Cart> Mouse();
+  int MouseX();
+  int MouseY();
+  Vec2<Cart> Mouse();
 
-    bool QuitRequested();
+  bool QuitRequested();
 };

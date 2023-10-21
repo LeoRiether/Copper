@@ -9,16 +9,16 @@ using std::shared_ptr;
 using std::string;
 
 class Music {
-   private:
-    shared_ptr<MixMusic> music;
+private:
+  shared_ptr<MixMusic> music;
 
-   public:
-    Music();
-    Music(const string& file);
-    ~Music();
+public:
+  Music();
+  Music(const string &file);
+  ~Music();
 
-    void Play(int times = -1);
-    void Stop(int msToStop = 1500);
-    void Open(const string& file);
-    bool IsOpen();
+  void Play(int times = -1);
+  void Stop(int msToStop = 1500);
+  void Open(const string &file);
+  bool IsOpen();
 };

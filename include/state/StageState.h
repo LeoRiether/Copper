@@ -17,25 +17,25 @@ using std::unique_ptr;
 using std::vector;
 
 class StageState : public State {
-   private:
-    Music* music;
+private:
+  Music *music;
 
-    GameObject* CreatePlayer();
-    GameObject* CreateEnemyFollower();
-    GameObject* CreateEnemyDistancer();
+  GameObject *CreatePlayer();
+  GameObject *CreateEnemyFollower();
+  GameObject *CreateEnemyDistancer();
 
-   public:
-    ~StageState();
+public:
+  ~StageState();
 
-    void Start();
-    void Pause();
-    void Resume();
+  void Start();
+  void Pause();
+  void Resume();
 
-    void LoadAssets();
-    void Update(float dt);
-    void Render();
+  void LoadAssets();
+  void Update(float dt);
+  void Render();
 
-    void Input();
+  void Input();
 
-    inline Camera& GetCamera() { return *camera; }
+  inline Camera &GetCamera() { return *camera; }
 };

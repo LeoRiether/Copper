@@ -9,17 +9,17 @@
 #include "physics/Tags.h"
 
 class IsoCollider : public Component {
-   public:
-    IsoCollider(GameObject& associated);
+public:
+  IsoCollider(GameObject &associated);
 
-    tagset tags;
-    Rect offset, box;
+  tagset tags;
+  Rect offset, box;
 
-    void Update(float dt);
-    void Render(Vec2<Cart> camera);
+  void Update(float dt);
+  void Render(Vec2<Cart> camera);
 
-    void ScaleToSprite();
-    void ExpandBy(float pixels);
+  void ScaleToSprite();
+  void ExpandBy(float pixels);
 
-    bool Is(CType type);
+  bool Is(CType type);
 };

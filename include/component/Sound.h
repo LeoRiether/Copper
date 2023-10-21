@@ -14,22 +14,22 @@ using std::shared_ptr;
 using std::string;
 
 class Sound : public Component {
-   private:
-    shared_ptr<SoundChunk> chunk;
-    int channel;
+private:
+  shared_ptr<SoundChunk> chunk;
+  int channel;
 
-   public:
-    Sound(GameObject& associated);
-    Sound(GameObject& associated, const string& file);
-    ~Sound();
+public:
+  Sound(GameObject &associated);
+  Sound(GameObject &associated, const string &file);
+  ~Sound();
 
-    void Play(int times = 1);
-    void Stop();
-    void Open(const string& file);
-    bool IsOpen();
-    bool IsPlaying();
+  void Play(int times = 1);
+  void Stop();
+  void Open(const string &file);
+  bool IsOpen();
+  bool IsPlaying();
 
-    void Update(float dt);
-    void Render(Vec2<Cart> camera);
-    bool Is(CType type);
+  void Update(float dt);
+  void Render(Vec2<Cart> camera);
+  bool Is(CType type);
 };

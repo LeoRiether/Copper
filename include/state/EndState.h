@@ -4,18 +4,18 @@
 #include "state/State.h"
 
 class EndState : public State {
-   private:
-    Music bgMusic;
+private:
+  Music bgMusic;
 
-   public:
-    EndState();
-    ~EndState();
+public:
+  EndState();
+  ~EndState();
 
-    void LoadAssets();
-    void Update(float dt);
-    void Render();
+  void LoadAssets();
+  void Update(float dt);
+  void Render();
 
-    void Start();
-    void Pause();
-    void Resume();
+  void Start();
+  void Pause();
+  void Resume();
 };

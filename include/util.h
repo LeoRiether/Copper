@@ -16,50 +16,50 @@
 #define CYAN "\033[96m"
 #define WHITE "\033[97m"
 
-#define log(fmt) \
-    { fprintf(stderr, BLUE MODULE ":: " RESET fmt "\n"); }
-#define log2(fmt, ...) \
-    { fprintf(stderr, BLUE MODULE ":: " RESET fmt "\n", __VA_ARGS__); }
-#define info(fmt) \
-    { fprintf(stderr, GREEN MODULE ":: " RESET fmt "\n"); }
-#define info2(fmt, ...) \
-    { fprintf(stderr, GREEN MODULE ":: " RESET fmt "\n", __VA_ARGS__); }
-#define trace(fmt) \
-    { fprintf(stderr, WHITE MODULE ":: " RESET fmt "\n"); }
-#define trace2(fmt, ...) \
-    { fprintf(stderr, WHITE MODULE ":: " RESET fmt "\n", __VA_ARGS__); }
-#define debug(fmt) \
-    { fprintf(stderr, CYAN MODULE ":: " RESET fmt "\n"); }
-#define debug2(fmt, ...) \
-    { fprintf(stderr, CYAN MODULE ":: " RESET fmt "\n", __VA_ARGS__); }
-#define warn(fmt) \
-    { fprintf(stderr, YELLOW MODULE ":: " RESET fmt "\n"); }
-#define warn2(fmt, ...) \
-    { fprintf(stderr, YELLOW MODULE ":: " RESET fmt "\n", __VA_ARGS__); }
-#define error(fmt) \
-    { fprintf(stderr, RED MODULE ":: " RESET fmt "\n"); }
+#define log(fmt)                                                               \
+  { fprintf(stderr, BLUE MODULE ":: " RESET fmt "\n"); }
+#define log2(fmt, ...)                                                         \
+  { fprintf(stderr, BLUE MODULE ":: " RESET fmt "\n", __VA_ARGS__); }
+#define info(fmt)                                                              \
+  { fprintf(stderr, GREEN MODULE ":: " RESET fmt "\n"); }
+#define info2(fmt, ...)                                                        \
+  { fprintf(stderr, GREEN MODULE ":: " RESET fmt "\n", __VA_ARGS__); }
+#define trace(fmt)                                                             \
+  { fprintf(stderr, WHITE MODULE ":: " RESET fmt "\n"); }
+#define trace2(fmt, ...)                                                       \
+  { fprintf(stderr, WHITE MODULE ":: " RESET fmt "\n", __VA_ARGS__); }
+#define debug(fmt)                                                             \
+  { fprintf(stderr, CYAN MODULE ":: " RESET fmt "\n"); }
+#define debug2(fmt, ...)                                                       \
+  { fprintf(stderr, CYAN MODULE ":: " RESET fmt "\n", __VA_ARGS__); }
+#define warn(fmt)                                                              \
+  { fprintf(stderr, YELLOW MODULE ":: " RESET fmt "\n"); }
+#define warn2(fmt, ...)                                                        \
+  { fprintf(stderr, YELLOW MODULE ":: " RESET fmt "\n", __VA_ARGS__); }
+#define error(fmt)                                                             \
+  { fprintf(stderr, RED MODULE ":: " RESET fmt "\n"); }
 
-#define fail(fmt)                                                      \
-    {                                                                  \
-        fprintf(stderr, RED MODULE ":: Fatal error: " RESET fmt "\n"); \
-        exit(EXIT_FAILURE);                                            \
-    }
-#define fail2(fmt, ...)                                               \
-    {                                                                 \
-        fprintf(stderr, RED MODULE ":: Fatal error: " RESET fmt "\n", \
-                __VA_ARGS__);                                         \
-        exit(EXIT_FAILURE);                                           \
-    }
-#define sdlfail(fmt)                                                         \
-    {                                                                        \
-        fprintf(stderr,                                                      \
-                RED MODULE ":: Fatal SDL error: " RESET fmt ". Cause: %s\n", \
-                SDL_GetError());                                             \
-        exit(EXIT_FAILURE);                                                  \
-    }
+#define fail(fmt)                                                              \
+  {                                                                            \
+    fprintf(stderr, RED MODULE ":: Fatal error: " RESET fmt "\n");             \
+    exit(EXIT_FAILURE);                                                        \
+  }
+#define fail2(fmt, ...)                                                        \
+  {                                                                            \
+    fprintf(stderr, RED MODULE ":: Fatal error: " RESET fmt "\n",              \
+            __VA_ARGS__);                                                      \
+    exit(EXIT_FAILURE);                                                        \
+  }
+#define sdlfail(fmt)                                                           \
+  {                                                                            \
+    fprintf(stderr,                                                            \
+            RED MODULE ":: Fatal SDL error: " RESET fmt ". Cause: %s\n",       \
+            SDL_GetError());                                                   \
+    exit(EXIT_FAILURE);                                                        \
+  }
 
-#define UNUSED(x) \
-    { (void)(x); }
+#define UNUSED(x)                                                              \
+  { (void)(x); }
 
-inline std::mt19937 rng(
-    std::chrono::steady_clock::now().time_since_epoch().count());
+inline std::mt19937
+    rng(std::chrono::steady_clock::now().time_since_epoch().count());

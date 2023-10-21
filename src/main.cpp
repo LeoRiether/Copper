@@ -8,8 +8,8 @@
 #include "util.h"
 
 #define MODULE "main"
-int main(int, char*[]) {
-    Game& game = Game::Instance();
-    game.Run();
-    return EXIT_SUCCESS;
+int main(int, char *[]) {
+  Game &game = Game::Instance();
+  game.Run();
+  return EXIT_SUCCESS;
 }

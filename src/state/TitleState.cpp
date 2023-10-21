@@ -19,48 +19,48 @@ TitleState::~TitleState() {}
 void TitleState::LoadAssets() {}
 
 void TitleState::Update(float dt) {
-    ProcessAddRequests();
+  ProcessAddRequests();
 
-    auto& input = InputManager::Instance();
-    input.Update();
+  auto &input = InputManager::Instance();
+  input.Update();
 
-    if (input.QuitRequested() || input.KeyPress(SDL_SCANCODE_ESCAPE)) {
-        quitRequested = true;
-    }
+  if (input.QuitRequested() || input.KeyPress(SDL_SCANCODE_ESCAPE)) {
+    quitRequested = true;
+  }
 
-    if (input.KeyPress(SDL_SCANCODE_SPACE)) {
-        log("pushing StageState");
-        Game::Instance().RequestPush(new StageState{});
-    }
+  if (input.KeyPress(SDL_SCANCODE_SPACE)) {
+    log("pushing StageState");
+    Game::Instance().RequestPush(new StageState{});
+  }
 
-    if (input.KeyPress(SDL_SCANCODE_V)) {
-        Game::Instance().RequestPush(new ViewerState{});
-        return;
-    }
+  if (input.KeyPress(SDL_SCANCODE_V)) {
+    Game::Instance().RequestPush(new ViewerState{});
+    return;
+  }
 
-    for (auto& go : objects) go->Update(dt);
+  for (auto &go : objects)
+    go->Update(dt);
 }
 
 void TitleState::Render() { RenderArray(); }
 
 void TitleState::Start() {
-    {
-        auto bgGO = new GameObject{};
-        auto sprite = new Sprite{*bgGO, ASSETS "/img/splashscreen.png"};
-        sprite->SetScale((float)SCREEN_WIDTH / sprite->SheetWidth());
-        bgGO->AddComponent(sprite);
-        RequestAddObject(bgGO);
-    }
+  {
+    auto bgGO = new GameObject{};
+    auto sprite = new Sprite{*bgGO, ASSETS "/img/splashscreen.png"};
+    sprite->SetScale((float)SCREEN_WIDTH / sprite->SheetWidth());
+    bgGO->AddComponent(sprite);
+    RequestAddObject(bgGO);
+  }
 
-    {
-        auto go = new GameObject{};
-        go->AddComponent(new Text{*go, ASSETS "/font/Call me maybe.ttf", 120,
-                                  Text::Blended, "COPPER",
-                                  colorFromHex("e23400")});
-        go->AddComponent(new TextBlinker{*go, 3.0f});
-        go->box.SetFoot(Vec2<Cart>{SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 64});
-        RequestAddObject(go);
-    }
+  {
+    auto go = new GameObject{};
+    go->AddComponent(new Text{*go, ASSETS "/font/Call me maybe.ttf", 120,
+                              Text::Blended, "COPPER", colorFromHex("e23400")});
+    go->AddComponent(new TextBlinker{*go, 3.0f});
+    go->box.SetFoot(Vec2<Cart>{SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 64});
+    RequestAddObject(go);
+  }
 }
 
 void TitleState::Pause() {}

@@ -1,3 +1,2 @@
 < Copper: Hello World!
-> Ferreiro: Olá Mundo!
-< Bruxa: ...
+< Copper: This is\nMultiline text
