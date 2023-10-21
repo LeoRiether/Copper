@@ -30,7 +30,7 @@ jobs:
       with:
         type: 'zip'
         filename: 'release-linux.zip'
-        path: assets/ copper_release
+        path: assets/ copper_release consts.ini
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
@@ -78,7 +78,7 @@ jobs:
         with:
           type: 'zip'
           filename: 'release-windows.zip'
-          path: assets/ *.dll copper_release
+          path: assets/ *.dll copper_release consts.ini
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
