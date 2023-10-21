@@ -68,7 +68,7 @@ jobs:
             mingw-w64-x86_64-SDL2_mixer
 
       - name: Generate makefile 
-        run: premake5 gmake2
+        run: premake5 gmake2 --file premake5-windows.lua
 
       - name: Build
         run: make config=release
