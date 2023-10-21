@@ -68,7 +68,7 @@ jobs:
             mingw-w64-x86_64-SDL2_mixer
 
       - name: Generate makefile 
-        run: premake5 gmake2 --file premake5-windows.lua
+        run: premake5 gmake2 --file=premake5-windows.lua
 
       - name: Build
         run: make config=release
@@ -81,7 +81,7 @@ jobs:
         with:
           type: 'zip'
           filename: 'release-windows.zip'
-          path: assets/ *.dll copper_release consts.ini
+          path: assets/ *.dll copper_release.exe consts.ini
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
