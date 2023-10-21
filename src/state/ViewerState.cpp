@@ -120,11 +120,11 @@ void ViewerState::Render() {
                         (fromIso.x - toIso.x) / zoom,
                         (fromIso.y - toIso.y) / zoom};
         } else {
-            auto pivot = image.lock()->box.TopLeft().toIso();
+            auto pivot = image.lock()->box.TopLeft();
             left = {from.x, std::max(from.y, to.y)};
             right = {to.x, std::min(from.y, to.y)};
-            dragRect = {from.x - pivot.x, from.y - pivot.y, to.x - from.x,
-                        to.y - from.y};
+            dragRect = {(from.x - pivot.x) / zoom, (from.y - pivot.y) / zoom,
+                        (to.x - from.x) / zoom, (to.y - from.y) / zoom};
         }
 
         SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
