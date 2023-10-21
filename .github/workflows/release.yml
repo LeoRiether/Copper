@@ -33,7 +33,7 @@ jobs:
         path: assets/ copper_release
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
-        repo_token: "$"
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest-linux"
         prerelease: false
         title: "Latest Linux Build"
@@ -56,6 +56,7 @@ jobs:
             base-devel
             git
             make
+            mingw-w64-premake
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-harfbuzz
             mingw-w64-x86_64-SDL2
@@ -63,10 +64,6 @@ jobs:
             mingw-w64-x86_64-SDL2_gfx
             mingw-w64-x86_64-SDL2_image
 
-      - uses: abel0b/setup-premake@v2.3
-        name: Setup premake
-        with:
-          version: "5.0.0-beta2"
       - name: Generate makefile 
         run: premake5 gmake2
 
@@ -85,7 +82,7 @@ jobs:
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
-          repo_token: "$"
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest-windows"
           prerelease: false
           title: "Latest Windows Build"
