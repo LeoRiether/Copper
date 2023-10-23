@@ -22,3 +22,5 @@
 - [Writing a Physics Engine from scratch - collision detection optimization](https://www.youtube.com/watch?v=9IULfQH7E90)
 - [Circle-Rectangle collision detection](https://stackoverflow.com/a/402019)
 - [The Pain of Compiling an SDL game written in C for Windows](https://anna-singleton.github.io/posts/compiling-sdl-c-windows/)
+- [Pixel Art Class - Fully Lit Isometric Tiles in Unity!](https://www.youtube.com/watch?v=xpL44Ztyy1Q)
+- [SDL Programming Tips](https://www.reddit.com/r/gamedev/comments/re4zvh/modern_sdl_programming_tips_tricks/)
