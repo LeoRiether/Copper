@@ -150,7 +150,7 @@ void StageState::LoadAssets() {
     // Background
     auto bgGO = new GameObject;
     bgGO->box = Rect{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-    bgGO->AddComponent(new InfiniteBg{*bgGO, ASSETS "/img/isobg.png"});
+    bgGO->AddComponent(new InfiniteBg{*bgGO, ASSETS "/img/sala_v0.png"});
     bgGO->renderLayer = -1;
     RequestAddObject(bgGO);
 

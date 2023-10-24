@@ -28,14 +28,15 @@ Player* Player::player;
 Player::Player(GameObject& associated) : Component(associated) {
     Player::player = this;
 
-    auto sprite = new Sprite{associated, ASSETS "/img/unicorn_atlas.png"};
+    auto sprite = new Sprite{associated, ASSETS "/img/copper_running.png"};
     sprite->SetHasShadow(true);
+    sprite->SetScale(0.35);
     associated.AddComponent(sprite);
 
     {
         auto anim = new Animation{associated};
-        GridKeyframe grid{24, 12, sprite->SheetWidth(), sprite->SheetHeight(),
-                          0.1};
+        GridKeyframe grid{20, 8, sprite->SheetWidth(), sprite->SheetHeight(),
+                          0.02};
 
         auto row = [&](int i, int startJ, int frames) {
             Keyframes kf;
@@ -44,22 +45,22 @@ Player::Player(GameObject& associated) : Component(associated) {
             return kf;
         };
 
-        anim->AddKeyframes("E", row(0, 0, 6));
-        anim->AddKeyframes("NE", row(0, 6, 6));
-        anim->AddKeyframes("N", row(0, 12, 6));
-        anim->AddKeyframes("NW", row(0, 18, 6));
-        anim->AddKeyframes("W", row(1, 0, 6));
-        anim->AddKeyframes("SW", row(1, 6, 6));
-        anim->AddKeyframes("SE", row(1, 12, 6));
-        anim->AddKeyframes("S", row(1, 18, 6));
-        anim->AddKeyframes("idle_E", row(0, 0, 1));
-        anim->AddKeyframes("idle_NE", row(0, 6, 1));
-        anim->AddKeyframes("idle_N", row(0, 12, 1));
-        anim->AddKeyframes("idle_NW", row(0, 18, 1));
-        anim->AddKeyframes("idle_W", row(1, 0, 1));
-        anim->AddKeyframes("idle_SW", row(1, 6, 1));
-        anim->AddKeyframes("idle_SE", row(1, 12, 1));
-        anim->AddKeyframes("idle_S", row(1, 18, 1));
+        anim->AddKeyframes("S", row(0, 0, 20));
+        anim->AddKeyframes("SW", row(1, 0, 20));
+        anim->AddKeyframes("W", row(2, 0, 20));
+        anim->AddKeyframes("NW", row(3, 0, 20));
+        anim->AddKeyframes("N", row(4, 0, 20));
+        anim->AddKeyframes("NE", row(5, 0, 20));
+        anim->AddKeyframes("E", row(6, 0, 20));
+        anim->AddKeyframes("SE", row(7, 0, 20));
+        anim->AddKeyframes("idle_S", row(0, 0, 1));
+        anim->AddKeyframes("idle_SW", row(1, 0, 1));
+        anim->AddKeyframes("idle_W", row(2, 0, 1));
+        anim->AddKeyframes("idle_NW", row(3, 0, 1));
+        anim->AddKeyframes("idle_N", row(4, 0, 1));
+        anim->AddKeyframes("idle_NE", row(5, 0, 1));
+        anim->AddKeyframes("idle_E", row(6, 0, 1));
+        anim->AddKeyframes("idle_SE", row(7, 0, 1));
         anim->Play("idle_S");  // just to kickstart the associated.box...
         associated.AddComponent(anim);
     }

@@ -91,8 +91,8 @@ void Animation::Update(float) {
         fail("no Sprite component found on the associated component");
     sprite->SetClip(frame.clipRect);
 
-    associated.box.w = frame.clipRect.w;
-    associated.box.h = frame.clipRect.h;
+    associated.box.w = frame.clipRect.w * sprite->Scale().x;
+    associated.box.h = frame.clipRect.h * sprite->Scale().y;
 }
 
 bool Animation::Is(CType type) { return type == CType::Animation; }
