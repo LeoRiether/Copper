@@ -4,6 +4,7 @@
 
 #include "Component.h"
 #include "GameObject.h"
+#include "Timer.h"
 #include "math/Vec2.h"
 using std::string;
 
@@ -16,14 +17,13 @@ class Bullet : public Component {
     bool targetsPlayer;
 
    public:
-    Bullet(GameObject& associated, float angle, float speed, int damage,
-           float maxDistance, int spriteFrameCount, const string& sprite,
-           bool targetsPlayer);
+    Bullet(GameObject& associated, float speed, float angle, int damage,
+           float maxDistance, bool targetsPlayer);
 
     void Update(float dt);
     void Render(Vec2<Cart> camera);
     bool Is(CType type);
-    virtual void NotifyCollision(GameObject& other);
+    void NotifyCollision(GameObject& other);
     inline int Damage() { return damage; }
     inline bool TargetsPlayer() { return targetsPlayer; }
 };

@@ -1,7 +1,6 @@
 #include "component/Bullet.h"
 
-#include <math.h>
-
+#include <cmath>
 #include <iterator>
 
 #include "CType.h"
@@ -11,23 +10,15 @@
 
 #define MODULE "Bullet"
 
-Bullet::Bullet(GameObject& associated, float angle, float speed, int damage,
-               float maxDistance, int spriteFrameCount,
-               const string& spritePath, bool targetsPlayer)
+Bullet::Bullet(GameObject& associated, float speed, float angle, int damage,
+               float maxDistance, bool targetsPlayer)
     : Component(associated),
       speed{speed * cos(angle), speed * sin(angle)},
       speedNorm(this->speed.norm()),
       distanceLeft(maxDistance),
       damage(damage),
       targetsPlayer(targetsPlayer) {
-    auto sprite = new Sprite{associated, spritePath};
-    auto animation =
-        Animation::horizontal(associated, *sprite, spriteFrameCount, 0.1);
-    associated.AddComponent(sprite);
-    associated.AddComponent(animation);
     associated.angle = angle;
-
-    associated.AddComponent(new Collider{associated});
 }
 
 void Bullet::Update(float dt) {

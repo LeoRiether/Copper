@@ -2,7 +2,9 @@
 
 #include <algorithm>
 
+#include "Game.h"
 #include "component/Animation.h"
+#include "component/Bullet.h"
 #include "component/Collider.h"
 #include "component/Player.h"
 #include "component/Sprite.h"
@@ -59,6 +61,23 @@ void Enemy::Update(float dt) {
     }
 
     behavior->Update(*this, dt);
+
+    if (bulletTimer.Get() >= BULLET_DELAY) {
+        bulletTimer.Restart();
+
+        const auto playerPos = Player::player->Associated().box.Center();
+        const auto angle = (playerPos - associated.box.Center()).angle();
+
+        auto go = new GameObject{};
+        auto sprite = new Sprite{*go, ASSETS "/img/laser-bullet.png"};
+        go->AddComponent(new Bullet{*go, 700, angle, 20, 1000, true});
+        go->AddComponent(sprite);
+        go->AddComponent(new Collider{*go});
+        go->box = Rect{0, 0, (float)sprite->SheetWidth(),
+                       (float)sprite->SheetHeight()};
+        go->box.SetCenter(associated.box.Center());
+        Game::Instance().GetState().RequestAddObject(go);
+    }
 }
 
 void Enemy::Render(Vec2<Cart>) {}

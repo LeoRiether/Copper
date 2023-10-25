@@ -4,6 +4,7 @@
 
 #include "Component.h"
 #include "GameObject.h"
+#include "Timer.h"
 #include "component/enemy/EnemyBehavior.h"
 #include "math/Direction.h"
 
@@ -29,4 +30,8 @@ class Enemy : public Component {
 
     Enemy& WithStopDistance(float value);
     Enemy& WithBehavior(EnemyBehavior* value);
+
+   private:
+    constexpr static float BULLET_DELAY = 0.7f;
+    Timer bulletTimer;
 };
