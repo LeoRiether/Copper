@@ -64,7 +64,7 @@ void ViewerState::Update(float dt) {
         zoom /= 0.8;
     }
 
-    if (input.KeyPress(SDL_SCANCODE_SPACE)) {
+    if (input.KeyPress(SDL_SCANCODE_RETURN)) {
         warn2("rect = { %g, %g, %g, %g }", dragRect.x, dragRect.y, dragRect.w,
               dragRect.h);
     }
@@ -82,11 +82,17 @@ void ViewerState::Update(float dt) {
         drag = {};
     } else if (input.IsMouseDown(1)) {
         if (drag.has_value()) {
-            drag->to = input.Mouse();
+            drag->to = input.RawMouse();
         } else {
-            drag = {input.Mouse(), input.Mouse()};
+            drag = {input.RawMouse(), input.RawMouse()};
         }
     }
+
+    if (input.IsKeyDown(SDL_SCANCODE_SPACE)) {
+        camera->SetPos(camera->Pos() + lastMousePos - input.RawMouse());
+    }
+
+    lastMousePos = input.RawMouse();
 }
 
 void ViewerState::Render() {
@@ -110,20 +116,24 @@ void ViewerState::Render() {
 
         Vec2<Cart> left, right;
         if (mode == "iso") {
+            auto cam = camera->Pos().toIso();
             auto pivot = image.lock()->box.TopLeft().toIso();
             // to.x = from.x;
             auto fromIso = from.toIso();
             auto toIso = to.toIso();
             left = Vec2<Iso>{fromIso.x, std::min(fromIso.y, toIso.y)}.toCart();
             right = Vec2<Iso>{toIso.x, std::max(fromIso.y, toIso.y)}.toCart();
-            dragRect = {(toIso.x - pivot.x) / zoom, (toIso.y - pivot.y) / zoom,
+            dragRect = {(toIso.x - pivot.x + cam.x) / zoom,
+                        (toIso.y - pivot.y + cam.y) / zoom,
                         (fromIso.x - toIso.x) / zoom,
                         (fromIso.y - toIso.y) / zoom};
         } else {
+            auto cam = camera->Pos();
             auto pivot = image.lock()->box.TopLeft();
             left = {from.x, std::max(from.y, to.y)};
             right = {to.x, std::min(from.y, to.y)};
-            dragRect = {(from.x - pivot.x) / zoom, (from.y - pivot.y) / zoom,
+            dragRect = {(from.x - pivot.x + cam.x) / zoom,
+                        (from.y - pivot.y + cam.y) / zoom,
                         (to.x - from.x) / zoom, (to.y - from.y) / zoom};
         }
 

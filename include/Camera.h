@@ -15,6 +15,7 @@ class Camera {
     void Update(float dt);
 
     inline Vec2<Cart> Pos() { return pos; }
+    inline void SetPos(Vec2<Cart> p) { pos = p; }
     inline Vec2<Cart> Speed() { return speed; }
     inline void SetSpeed(const Vec2<Cart> s) { speed = s; }
 };

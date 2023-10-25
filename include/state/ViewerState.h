@@ -22,8 +22,10 @@ class ViewerState : public State {
 
    private:
     float zoom{1};
+    Vec2<Cart> offset{0, 0};
     string mode{"iso"};
     weak_ptr<GameObject> image{};
+    Vec2<Cart> lastMousePos{0, 0};
 
     struct MouseDrag {
         Vec2<Cart> from, to;

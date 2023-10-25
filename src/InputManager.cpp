@@ -20,10 +20,10 @@ InputManager::InputManager() {}
 InputManager::~InputManager() {}
 
 void InputManager::Update() {
-    SDL_GetMouseState(&mouseX, &mouseY);
+    SDL_GetMouseState(&rawMouseX, &rawMouseY);
     auto camera = Game::Instance().GetState().GetCamera().Pos();
-    mouseX += camera.x;
-    mouseY += camera.y;
+    mouseX = rawMouseX + camera.x;
+    mouseY = rawMouseY + camera.y;
     quitRequested = false;
     memset(keyUpdate, 0, sizeof(keyUpdate));
     memset(mouseUpdate, 0, sizeof(mouseUpdate));
@@ -89,5 +89,8 @@ bool InputManager::IsMouseDown(int button) {
 int InputManager::MouseX() { return mouseX; }
 int InputManager::MouseY() { return mouseY; }
 Vec2<Cart> InputManager::Mouse() { return {(float)mouseX, (float)mouseY}; }
+Vec2<Cart> InputManager::RawMouse() {
+    return {(float)rawMouseX, (float)rawMouseY};
+}
 
 bool InputManager::QuitRequested() { return quitRequested; }

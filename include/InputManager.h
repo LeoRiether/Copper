@@ -30,6 +30,7 @@ class InputManager {
     InputState keyState[KEYS];
     int keyUpdate[KEYS];
     bool quitRequested;
+    int rawMouseX, rawMouseY;
     int mouseX, mouseY;
 
     InputManager();
@@ -50,6 +51,7 @@ class InputManager {
     int MouseX();
     int MouseY();
     Vec2<Cart> Mouse();
+    Vec2<Cart> RawMouse();
 
     bool QuitRequested();
 };
