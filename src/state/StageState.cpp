@@ -83,15 +83,14 @@ void StageState::Start() {
         barrel->box.SetFoot(Vec2<Cart>{870, 600});
         auto collider1 = new IsoCollider{*barrel};
         collider1->tags.set(tag::Terrain);
-        collider1->offset = Rect{834.04, 113.16, 338.208, 336.592};
+        collider1->offset = Rect{1333.5, 605.7, 385, 623};
         collider1->ScaleToSprite();
         collider1->ExpandBy(10);
+        collider1->offset.w += 15;
         auto collider2 = new IsoCollider{*barrel};
         collider2->tags.set(tag::Terrain);
-        collider2->offset = Rect{640.039, 192.361, 245.905, 420.495};
+        collider2->offset = Rect{1344.7, 465.7, 931, 469};
         collider2->ScaleToSprite();
-        collider2->ExpandBy(10);
-        collider2->offset.w += 15;
         barrel->AddComponent(collider1);
         barrel->AddComponent(collider2);
         RequestAddObject(barrel);
@@ -108,7 +107,7 @@ void StageState::Start() {
         go->box.SetFoot(Vec2<Cart>{1200, 700});
         auto collider = new IsoCollider{*go};
         collider->tags.set(tag::Terrain);
-        collider->offset = Rect{1555.78, 134.273, 754.746, 754.746};
+        collider->offset = Rect{3110.36, 688.311, 1253.46, 1213.38};
         collider->ScaleToSprite();
         collider->ExpandBy(5);
         go->AddComponent(collider);
@@ -126,7 +125,7 @@ void StageState::Start() {
         go->box.SetFoot(Vec2<Cart>{1200, 700});
         auto collider = new IsoCollider{*go};
         collider->tags.set(tag::Terrain);
-        collider->offset = Rect{1555.78, 134.273, 754.746, 754.746};
+        collider->offset = Rect{3110.36, 688.311, 1253.46, 1213.38};
         collider->ScaleToSprite();
         go->AddComponent(collider);
         Vec2<Cart> center = go->box.Center();
