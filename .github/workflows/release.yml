@@ -61,13 +61,13 @@ jobs:
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-libc++
             mingw-w64-x86_64-harfbuzz
-            mingw-w64-ucrt-x86_64-toolchain
             mingw-w64-x86_64-SDL2
             mingw-w64-x86_64-SDL2_ttf
             mingw-w64-x86_64-SDL2_gfx
             mingw-w64-x86_64-SDL2_image
             mingw-w64-x86_64-SDL2_mixer
 
+            # mingw-w64-ucrt-x86_64-toolchain
       - name: Generate makefile 
         run: premake5 gmake2 --file=premake5-windows.lua
 
