@@ -34,11 +34,13 @@ void CollisionEngine::Solve(const vector<shared_ptr<GameObject>>& objects) {
     // Player--Terrain collisions
     if (player) {
         Vec2<Cart> pos = player->box.Foot();
+        pos.y -= 15;  // !
         for (int i = 0; i < 2; i++) {
             for (auto& collider : terrainColliders) {
                 pos = IsoSolver::Solve(*collider, pos);
             }
         }
+        pos.y += 15;  // !
         player->box.SetFoot(pos);
     }
 

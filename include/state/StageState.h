@@ -23,6 +23,7 @@ class StageState : public State {
     GameObject* CreatePlayer();
     GameObject* CreateEnemyFollower();
     GameObject* CreateEnemyDistancer();
+    void AddMapColliders();
 
    public:
     ~StageState();

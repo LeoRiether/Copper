@@ -69,6 +69,7 @@ void Game::Run() {
         CalculateDeltaTime();
         state->Update(dt);
 
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
         SDL_RenderClear(renderer);
         state->Render();
         SDL_RenderPresent(renderer);
