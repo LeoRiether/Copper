@@ -32,7 +32,7 @@ project "copper"      -- Nome do seu projeto
     -- Ao incluir um diretório, não é preciso especificar o caminho todo a partir do diretório raiz. 
     -- Assim, é possível escrever '#include "myclass.hpp"' ao invés de '#include "include/myclass.hpp"'.
     -- OBSERVAÇÃO: deve-se atualizar o diretório da pasta include da SDL aqui.
-    includedirs { "sdl/include", "%{prj.location}/include", "%{prj.location}/src", "/usr/include/SDL2", "./" }
+    includedirs { "sdl/include", "%{prj.location}/include", "%{prj.location}/src", "/usr/include/SDL2" }
 
     -- Diretório onde as bibliotecas a serem linkadas se encontram.
     -- OBSERVAÇÃO: deve-se atualizar o diretório da pasta lib da SDL aqui.
@@ -48,6 +48,7 @@ project "copper"      -- Nome do seu projeto
         "SDL2_mixer",
         "SDL2_ttf",
         "mingw32",
+        "mingw64",
     }
 
     -- Filtro para configurações específicas do sistema linux (não é necessário para Windows).
