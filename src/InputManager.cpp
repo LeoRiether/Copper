@@ -20,42 +20,51 @@ InputManager::InputManager() {}
 InputManager::~InputManager() {}
 
 void InputManager::Update() {
-    SDL_GetMouseState(&rawMouseX, &rawMouseY);
     auto camera = Game::Instance().GetState().GetCamera().Pos();
+    memset(mouseUpdate, 0, sizeof(mouseUpdate));
+    mouseWheel = MouseWheelState::None;
+    memset(keyUpdate, 0, sizeof(keyUpdate));
+    quitRequested = false;
+    SDL_GetMouseState(&rawMouseX, &rawMouseY);
     mouseX = rawMouseX + camera.x;
     mouseY = rawMouseY + camera.y;
-    quitRequested = false;
-    memset(keyUpdate, 0, sizeof(keyUpdate));
-    memset(mouseUpdate, 0, sizeof(mouseUpdate));
 
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
-            case SDL_QUIT:
+            case SDL_QUIT: {
                 quitRequested = true;
                 break;
-            case SDL_KEYDOWN:
+            }
+            case SDL_KEYDOWN: {
                 if (!event.key.repeat) {
                     keyUpdate[mapkey(event.key.keysym.scancode)] = true;
                     keyState[mapkey(event.key.keysym.scancode)] =
                         InputState::Down;
                 }
                 break;
-            case SDL_KEYUP:
+            }
+            case SDL_KEYUP: {
                 if (!event.key.repeat) {
                     keyUpdate[mapkey(event.key.keysym.scancode)] = true;
                     keyState[mapkey(event.key.keysym.scancode)] =
                         InputState::Up;
                 }
                 break;
-            case SDL_MOUSEBUTTONDOWN:
+            }
+            case SDL_MOUSEBUTTONDOWN: {
                 mouseUpdate[event.button.button] = true;
                 mouseState[event.button.button] = InputState::Down;
                 break;
-            case SDL_MOUSEBUTTONUP:
+            }
+            case SDL_MOUSEBUTTONUP: {
                 mouseUpdate[event.button.button] = true;
                 mouseState[event.button.button] = InputState::Up;
                 break;
+            }
+            case SDL_MOUSEWHEEL: {
+                mouseWheel = (MouseWheelState)event.wheel.y;
+            }
             default:
                 break;
         }
@@ -85,6 +94,8 @@ bool InputManager::MouseRelease(int button) {
 bool InputManager::IsMouseDown(int button) {
     return mouseState[button] == InputState::Down;
 }
+
+MouseWheelState InputManager::MouseWheel() { return mouseWheel; }
 
 int InputManager::MouseX() { return mouseX; }
 int InputManager::MouseY() { return mouseY; }

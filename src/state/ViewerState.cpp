@@ -58,9 +58,11 @@ void ViewerState::Update(float dt) {
         mode = mode == "iso" ? "cart" : "iso";
     }
 
-    if (input.KeyPress(SDL_SCANCODE_MINUS)) {
+    if (input.KeyPress(SDL_SCANCODE_MINUS) ||
+        input.MouseWheel() == MouseWheelState::Down) {
         zoom *= 0.8;
-    } else if (input.KeyPress(SDL_SCANCODE_EQUALS)) {
+    } else if (input.KeyPress(SDL_SCANCODE_EQUALS) ||
+               input.MouseWheel() == MouseWheelState::Up) {
         zoom /= 0.8;
     }
 

@@ -23,10 +23,13 @@ constexpr int DASH_KEY = SDL_SCANCODE_SPACE;
 
 enum class InputState { Up = false, Down = true };
 
+enum class MouseWheelState { Down = -1, None = 0, Up = 1 };
+
 class InputManager {
    private:
     InputState mouseState[6];
     int mouseUpdate[6];
+    MouseWheelState mouseWheel;
     InputState keyState[KEYS];
     int keyUpdate[KEYS];
     bool quitRequested;
@@ -47,6 +50,8 @@ class InputManager {
     bool MousePress(int button);
     bool MouseRelease(int button);
     bool IsMouseDown(int button);
+
+    MouseWheelState MouseWheel();
 
     int MouseX();
     int MouseY();
