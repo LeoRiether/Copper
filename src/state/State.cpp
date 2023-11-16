@@ -2,9 +2,11 @@
 
 #include <algorithm>
 #include <fstream>
+#include <memory>
 #include <tuple>
 
 #include "CType.h"
+#include "GameObject.h"
 #include "component/IsoCollider.h"
 #include "util.h"
 
@@ -70,28 +72,70 @@ void State::RenderArray() {
     }
 }
 
-// Currently (experimentally!!) doing a Shell Sort by <layer, box.y+box.h>
+// TODO: separate cartesians and isos, sort them separately, then merge
 void State::ZSort() {
-    auto key = [](const GameObject& go) {
-        auto isoCollider = (IsoCollider*)go.GetComponent(CType::IsoCollider);
-        if (isoCollider) {
-            Vec2<Cart> centerCart =
-                isoCollider->box
-                    .Center();  // it's actually a Vec2<Iso>!! Sorry :(
-            Vec2<Iso> centerIso = {centerCart.x, centerCart.y};
-            return std::tuple{go.renderLayer, centerIso.toCart().y};
-        }
+    auto pointLessThanIso = [&](const Vec2<Cart> point,
+                                const IsoCollider* iso) {
+        auto pointIso = point.toIso();
+        auto lineFrom = iso->box.BotLeft().transmute<Iso>();
+        auto lineTo = iso->box.TopRight().transmute<Iso>();
 
-        return std::tuple{go.renderLayer, go.box.y + go.box.h};
+        auto P = lineTo - lineFrom;
+        auto Q = pointIso - lineFrom;
+
+        auto cross = P.x * Q.y - P.y * Q.x;
+        return cross < 0;
     };
 
-    const size_t n = objects.size();
-    for (size_t gap : {102, 45, 20, 9, 4, 1}) {
-        for (size_t i = gap; i < n; i++) {
-            for (size_t j = i;
-                 j >= gap && key(*objects[j]) < key(*objects[j - gap]);
-                 j -= gap)
-                std::swap(objects[j], objects[j - gap]);
+    // Sort by render layer
+    std::stable_sort(objects.begin(), objects.end(), [&](auto& a, auto& b) {
+        return a->renderLayer < b->renderLayer;
+    });
+
+    // For each layer, separate cartesian objects and isocollider objects,
+    // sort them separately, then merge them back into `objects`
+    int n = objects.size();
+    for (int l = 0; l < n;) {
+        static vector<shared_ptr<GameObject>> cartesians, isos;
+        cartesians.clear();
+        isos.clear();
+
+        // We'll process a range in which every object has the same renderLayer
+        int r = l;
+        while (r < n && objects[r]->renderLayer == objects[l]->renderLayer) {
+            auto isoA =
+                (IsoCollider*)objects[r]->GetComponent(CType::IsoCollider);
+
+            if (isoA)
+                isos.emplace_back(objects[r]);
+            else
+                cartesians.emplace_back(objects[r]);
+
+            r++;
         }
+
+        std::stable_sort(cartesians.begin(), cartesians.end(),
+                         [&](auto& a, auto& b) {
+                             return a->box.Foot().y < b->box.Foot().y;
+                         });
+
+        std::stable_sort(isos.begin(), isos.end(), [&](auto& a, auto& b) {
+            auto isoA = (IsoCollider*)a->GetComponent(CType::IsoCollider);
+            auto isoB = (IsoCollider*)b->GetComponent(CType::IsoCollider);
+            return isoA->box.Center().toCart().y <
+                   isoB->box.Center().toCart().y;
+        });
+
+        // Merge cartesians and isos
+        int nc = cartesians.size(), ni = isos.size();
+        int ic = 0, ii = 0;
+        while (ic < nc && ii < ni) {
+            auto iso = (IsoCollider*)isos[ii]->GetComponent(CType::IsoCollider);
+            auto cart = cartesians[ic]->box.Foot();
+            objects[l++] =
+                pointLessThanIso(cart, iso) ? cartesians[ic++] : isos[ii++];
+        }
+        while (ic < nc) objects[l++] = cartesians[ic++];
+        while (ii < ni) objects[l++] = isos[ii++];
     }
 }

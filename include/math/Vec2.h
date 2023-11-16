@@ -45,6 +45,11 @@ struct Vec2 {
 
     Vec2<Iso> toIso() const;
     Vec2<Cart> toCart() const;
+
+    template <class OtherCoords>
+    inline Vec2<OtherCoords> transmute() {
+        return {x, y};
+    }
 };
 
 template <>

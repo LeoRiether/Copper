@@ -37,6 +37,20 @@ struct Rect {
         y = botright.y - h;
     }
 
+    inline Vec2<Cart> TopRight() const { return {x + w, y}; }
+
+    inline void SetTopRight(Vec2<Cart> topright) {
+        x = topright.x - w;
+        y = topright.y;
+    }
+
+    inline Vec2<Cart> BotLeft() const { return {x, y + h}; }
+
+    inline void SetBotLeft(Vec2<Cart> botleft) {
+        x = botleft.x;
+        y = botleft.y - h;
+    }
+
     /** Assumes the width of the rect is the width of the tile, then finds the
      * center of that tile  */
     inline Vec2<Cart> IsoBaseCenter() const {
