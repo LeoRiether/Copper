@@ -65,8 +65,8 @@ typedef enum {
                          */
     SDL_APP_LOWMEMORY,   /**< The application is low on memory, free memory if
                             possible.   Called on iOS in
-                            applicationDidReceiveMemoryWarning()   Called on Android
-                            in onLowMemory()
+                            applicationDidReceiveMemoryWarning()   Called on
+                            Android   in onLowMemory()
                          */
     SDL_APP_WILLENTERBACKGROUND, /**< The application is about to enter the
                                     background Called on iOS in

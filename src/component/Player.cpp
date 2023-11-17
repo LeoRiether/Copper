@@ -30,7 +30,7 @@ Player::Player(GameObject& associated) : Component(associated) {
 
     auto sprite = new Sprite{associated, ASSETS "/img/copper_running.png"};
     sprite->SetHasShadow(true);
-    sprite->SetScale(0.35);
+    sprite->SetScale(90.0f / (sprite->SheetHeight() / 8.0f));
     associated.AddComponent(sprite);
 
     {

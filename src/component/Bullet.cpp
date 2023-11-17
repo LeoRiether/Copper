@@ -13,7 +13,7 @@
 Bullet::Bullet(GameObject& associated, float speed, float angle, int damage,
                float maxDistance, bool targetsPlayer)
     : Component(associated),
-      speed{speed * cos(angle), speed * sin(angle)},
+      speed{float(speed * cos(angle)), float(speed * sin(angle))},
       speedNorm(this->speed.norm()),
       distanceLeft(maxDistance),
       damage(damage),

@@ -29,10 +29,10 @@ publish-docs:
 windows:
     premake5 --file=./premake5-windows.lua gmake2 
     python3 ./scripts/lib64.py
-    make
+    make config=release
 
     mkdir -p copper-windows
-    mv copper_debug.exe copper-windows/copper.exe
+    mv copper_release.exe copper-windows/copper.exe
     cp mingw-sdl/SDL2/bin/SDL2.dll copper-windows
     cp mingw-sdl/SDL2/bin/sdl2-config copper-windows
     cp mingw-sdl/image/bin/SDL2_image.dll copper-windows
