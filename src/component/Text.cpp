@@ -7,7 +7,6 @@
 #include "SDL_rect.h"
 #include "SDL_render.h"
 #include "SDL_surface.h"
-#include "SDL_ttf.h"
 #include "util.h"
 
 #define MODULE "Text"

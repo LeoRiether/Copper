@@ -21,10 +21,10 @@ Game::Game(const char* title, int width, int height) {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER))
         sdlfail("couldn't initialize SDL");
 
-    int img_flags = IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF;
+    int img_flags = IMG_INIT_JPG | IMG_INIT_PNG;
     if (IMG_Init(img_flags) != img_flags) sdlfail("couldn't initialize images");
 
-    int mix_flags = MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_OPUS;
+    int mix_flags = MIX_INIT_MP3 | MIX_INIT_OGG;
     if (Mix_Init(mix_flags) != mix_flags) sdlfail("couldn't initialize audio");
 
     if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT,
@@ -77,7 +77,7 @@ void Game::Run() {
         UpdateStateStack();
 
         int64_t deltaMs = (int64_t)SDL_GetTicks64() - frameStart;
-        SDL_Delay(std::max(0l, FRAME_MS - deltaMs));
+        SDL_Delay(std::max(0ll, (long long)(FRAME_MS - deltaMs)));
     }
     stateStack.clear();
     Resources::ClearAll();

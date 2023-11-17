@@ -3,7 +3,7 @@
 workspace "mypremake"      -- Nome do seu workspace
     architecture "x86_64"  -- x86_64 para LINUX - x32 para arquiteturas de 32 bits - x64 para arquiteturas de 64 bits	
     toolset "gcc"          -- Compilador
-    -- gccprefix "mingw-w64-x86_64-"
+    gccprefix "x86_64-w64-mingw32-"
     language "C++"         -- Linguagem
     cppdialect "C++17"     -- Versão da linguagem 'equivalente a usar -std=c++17'
     configurations { "debug", "release" } -- Configurações de saída
@@ -32,27 +32,36 @@ project "copper"      -- Nome do seu projeto
     -- Ao incluir um diretório, não é preciso especificar o caminho todo a partir do diretório raiz. 
     -- Assim, é possível escrever '#include "myclass.hpp"' ao invés de '#include "include/myclass.hpp"'.
     -- OBSERVAÇÃO: deve-se atualizar o diretório da pasta include da SDL aqui.
-    includedirs { "sdl/include", "%{prj.location}/include", "%{prj.location}/src", "/usr/include/SDL2", "./" }
+    includedirs {
+        "./mingw-sdl/SDL2/include",
+        "./mingw-sdl/SDL2/include/SDL2",
+        "./mingw-sdl/image/include",
+        "./mingw-sdl/mixer/include",
+        "./mingw-sdl/ttf/include",
+        "%{prj.location}/include",
+        "%{prj.location}/src",
+    }
 
     -- Diretório onde as bibliotecas a serem linkadas se encontram.
     -- OBSERVAÇÃO: deve-se atualizar o diretório da pasta lib da SDL aqui.
     -- Costuma não ser necessário no Linux. Remova se causar problemas.
-    libdirs { "/usr/lib", "./", "sdl/lib" }
+    libdirs {
+        "./mingw-sdl/SDL2/lib",
+        "./mingw-sdl/image/lib",
+        "./mingw-sdl/mixer/lib",
+        "./mingw-sdl/ttf/lib",
+    }
 
     -- Aqui são linkados as diversas bibliotecas necessárias.
     links
     {
+        "mingw32",
         "SDL2main",
         "SDL2",
         "SDL2_image",
         "SDL2_mixer",
         "SDL2_ttf",
-        "mingw32",
     }
-
-    -- Filtro para configurações específicas do sistema linux (não é necessário para Windows).
-    filter "system:linux"
-        pic "On"
 
     buildoptions { "-Wno-macro-redefined" }
 

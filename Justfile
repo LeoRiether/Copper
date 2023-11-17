@@ -26,3 +26,21 @@ format:
 publish-docs:
     mkdocs gh-deploy
 
+windows:
+    premake5 --file=./premake5-windows.lua gmake2 
+    python3 ./scripts/lib64.py
+    make
+
+    mkdir -p copper-windows
+    mv copper_debug.exe copper-windows/copper.exe
+    cp mingw-sdl/SDL2/bin/SDL2.dll copper-windows
+    cp mingw-sdl/SDL2/bin/sdl2-config copper-windows
+    cp mingw-sdl/image/bin/SDL2_image.dll copper-windows
+    cp mingw-sdl/mixer/bin/SDL2_mixer.dll copper-windows
+    cp mingw-sdl/ttf/bin/SDL2_ttf.dll copper-windows
+    cp mingw-sdl/libwinpthread-1.dll copper-windows
+    cp -r assets/ copper-windows/
+    cp consts.ini copper-windows/
+    7z a copper-windows.zip copper-windows
+
+
