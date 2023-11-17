@@ -120,8 +120,7 @@ void StageState::Start() {
     RequestAddObject(CreateEnemyFollower());
     RequestAddObject(CreateEnemyDistancer());
 
-    // Barril
-    {
+    auto stayingHereForHistorySake = [&]() {
         auto barrel = new GameObject{};
         auto sprite = new Sprite{*barrel, ASSETS "/img/Barris.png"};
         sprite->SetScale(0.2);
@@ -142,20 +141,34 @@ void StageState::Start() {
         barrel->AddComponent(collider1);
         barrel->AddComponent(collider2);
         RequestAddObject(barrel);
+    };
+
+    // Barril
+    {
+        auto barrel = new GameObject{};
+        auto sprite = new Sprite{*barrel, ASSETS "/img/Barris.png"};
+        barrel->AddComponent(sprite);
+        barrel->box.SetFoot(Vec2<Cart>{1300, 600});
+        auto collider1 = new IsoCollider{*barrel};
+        collider1->tags.set(tag::Terrain);
+        collider1->offset = Rect{261.78, 69.441, 194.642, 130.417};
+        auto collider2 = new IsoCollider{*barrel};
+        collider2->tags.set(tag::Terrain);
+        collider2->offset = Rect{260.797, 57.3168, 87.1629, 201.196};
+        barrel->AddComponent(collider1);
+        barrel->AddComponent(collider2);
+        RequestAddObject(barrel);
     }
 
     // Escavadeira
     {
         auto go = new GameObject{};
         auto sprite = new Sprite{*go, ASSETS "/img/Escavadeira.png"};
-        sprite->SetScale(0.2);
         go->AddComponent(sprite);
-        go->box = {0, 0, (float)sprite->SheetWidth() * sprite->Scale().x,
-                   (float)sprite->SheetHeight() * sprite->Scale().y};
         go->box.SetFoot(Vec2<Cart>{1200, 700});
         auto collider = new IsoCollider{*go};
         collider->tags.set(tag::Terrain);
-        collider->offset = Rect{3110.36, 688.311, 1253.46, 1213.38};
+        collider->offset = Rect{638.71, 138.915, 240.517, 247.071};
         collider->ScaleToSprite();
         collider->ExpandBy(5);
         go->AddComponent(collider);
@@ -166,14 +179,11 @@ void StageState::Start() {
     {
         auto go = new GameObject{};
         auto sprite = new Sprite{*go, ASSETS "/img/Escavadeira.png"};
-        sprite->SetScale(0.2);
         go->AddComponent(sprite);
-        go->box = {0, 0, (float)sprite->SheetWidth() * sprite->Scale().x,
-                   (float)sprite->SheetHeight() * sprite->Scale().y};
         go->box.SetFoot(Vec2<Cart>{1200, 700});
         auto collider = new IsoCollider{*go};
         collider->tags.set(tag::Terrain);
-        collider->offset = Rect{3110.36, 688.311, 1253.46, 1213.38};
+        collider->offset = Rect{638.71, 138.915, 240.517, 247.071};
         collider->ScaleToSprite();
         go->AddComponent(collider);
         Vec2<Cart> center = go->box.Center();
