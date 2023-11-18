@@ -26,7 +26,21 @@ format:
 publish-docs:
     mkdocs gh-deploy
 
-windows:
+publish: publish-linux publish-win
+
+publish-linux:
+    rm -rf bin/
+    premake5 gmake2
+    make config=release
+
+    mkdir -p copper-linux
+    mv copper_release copper-linux/copper
+    cp -r assets/ copper-linux
+    cp consts.ini copper-linux
+    7z a copper-linux.zip copper-linux
+
+publish-win:
+    rm -r bin/
     premake5 --file=./premake5-windows.lua gmake2 
     python3 ./scripts/lib64.py
     make config=release

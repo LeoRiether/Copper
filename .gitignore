@@ -6,6 +6,8 @@ copper_debug
 copper_release
 copper-windows.zip
 /copper-windows/
+copper-linux.zip
+/copper-linux/
 copper.make
 compile_commands.json
 .gdbinit
