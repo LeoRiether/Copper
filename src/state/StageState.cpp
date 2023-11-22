@@ -20,7 +20,6 @@
 #include "component/Sound.h"
 #include "component/enemy/EnemyDistancer.h"
 #include "component/enemy/EnemyFollower.h"
-#include "component/enemy/EnemyNop.h"
 #include "component/enemy/RobotCan.h"
 #include "math/Rect.h"
 #include "physics/Collision.h"
@@ -40,18 +39,18 @@ GameObject* StageState::CreatePlayer() {
 
 GameObject* StageState::CreateEnemyFollower() {
     auto go = new GameObject{};
-    auto body = new RobotCan{*go};
-    (*body).WithStopDistance(100).WithBehavior(new EnemyFollower);
+    auto body = (new RobotCan{*go})->WithStopDistance(100);
     go->AddComponent(body);
+    go->AddComponent((new EnemyFollower{*go})->WithRobotCan(body));
     go->box.SetFoot(Vec2<Cart>{1700, 400});
     return go;
 }
 
 GameObject* StageState::CreateEnemyDistancer() {
     auto go = new GameObject{};
-    auto body = new RobotCan{*go};
-    (*body).WithStopDistance(300).WithBehavior(new EnemyDistancer);
+    auto body = (new RobotCan{*go})->WithStopDistance(300);
     go->AddComponent(body);
+    go->AddComponent((new EnemyDistancer{*go})->WithRobotCan(body));
     go->box.SetFoot(Vec2<Cart>{1700, 400});
     return go;
 }
@@ -198,7 +197,6 @@ void StageState::Start() {
     {
         auto go = new GameObject{};
         auto robotcan = new RobotCan{*go};
-        robotcan->WithBehavior(new EnemyNop);
         go->AddComponent(robotcan);
         go->box.SetCenter(Vec2<Cart>{1700, 600});
         RequestAddObject(go);

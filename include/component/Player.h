@@ -37,7 +37,7 @@ class Player : public Component {
     /* Only calls ChangeState if state != newState */
     void MaybeChangeState(State newState);
 
-    void UpdateState();
+    void UpdateState(float dt);
     void UpdatePosition(float dt);
     void ConstrainToTile();
 

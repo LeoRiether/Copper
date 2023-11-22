@@ -4,12 +4,13 @@
 
 class Timer {
    private:
-    int64_t startTime;
+    double acc{0.0};
 
    public:
     Timer();
 
+    void Update(double dt);
     void Restart();
-    void Delay(float t);
-    float Get();
+    void Delay(double t);
+    double Get();
 };

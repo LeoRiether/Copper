@@ -1,9 +1,17 @@
 #pragma once
 
-#include "component/enemy/EnemyBehavior.h"
+#include "Component.h"
+#include "GameObject.h"
+#include "component/enemy/RobotCan.h"
 
-class EnemyFollower : public EnemyBehavior {
+class EnemyFollower : public Component {
    private:
+    RobotCan* self;
+
    public:
-    void Update(RobotCan& self, float dt);
+    EnemyFollower(GameObject& go);
+    EnemyFollower* WithRobotCan(RobotCan* self);
+    void Update(float dt);
+
+    inline bool Is(CType type) { return type == CType::EnemyBehavior; }
 };

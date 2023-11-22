@@ -75,9 +75,10 @@ void Animation::SoftPlay(const string& animationName) {
     if (id->second != currentAnimation) Play(id->second);
 }
 
-void Animation::Update(float) {
+void Animation::Update(float dt) {
     auto& anim = animations[currentAnimation];
 
+    timer.Update(dt);
     if (timer.Get() >= anim[currentFrame].frameTime) {
         timer.Restart();
         currentFrame++;

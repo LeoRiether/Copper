@@ -33,7 +33,7 @@ struct GridKeyframe {
 class Animation : public Component {
    private:
     Sprite& sprite;
-    Timer timer;
+    Timer timer{};
     vector<Keyframes> animations;
     hashmap<string, int> nameToId;
     int currentAnimation{0}, currentFrame{0};

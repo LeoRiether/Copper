@@ -20,6 +20,8 @@ class Bullet : public Component {
     Bullet(GameObject& associated, float speed, float angle, int damage,
            float maxDistance, bool targetsPlayer);
 
+    static GameObject* Make(Vec2<Cart> center, float angle);
+
     void Update(float dt);
     void Render(Vec2<Cart> camera);
     bool Is(CType type);

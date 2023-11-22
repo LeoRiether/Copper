@@ -1,9 +1,9 @@
 #pragma once
 
-#include "component/enemy/EnemyBehavior.h"
+#include "Component.h"
 
-class EnemyNop : public EnemyBehavior {
-   private:
+class EnemyNop : public Component {
    public:
-    void Update(RobotCan& self, float dt);
+    void Update(float dt);
+    inline bool Is(CType type) { return type == CType::EnemyBehavior; }
 };

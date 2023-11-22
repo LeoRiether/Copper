@@ -9,6 +9,7 @@
 #include "component/Player.h"
 #include "component/Sprite.h"
 #include "math/Direction.h"
+#include "physics/Tags.h"
 #include "util.h"
 
 #define MODULE "RobotCan"
@@ -93,31 +94,10 @@ RobotCan::RobotCan(GameObject& associated) : Component(associated) {
     direction = Direction{NoneX, Down};
 }
 
-void RobotCan::Update(float dt) {
+void RobotCan::Update(float) {
     if (!behavior) {
-        warn("unset behavior!");
+        // warn("unset behavior!");
         return;
-    }
-
-    behavior->Update(*this, dt);
-
-    if (bulletTimer.Get() >= BULLET_DELAY) {
-        bulletTimer.Restart();
-
-        const auto playerPos = Player::player->Associated().box.Center();
-        const auto angle = (playerPos - associated.box.Center()).angle();
-
-        auto go = new GameObject{};
-        auto sprite = new Sprite{*go, ASSETS "/img/laser-bullet.png"};
-        go->AddComponent(new Bullet{*go, 700, angle, 20, 1000, true});
-        go->AddComponent(sprite);
-        go->AddComponent(
-            (new Collider{*go})
-                ->WithBase(Rect{46.555, 55.1247, 28.3535, 11.9118}));
-        go->box = Rect{0, 0, (float)sprite->SheetWidth(),
-                       (float)sprite->SheetHeight()};
-        go->box.SetCenter(associated.box.Center());
-        Game::Instance().GetState().RequestAddObject(go);
     }
 }
 
@@ -125,12 +105,7 @@ void RobotCan::Render(Vec2<Cart>) {}
 
 bool RobotCan::Is(CType type) { return type == CType::RobotCan; }
 
-RobotCan& RobotCan::WithStopDistance(float value) {
+RobotCan* RobotCan::WithStopDistance(float value) {
     stopDistance = value;
-    return *this;
-}
-
-RobotCan& RobotCan::WithBehavior(EnemyBehavior* value) {
-    behavior = unique_ptr<EnemyBehavior>(value);
-    return *this;
+    return this;
 }

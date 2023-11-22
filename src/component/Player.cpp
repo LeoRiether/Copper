@@ -116,14 +116,15 @@ void Player::MaybeChangeState(State newState) {
 }
 
 void Player::Update(float dt) {
-    UpdateState();
+    UpdateState(dt);
     UpdatePosition(dt);
 }
 
-void Player::UpdateState() {
+void Player::UpdateState(float dt) {
     auto& input = InputManager::Instance();
 
     auto checkDashEvent = [&]() {
+        dashState.timeout.Update(dt);
         if (dashState.timeout.Get() >= DASH_TIMEOUT &&
             input.KeyPress(DASH_KEY)) {
             ChangeState(Dashing);
@@ -156,6 +157,7 @@ void Player::UpdateState() {
             break;
         }
         case Dashing: {
+            dashState.timeSinceStart.Update(dt);
             if (dashState.timeSinceStart.Get() >= DASH_DURATION) {
                 ChangeState(Idle);
             }
