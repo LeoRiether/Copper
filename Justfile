@@ -27,8 +27,6 @@ format:
 publish-docs:
     mkdocs gh-deploy
 
-publish: publish-linux publish-win
-
 publish-linux:
     rm -rf bin/
     premake5 gmake2
@@ -58,4 +56,5 @@ publish-win:
     cp consts.ini copper-windows/
     7z a copper-windows.zip copper-windows
 
+publish: publish-linux publish-win
 

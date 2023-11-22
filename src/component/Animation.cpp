@@ -15,7 +15,8 @@ Keyframe GridKeyframe::At(int x, int y) {
     };
 }
 
-Animation::Animation(GameObject& associated) : Component(associated) {}
+Animation::Animation(GameObject& associated, Sprite& sprite)
+    : Component(associated), sprite(sprite) {}
 
 Animation* Animation::horizontal(GameObject& associated, Sprite& sprite,
                                  int frames, float frameTime) {
@@ -23,7 +24,7 @@ Animation* Animation::horizontal(GameObject& associated, Sprite& sprite,
         fail2("can't create Animation with " BLUE "%d" RESET " frames", frames);
     }
 
-    Animation* self = new Animation{associated};
+    Animation* self = new Animation{associated, sprite};
 
     int frameWidth = sprite.SheetWidth() / frames;
     int frameHeight = sprite.SheetHeight();
@@ -86,13 +87,10 @@ void Animation::Update(float) {
     }
 
     auto& frame = anim[currentFrame];
-    auto sprite = (Sprite*)associated.GetComponent(CType::Sprite);
-    if (sprite == nullptr)
-        fail("no Sprite component found on the associated component");
-    sprite->SetClip(frame.clipRect);
+    sprite.SetClip(frame.clipRect);
 
-    associated.box.w = frame.clipRect.w * sprite->Scale().x;
-    associated.box.h = frame.clipRect.h * sprite->Scale().y;
+    associated.box.w = frame.clipRect.w * sprite.Scale().x;
+    associated.box.h = frame.clipRect.h * sprite.Scale().y;
 }
 
 bool Animation::Is(CType type) { return type == CType::Animation; }

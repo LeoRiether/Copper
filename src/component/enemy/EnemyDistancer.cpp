@@ -6,7 +6,13 @@
 void EnemyDistancer::Update(Enemy& self, float dt) {
     if (!Player::player) return;
 
-    auto anim = (Animation*)self.associated.GetComponent(CType::Animation);
+    auto allAnimsPlay = [&](const string& id) {
+        auto anims = self.associated.GetAllComponents(CType::Animation);
+        for (auto& anim : anims) {
+            ((Animation*)anim)->SoftPlay(id);
+        }
+    };
+
     auto playerPos = Player::player->Associated().box.Foot();
     auto enemyPos = self.associated.box.Foot();
     auto distVec = enemyPos - playerPos;
@@ -14,12 +20,12 @@ void EnemyDistancer::Update(Enemy& self, float dt) {
 
     const float stop2 = self.stopDistance * self.stopDistance;
     if (distVec.norm2() > stop2 && (walkingTime >= 0.3 || walkingTime == 0)) {
-        anim->SoftPlay("idle_" + (-self.direction).toString());
+        allAnimsPlay("idle_" + (-self.direction).toString());
         walkingTime = 0;
         return;
     }
 
-    anim->SoftPlay(self.direction.toString());
+    allAnimsPlay(self.direction.toString());
     self.associated.box.OffsetBy(distVec.normalize() * 300 * dt);
     walkingTime += dt;
 }

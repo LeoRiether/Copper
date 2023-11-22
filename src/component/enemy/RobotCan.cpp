@@ -1,24 +1,21 @@
-#include "component/enemy/Enemy.h"
+#include "component/enemy/RobotCan.h"
 
-#include <algorithm>
+#include <cstring>
 
-#include "Game.h"
 #include "component/Animation.h"
-#include "component/Bullet.h"
 #include "component/Collider.h"
 #include "component/Player.h"
-#include "component/Sprite.h"
 #include "math/Direction.h"
 #include "util.h"
 
-#define MODULE "Enemy"
+#define MODULE "RobotCan"
 
-Enemy::Enemy(GameObject& associated) : Component(associated) {
-    auto baseSprite = new Sprite{
+RobotCan::RobotCan(GameObject& associated) : Component(associated) {
+    baseSprite = new Sprite{
         associated, ASSETS "/img/RobotCan/RobotCanWalkBase/spritesheet.png"};
     associated.AddComponent(baseSprite);
 
-    auto coreSprite = new Sprite{
+    coreSprite = new Sprite{
         associated, ASSETS "/img/RobotCan/RobotCanWalkCore/spritesheet.png"};
     associated.AddComponent(coreSprite);
 
@@ -88,45 +85,20 @@ Enemy::Enemy(GameObject& associated) : Component(associated) {
         associated.AddComponent(anim);
     }
 
-    direction = Direction{NoneX, Down};
+    associated.AddComponent(new Collider{associated});
 }
 
-void Enemy::Update(float dt) {
-    if (!behavior) {
-        warn("unset behavior!");
-        return;
-    }
+void RobotCan::Update(float) {
+    auto player = Player::player;
+    if (player != nullptr) {
+        auto dir = Direction::approxFromVec(player->associated.box.Center() -
+                                            associated.box.Center());
 
-    behavior->Update(*this, dt);
-
-    if (bulletTimer.Get() >= BULLET_DELAY) {
-        bulletTimer.Restart();
-
-        const auto playerPos = Player::player->Associated().box.Center();
-        const auto angle = (playerPos - associated.box.Center()).angle();
-
-        auto go = new GameObject{};
-        auto sprite = new Sprite{*go, ASSETS "/img/laser-bullet.png"};
-        go->AddComponent(new Bullet{*go, 700, angle, 20, 1000, true});
-        go->AddComponent(sprite);
-        go->AddComponent(new Collider{*go});
-        go->box = Rect{0, 0, (float)sprite->SheetWidth(),
-                       (float)sprite->SheetHeight()};
-        go->box.SetCenter(associated.box.Center());
-        Game::Instance().GetState().RequestAddObject(go);
+        auto anims = associated.GetAllComponents(CType::Animation);
+        for (auto& anim : anims) {
+            ((Animation*)anim)->SoftPlay(dir.toString());
+        }
     }
 }
 
-void Enemy::Render(Vec2<Cart>) {}
-
-bool Enemy::Is(CType type) { return type == CType::Enemy; }
-
-Enemy& Enemy::WithStopDistance(float value) {
-    stopDistance = value;
-    return *this;
-}
-
-Enemy& Enemy::WithBehavior(EnemyBehavior* value) {
-    behavior = unique_ptr<EnemyBehavior>(value);
-    return *this;
-}
+bool RobotCan::Is(CType type) { return type == CType::RobotCan; }

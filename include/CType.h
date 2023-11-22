@@ -20,4 +20,5 @@ enum class CType {
     Enemy,
     IsoCollider,
     RigidBody,
+    RobotCan,
 };

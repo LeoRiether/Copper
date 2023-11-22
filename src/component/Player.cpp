@@ -34,7 +34,7 @@ Player::Player(GameObject& associated) : Component(associated) {
     associated.AddComponent(sprite);
 
     {
-        auto anim = new Animation{associated};
+        auto anim = new Animation{associated, *sprite};
         GridKeyframe grid{7, 8, sprite->SheetWidth(), sprite->SheetHeight(),
                           0.05};
 

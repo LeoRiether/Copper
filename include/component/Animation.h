@@ -32,6 +32,7 @@ struct GridKeyframe {
 
 class Animation : public Component {
    private:
+    Sprite& sprite;
     Timer timer;
     vector<Keyframes> animations;
     hashmap<string, int> nameToId;
@@ -41,7 +42,7 @@ class Animation : public Component {
     void Play(int id);
 
    public:
-    Animation(GameObject& associated);
+    Animation(GameObject& associated, Sprite& sprite);
 
     /** Constructs an animation by dividing a spritesheet into `frames`
      * horizontal frames, in which all of them take `frameTime` to advance */
