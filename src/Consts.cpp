@@ -32,11 +32,11 @@ void Consts::Load() {
         Consts::Value x;
         try {
             x.f = std::stof(value);
-        } catch (std::exception e) {
+        } catch (std::exception const&) {
         }
         try {
             x.i = std::stoi(value);
-        } catch (std::exception e) {
+        } catch (std::exception const&) {
         }
         x.s = value;
 

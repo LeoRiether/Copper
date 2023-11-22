@@ -4,18 +4,16 @@
 #include "Consts.h"
 #include "Game.h"
 
-Collider::Collider(GameObject& associated, Vec2<Cart> scale, Vec2<Cart> offset)
-    : Component(associated), scale(scale), offset(offset) {}
+Collider::Collider(GameObject& associated) : Component(associated) {}
 
 void Collider::Update(float) {
-    box = associated.box;
-
-    box.w *= scale.x;
-    box.h *= scale.y;
-
-    offset = offset.GetRotated(associated.angle);
-    box.x += offset.x;
-    box.y += offset.y;
+    if (base.w == 0 && base.h == 0) {
+        box = associated.box;
+    } else {
+        box = base;
+        box.x += associated.box.x;
+        box.y += associated.box.y;
+    }
 }
 
 void Collider::Render(Vec2<Cart> camera) {
@@ -54,5 +52,7 @@ void Collider::Render(Vec2<Cart> camera) {
 
 bool Collider::Is(CType type) { return type == CType::Collider; }
 
-void Collider::SetScale(Vec2<Cart> s) { scale = s; }
-void Collider::SetOffset(Vec2<Cart> o) { offset = o; }
+Collider* Collider::WithBase(Rect b) {
+    base = b;
+    return this;
+}

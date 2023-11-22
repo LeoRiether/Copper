@@ -17,7 +17,6 @@ enum class CType {
     EndStageDimmer,
     InfiniteBg,
     Animation,
-    Enemy,
     IsoCollider,
     RigidBody,
     RobotCan,

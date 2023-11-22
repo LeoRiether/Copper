@@ -1,11 +1,9 @@
 #include "component/enemy/EnemyFollower.h"
 
-#include <bits/fs_fwd.h>
-
 #include "component/Animation.h"
 #include "component/Player.h"
 
-void EnemyFollower::Update(Enemy& self, float dt) {
+void EnemyFollower::Update(RobotCan& self, float dt) {
     if (!Player::player) return;
 
     auto allAnimsPlay = [&](const string& id) {

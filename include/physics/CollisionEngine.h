@@ -18,7 +18,7 @@ class CollisionEngine {
    private:
     static vector<IsoCollider*> terrainColliders;
     static GameObject* player;
-    static vector<GameObject*> enemies;
+    static vector<GameObject*> entities;
 
     static void ClearState();
 };

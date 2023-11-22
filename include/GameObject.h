@@ -6,6 +6,7 @@
 #include "Component.h"
 #include "math/Rect.h"
 #include "math/Vec2.h"
+#include "physics/Tags.h"
 using std::string;
 using std::unique_ptr;
 using std::vector;
@@ -25,6 +26,7 @@ class GameObject {
     double angle{0};
     int renderLayer{0};
     const char* debugName;
+    tagset tags;
 
     GameObject();
     ~GameObject();

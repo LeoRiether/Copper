@@ -2,7 +2,7 @@
 
 #include "component/enemy/EnemyBehavior.h"
 
-class EnemyFollower : public EnemyBehavior {
+class EnemyNop : public EnemyBehavior {
    private:
    public:
     void Update(RobotCan& self, float dt);

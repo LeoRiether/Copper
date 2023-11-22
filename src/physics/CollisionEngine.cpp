@@ -1,7 +1,7 @@
 #include "physics/CollisionEngine.h"
 
 #include "CType.h"
-#include "component/enemy/Enemy.h"
+#include "component/enemy/RobotCan.h"
 #include "physics/IsoSolver.h"
 #include "util.h"
 
@@ -9,7 +9,7 @@
 
 vector<IsoCollider*> CollisionEngine::terrainColliders;
 GameObject* CollisionEngine::player;
-vector<GameObject*> CollisionEngine::enemies;
+vector<GameObject*> CollisionEngine::entities;
 
 void CollisionEngine::Solve(const vector<shared_ptr<GameObject>>& objects) {
     ClearState();
@@ -25,9 +25,8 @@ void CollisionEngine::Solve(const vector<shared_ptr<GameObject>>& objects) {
             }
         }
 
-        auto enemy = (Enemy*)obj->GetComponent(CType::Enemy);
-        if (enemy) {
-            enemies.emplace_back(&enemy->associated);
+        if (obj->tags.test(tag::Entity)) {
+            entities.emplace_back(obj.get());
         }
     }
 
@@ -45,7 +44,7 @@ void CollisionEngine::Solve(const vector<shared_ptr<GameObject>>& objects) {
     }
 
     // Enemy--Terrain collisions
-    for (auto enemy : enemies) {
+    for (auto enemy : entities) {
         Vec2<Cart> pos = enemy->box.Foot();
         for (int i = 0; i < 2; i++) {
             for (auto& collider : terrainColliders) {
@@ -59,5 +58,5 @@ void CollisionEngine::Solve(const vector<shared_ptr<GameObject>>& objects) {
 void CollisionEngine::ClearState() {
     terrainColliders.clear();
     player = Player::player ? &Player::player->Associated() : nullptr;
-    enemies.clear();
+    entities.clear();
 }

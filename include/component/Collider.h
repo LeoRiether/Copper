@@ -9,17 +9,16 @@
 
 class Collider : public Component {
    private:
-    Vec2<Cart> scale, offset;
+    Rect base{0, 0, 0, 0};
 
    public:
-    Collider(GameObject& associated, Vec2<Cart> scale = {1, 1},
-             Vec2<Cart> offset = {0, 0});
+    Collider(GameObject& associated);
 
     Rect box;
 
     void Update(float dt);
     void Render(Vec2<Cart> camera);
     bool Is(CType type);
-    void SetScale(Vec2<Cart> scale);
-    void SetOffset(Vec2<Cart> offset);
+
+    Collider* WithBase(Rect base);
 };

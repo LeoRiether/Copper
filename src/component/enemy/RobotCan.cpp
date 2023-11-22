@@ -1,21 +1,26 @@
 #include "component/enemy/RobotCan.h"
 
-#include <cstring>
+#include <algorithm>
 
+#include "Game.h"
 #include "component/Animation.h"
+#include "component/Bullet.h"
 #include "component/Collider.h"
 #include "component/Player.h"
+#include "component/Sprite.h"
 #include "math/Direction.h"
 #include "util.h"
 
 #define MODULE "RobotCan"
 
 RobotCan::RobotCan(GameObject& associated) : Component(associated) {
-    baseSprite = new Sprite{
+    associated.tags.set(tag::Entity);
+
+    auto baseSprite = new Sprite{
         associated, ASSETS "/img/RobotCan/RobotCanWalkBase/spritesheet.png"};
     associated.AddComponent(baseSprite);
 
-    coreSprite = new Sprite{
+    auto coreSprite = new Sprite{
         associated, ASSETS "/img/RobotCan/RobotCanWalkCore/spritesheet.png"};
     associated.AddComponent(coreSprite);
 
@@ -85,20 +90,47 @@ RobotCan::RobotCan(GameObject& associated) : Component(associated) {
         associated.AddComponent(anim);
     }
 
-    associated.AddComponent(new Collider{associated});
+    direction = Direction{NoneX, Down};
 }
 
-void RobotCan::Update(float) {
-    auto player = Player::player;
-    if (player != nullptr) {
-        auto dir = Direction::approxFromVec(player->associated.box.Center() -
-                                            associated.box.Center());
+void RobotCan::Update(float dt) {
+    if (!behavior) {
+        warn("unset behavior!");
+        return;
+    }
 
-        auto anims = associated.GetAllComponents(CType::Animation);
-        for (auto& anim : anims) {
-            ((Animation*)anim)->SoftPlay(dir.toString());
-        }
+    behavior->Update(*this, dt);
+
+    if (bulletTimer.Get() >= BULLET_DELAY) {
+        bulletTimer.Restart();
+
+        const auto playerPos = Player::player->Associated().box.Center();
+        const auto angle = (playerPos - associated.box.Center()).angle();
+
+        auto go = new GameObject{};
+        auto sprite = new Sprite{*go, ASSETS "/img/laser-bullet.png"};
+        go->AddComponent(new Bullet{*go, 700, angle, 20, 1000, true});
+        go->AddComponent(sprite);
+        go->AddComponent(
+            (new Collider{*go})
+                ->WithBase(Rect{46.555, 55.1247, 28.3535, 11.9118}));
+        go->box = Rect{0, 0, (float)sprite->SheetWidth(),
+                       (float)sprite->SheetHeight()};
+        go->box.SetCenter(associated.box.Center());
+        Game::Instance().GetState().RequestAddObject(go);
     }
 }
 
+void RobotCan::Render(Vec2<Cart>) {}
+
 bool RobotCan::Is(CType type) { return type == CType::RobotCan; }
+
+RobotCan& RobotCan::WithStopDistance(float value) {
+    stopDistance = value;
+    return *this;
+}
+
+RobotCan& RobotCan::WithBehavior(EnemyBehavior* value) {
+    behavior = unique_ptr<EnemyBehavior>(value);
+    return *this;
+}

@@ -8,5 +8,5 @@ class EnemyDistancer : public EnemyBehavior {
     float walkingTime{0};
 
    public:
-    void Update(Enemy& enemy, float dt);
+    void Update(RobotCan& enemy, float dt);
 };

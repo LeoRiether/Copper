@@ -1,11 +1,11 @@
 #pragma once
 
-#include "component/enemy/Enemy.h"
+#include "component/enemy/RobotCan.h"
 
-class Enemy;
+class RobotCan;
 
 class EnemyBehavior {
    public:
     virtual ~EnemyBehavior() {}
-    virtual void Update(Enemy&, float) {}
+    virtual void Update(RobotCan&, float) {}
 };

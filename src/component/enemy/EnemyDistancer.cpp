@@ -3,7 +3,7 @@
 #include "component/Animation.h"
 #include "component/Player.h"
 
-void EnemyDistancer::Update(Enemy& self, float dt) {
+void EnemyDistancer::Update(RobotCan& self, float dt) {
     if (!Player::player) return;
 
     auto allAnimsPlay = [&](const string& id) {
