@@ -239,10 +239,11 @@ void StageState::Update(float dt) {
     }
 
     // Handle updates
+    CollisionEngine::Update(objects);
     for (auto& go : objects) {
         go->Update(dt);
     }
-    CollisionEngine::Solve(objects);
+    CollisionEngine::Solve();
     camera->Update(dt);
 
     // Swap-remove dead objects

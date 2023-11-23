@@ -10,10 +10,12 @@
 using std::shared_ptr;
 using std::vector;
 
-// Honestly, this is not a class, this is a function
+// Honestly, this is not a class, this is a namespace
 class CollisionEngine {
    public:
-    static void Solve(const vector<shared_ptr<GameObject>>& objects);
+    static void Update(const vector<shared_ptr<GameObject>>& objects);
+    static void Solve();
+    static bool TerrainContains(const Vec2<Iso> point);
 
    private:
     static vector<IsoCollider*> terrainColliders;

@@ -84,7 +84,7 @@ RobotCan::RobotCan(GameObject& associated) : Component(associated) {
             baseAnim->AddKeyframes(idles[i], row(baseGrid, i, 0, 1, 1.0));
         }
 
-        coreAnim->Play("walk_S");  // just to kickstart the associated.box...
+        baseAnim->Play("walk_S");  // just to kickstart the associated.box...
         associated.AddComponent(coreAnim);
         associated.AddComponent(baseAnim);
     }

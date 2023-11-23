@@ -24,7 +24,7 @@ void EnemyFollower::Update(float dt) {
     auto enemyPos = associated.box.Foot();
     auto distVec = playerPos - enemyPos;
     if (distVec.norm2() <= self->stopDistance * self->stopDistance) {
-        allAnimsPlay("idle_" + self->direction.toString());
+        allAnimsPlay("hide_" + self->direction.toString());
         return;
     }
 
