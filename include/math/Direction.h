@@ -24,11 +24,11 @@ struct Direction {
     static Direction approxFromVec(Vec2<Cart> v);
 
     /** Returns a normalized vector with the appropriate direction */
-    Vec2<Cart> toVec();
+    Vec2<Cart> toVec() const;
 
-    string toString();
+    string toString() const;
 
-    bool isNone();
+    bool isNone() const;
 
     bool operator==(Direction& rhs) const;
     bool operator!=(Direction& rhs) const;

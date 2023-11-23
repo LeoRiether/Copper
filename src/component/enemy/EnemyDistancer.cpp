@@ -6,6 +6,7 @@
 #include "component/Bullet.h"
 #include "component/Player.h"
 #include "component/enemy/RobotCan.h"
+#include "math/Vec2.h"
 
 EnemyDistancer::EnemyDistancer(GameObject& go) : Component(go) {}
 
@@ -16,6 +17,8 @@ EnemyDistancer* EnemyDistancer::WithRobotCan(RobotCan* rc) {
 
 void EnemyDistancer::Update(float dt) {
     if (!Player::player) return;
+
+    auto roam = [&]() { associated.box.OffsetBy(roamingDelta * speed * dt); };
 
     auto walkAway = [&]() {
         auto playerPos = Player::player->Associated().box.Foot();
@@ -31,26 +34,31 @@ void EnemyDistancer::Update(float dt) {
             return;
         }
 
-        allAnimsPlay(self->direction.toString());
-        associated.box.OffsetBy(distVec.normalize() * 300 * dt);
+        allAnimsPlay("walk_" + self->direction.toString());
+        associated.box.OffsetBy(distVec.normalize() * speed * dt);
         walkingTime += dt;
     };
 
     switch (state) {
-        case WalkingAway: {
-            walkAway();
+        case Roaming: {
+            roam();
 
-            timeBetweenShots.Update(dt);
-            if (timeBetweenShots.Get() >= timeBetweenShotsConst) {
+            roamingTimeout.Update(dt);
+            if (roamingTimeout.Get() >= roamingTimeConst) {
                 switchState(Shooting);
             }
 
             break;
         }
+        case WalkingAway: {
+            walkAway();
+
+            break;
+        }
         case Shooting: {
             shotTimeout.Update(dt);
-            if (shotTimeout.Get() >= bulletDelay) {
-                switchState(WalkingAway);
+            if (shotTimeout.Get() >= shotAnimationTime) {
+                switchState(Roaming);
             }
             break;
         }
@@ -63,6 +71,9 @@ void EnemyDistancer::switchState(State newState) {
         case WalkingAway: {
             break;
         }
+        case Roaming: {
+            break;
+        }
         case Shooting: {
             break;
         }
@@ -70,18 +81,28 @@ void EnemyDistancer::switchState(State newState) {
 
     auto shoot = [&]() {
         const auto playerPos = Player::player->Associated().box.Foot();
-        const auto angle = (playerPos - associated.box.Center()).angle();
-        auto go = Bullet::Make(associated.box.Center(), angle);
+        const auto delta = playerPos - associated.box.Center();
+        auto go = Bullet::Make(associated.box.Center(), delta.angle());
         Game::Instance().GetState().RequestAddObject(go);
 
-        // TODO: switch animation
+        // TODO: shoot animation
+        const auto dir = Direction::approxFromVec(delta);
+        allAnimsPlay("fire2_" + dir.toString());
     };
 
     // Get in new state
     switch (newState) {
         case WalkingAway: {
-            timeBetweenShots.Restart();
             walkingTime = 0;
+            break;
+        }
+        case Roaming: {
+            auto angle = randf(0, 2 * PI);
+            roamingDelta = Vec2<Cart>{1, 0}.GetRotated(angle);
+            auto dir = Direction::approxFromVec(roamingDelta);
+            allAnimsPlay("walk_" + dir.toString());
+
+            roamingTimeout.Restart();
             break;
         }
         case Shooting: {

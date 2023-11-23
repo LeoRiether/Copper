@@ -1,7 +1,7 @@
 import os
 import shutil  # wtf kind of name is that?
 from PIL import Image
-from colorama import Fore
+from colorama import Fore, Style
 from collections import namedtuple
 
 ############################
@@ -9,12 +9,25 @@ from collections import namedtuple
 ############################
 Resize = namedtuple("Resize", ["path", "target_width"])
 Trim = namedtuple("Trim", ["path"])
+Concat = namedtuple("Concat", ["path", "inputs"])
 
 RULES = [
     Trim("img/Barris.png"),
     Resize("img/Barris.png", 212),
     Trim("img/Escavadeira.png"),
     Resize("img/Escavadeira.png", 372),
+    Concat("img/RobotCanCore.png", [
+        "img/RobotCan/RobotCanWalkCore/spritesheet.png",
+        "img/RobotCan/RobotCanFire1Core/spritesheet.png",
+        "img/RobotCan/RobotCanFire2Core/spritesheet.png",
+        "img/RobotCan/RobotCanHideCore/spritesheet.png",
+    ]),
+    Concat("img/RobotCanBase.png", [
+        "img/RobotCan/RobotCanWalkBase/spritesheet.png",
+        "img/RobotCan/RobotCanFire1Base/spritesheet.png",
+        "img/RobotCan/RobotCanFire2Base/spritesheet.png",
+        "img/RobotCan/RobotCanHideBase/spritesheet.png",
+    ]),
 ]
 
 
@@ -23,7 +36,7 @@ def backup(path):
     if os.path.exists(bakpath):
         # turn path back to original
         shutil.copyfile(bakpath, path)
-    else:
+    elif os.path.exists(path):
         # make backup
         shutil.copyfile(path, bakpath)
 
@@ -47,6 +60,24 @@ def trim(path):
         bounding_box = image.getbbox()
         image.crop(bounding_box).save(path)
 
+def concat(path, inputs):
+    print(f"{Fore.MAGENTA}Concatenating{Fore.RESET} {path} from")
+    for inp in inputs:
+        print(f"  {Style.DIM}{inp}{Style.RESET_ALL}")
+
+    inputs = (os.path.join("assets/", inp) for inp in inputs)
+    imgs = [ Image.open(inp) for inp in inputs ]
+    total_width = max(img.width for img in imgs)
+    total_height = sum(img.height for img in imgs)
+    result = Image.new("RGBA", (total_width, total_height))
+
+    current_height = 0
+    for img in imgs:
+        result.paste(img, (0, current_height))
+        current_height += img.height
+
+    result.save(path)
+
 
 def main():
     paths = {os.path.join("assets/", rule.path) for rule in RULES}
@@ -60,6 +91,8 @@ def main():
             resize(path, rule.target_width)
         elif isinstance(rule, Trim):
             trim(path)
+        elif isinstance(rule, Concat):
+            concat(path, rule.inputs)
         else:
             print(f"Rule not registered: {rule}")
 

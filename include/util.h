@@ -63,3 +63,8 @@
 
 inline std::mt19937 rng(
     std::chrono::steady_clock::now().time_since_epoch().count());
+
+inline float randf(float low, float high) {
+    auto dist = std::uniform_real_distribution<float>();
+    return dist(rng) * (high - low) + low;
+}

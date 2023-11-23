@@ -8,19 +8,22 @@
 class EnemyDistancer : public Component {
    public:
     enum State {
+        Roaming,
         WalkingAway,
         Shooting,
-    } state;
+    } state{Roaming};
 
    private:
     RobotCan* self{nullptr};
 
     float walkingTime{0};
-    Timer shotTimeout{}, timeBetweenShots{};
+    Timer roamingTimeout{}, shotTimeout{};
 
-    float& bulletDelay{Consts::GetFloat("robotcan.bullet_delay")};
-    float& timeBetweenShotsConst{
-        Consts::GetFloat("robotcan.time_between_shots")};
+    Vec2<Cart> roamingDelta;
+
+    float& shotAnimationTime{Consts::GetFloat("robotcan.shot_animation_time")};
+    float& roamingTimeConst{Consts::GetFloat("robotcan.roaming_time")};
+    float& speed{Consts::GetFloat("robotcan.speed")};
 
     void switchState(State newState);
     void allAnimsPlay(const string& id);

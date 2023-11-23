@@ -17,6 +17,7 @@ class Consts {
     };
 
     static void Load();
+    static void PeriodicLoad();
 
     static int& GetInt(const string& key);
     static float& GetFloat(const string& key);

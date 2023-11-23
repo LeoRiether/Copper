@@ -36,7 +36,7 @@ Direction Direction::approxFromVec(Vec2<Cart> v) {
     return self;
 }
 
-Vec2<Cart> Direction::toVec() {
+Vec2<Cart> Direction::toVec() const {
     Vec2<Cart> res{(float)x, (float)y};
     if (res.x != 0 && res.y != 0) {
         res.x *= 2;          // walk on the same angle as the tiles
@@ -45,13 +45,13 @@ Vec2<Cart> Direction::toVec() {
     return res;
 }
 
-string Direction::toString() {
+string Direction::toString() const {
     string xstr = x == Left ? "W" : x == Right ? "E" : "";
     string ystr = y == Up ? "N" : y == Down ? "S" : "";
     return ystr + xstr;
 }
 
-bool Direction::isNone() { return x == NoneX && y == NoneY; }
+bool Direction::isNone() const { return x == NoneX && y == NoneY; }
 
 bool Direction::operator==(Direction& rhs) const {
     return x == rhs.x && y == rhs.y;

@@ -4,6 +4,7 @@
 #include "InputManager.h"
 #include "Resources.h"
 #include "SDL_include.h"
+#include "SDL_timer.h"
 #include "state/TitleState.h"
 
 #define MODULE "Game"
@@ -75,6 +76,8 @@ void Game::Run() {
         SDL_RenderPresent(renderer);
 
         UpdateStateStack();
+
+        Consts::PeriodicLoad();
 
         int64_t deltaMs = (int64_t)SDL_GetTicks64() - frameStart;
         SDL_Delay(std::max(0ll, (long long)(FRAME_MS - deltaMs)));

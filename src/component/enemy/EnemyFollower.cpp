@@ -29,6 +29,6 @@ void EnemyFollower::Update(float dt) {
     }
 
     self->direction = Direction::approxFromVec(distVec);
-    allAnimsPlay(self->direction.toString());
+    allAnimsPlay("walk_" + self->direction.toString());
     self->associated.box.OffsetBy(distVec.normalize() * 300 * dt);
 }

@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 
+#include "SDL_include.h"
 #include "util.h"
 
 #define MODULE "Consts"
@@ -41,6 +42,15 @@ void Consts::Load() {
         x.s = value;
 
         Consts::values[key] = x;
+    }
+}
+
+void Consts::PeriodicLoad() {
+    static int lastLoad = 0;
+    int now = SDL_GetTicks();
+    if (now - lastLoad > 1000) {
+        lastLoad = now;
+        Consts::Load();
     }
 }
 
