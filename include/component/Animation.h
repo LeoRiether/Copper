@@ -37,9 +37,10 @@ class Animation : public Component {
     vector<Keyframes> animations;
     hashmap<string, int> nameToId;
     int currentAnimation{0}, currentFrame{0};
+    bool loops{true};
 
     /** Play animation from start, given the ID instead of name */
-    void Play(int id);
+    void Play(int id, bool looping = true);
 
    public:
     Animation(GameObject& associated, Sprite& sprite);
@@ -50,10 +51,10 @@ class Animation : public Component {
                                  int frames, float frameTime);
 
     /** Play animation from start */
-    void Play(const string& animationName);
+    void Play(const string& animationName, bool looping = true);
 
     /** Play animation if it's not already playing */
-    void SoftPlay(const string& animationName);
+    void SoftPlay(const string& animationName, bool looping = true);
 
     void AddKeyframes(const string& animationName, const Keyframes& kf);
 

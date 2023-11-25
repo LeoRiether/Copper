@@ -50,29 +50,30 @@ void Animation::AddKeyframes(const string& animationName, const Keyframes& kf) {
     animations.emplace_back(kf);
 }
 
-void Animation::Play(int id) {
+void Animation::Play(int id, bool looping) {
     currentAnimation = id;
     currentFrame = 0;
+    loops = looping;
     Update(0);
 }
 
-void Animation::Play(const string& animationName) {
+void Animation::Play(const string& animationName, bool looping) {
     auto id = nameToId.find(animationName);
     if (id == nameToId.end()) {
         fail2("animation " YELLOW "%s" RESET " does not exist!",
               animationName.c_str());
     }
-    Play(id->second);
+    Play(id->second, looping);
 }
 
-void Animation::SoftPlay(const string& animationName) {
+void Animation::SoftPlay(const string& animationName, bool looping) {
     auto id = nameToId.find(animationName);
     if (id == nameToId.end()) {
         fail2("animation " YELLOW "%s" RESET " does not exist!",
               animationName.c_str());
     }
 
-    if (id->second != currentAnimation) Play(id->second);
+    if (id->second != currentAnimation) Play(id->second, looping);
 }
 
 void Animation::Update(float dt) {
@@ -83,7 +84,7 @@ void Animation::Update(float dt) {
         timer.Restart();
         currentFrame++;
         if (currentFrame >= (int)anim.size()) {
-            currentFrame = 0;
+            currentFrame = loops ? 0 : (int)anim.size() - 1;
         }
     }
 

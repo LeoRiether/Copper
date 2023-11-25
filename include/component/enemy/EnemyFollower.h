@@ -1,12 +1,15 @@
 #pragma once
 
 #include "Component.h"
+#include "Consts.h"
 #include "GameObject.h"
 #include "component/enemy/RobotCan.h"
 
 class EnemyFollower : public Component {
    private:
     RobotCan* self;
+
+    float& speed{Consts::GetFloat("robotcan.speed")};
 
    public:
     EnemyFollower(GameObject& go);

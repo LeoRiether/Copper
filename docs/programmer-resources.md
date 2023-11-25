@@ -33,3 +33,4 @@
 - [Integration Basics](https://gafferongames.com/post/integration_basics/)
 - [CVar System](https://vkguide.dev/docs/extra-chapter/cvar_system/)
 - [How to Make Attack Feel Great: animations, particles, and other cool tricks](https://www.youtube.com/watch?v=_qxl7CalhDM)
+- [Juicing Kit](https://pigdev.itch.io/juicing-kit) 

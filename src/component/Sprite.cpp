@@ -1,7 +1,5 @@
 #include "component/Sprite.h"
 
-#include <chrono>
-
 #include "Game.h"
 #include "GameObject.h"
 #include "Resources.h"
