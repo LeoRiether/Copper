@@ -26,7 +26,7 @@ def main():
         return
 
     if len(classpath.split('/')) > 1:
-        os.makedirs(os.path.join(*classpath.split('/')[:-1]))
+        os.makedirs(os.path.join(*classpath.split('/')[:-1]), exist_ok=True)
 
     includes = ""
     inherit = ""

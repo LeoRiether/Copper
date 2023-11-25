@@ -18,7 +18,7 @@ class Music {
     ~Music();
 
     void Play(int times = -1);
-    void Stop(int msToStop = 1500);
+    void Stop(int msToStop = 0);
     void Open(const string& file);
     bool IsOpen();
 };
