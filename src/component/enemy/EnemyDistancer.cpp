@@ -2,6 +2,7 @@
 
 #include "Game.h"
 #include "GameObject.h"
+#include "Prefabs.h"
 #include "component/Animation.h"
 #include "component/Bullet.h"
 #include "component/Player.h"
@@ -85,7 +86,7 @@ void EnemyDistancer::switchState(State newState) {
     auto shoot = [&]() {
         const auto playerPos = Player::player->Associated().box.Foot();
         const auto delta = playerPos - associated.box.Center();
-        auto go = Bullet::Make(associated.box.Center(), delta.angle());
+        auto go = MakeBullet(associated.box.Center(), delta.angle());
         Game::Instance().GetState().RequestAddObject(go);
 
         // TODO: shoot animation

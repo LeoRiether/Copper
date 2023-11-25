@@ -4,6 +4,7 @@
 #include "Consts.h"
 #include "Game.h"
 #include "component/Sprite.h"
+#include "math/Vec2.h"
 #include "util.h"
 
 #define MODULE "IsoCollider"
@@ -11,12 +12,12 @@
 IsoCollider::IsoCollider(GameObject& associated) : Component(associated) {}
 
 void IsoCollider::Update(float) {
-    box.w = offset.w;
-    box.h = offset.h;
+    box.w = base.w;
+    box.h = base.h;
 
-    Vec2<Iso> base = associated.box.TopLeft().toIso();
-    box.x = base.x + offset.x;
-    box.y = base.y + offset.y;
+    Vec2<Iso> something = associated.box.TopLeft().toIso();
+    box.x = base.x + something.x;
+    box.y = base.y + something.y;
 }
 
 void IsoCollider::Render(Vec2<Cart> camera) {
@@ -44,22 +45,29 @@ void IsoCollider::Render(Vec2<Cart> camera) {
     }
 }
 
-void IsoCollider::ScaleToSprite() {
+IsoCollider* IsoCollider::ScaleToSprite() {
     auto sprite = (Sprite*)associated.GetComponent(CType::Sprite);
     if (!sprite) {
         fail("no Sprite component found");
     }
-    offset.x *= sprite->Scale().x;
-    offset.y *= sprite->Scale().y;
-    offset.w *= sprite->Scale().x;
-    offset.h *= sprite->Scale().y;
+    base.x *= sprite->Scale().x;
+    base.y *= sprite->Scale().y;
+    base.w *= sprite->Scale().x;
+    base.h *= sprite->Scale().y;
+    return this;
 }
 
-void IsoCollider::ExpandBy(float pixels) {
-    offset.x -= pixels;
-    offset.y -= pixels;
-    offset.w += 2 * pixels;
-    offset.h += 2 * pixels;
+IsoCollider* IsoCollider::ExpandBy(float pixels) {
+    base.x -= pixels;
+    base.y -= pixels;
+    base.w += 2 * pixels;
+    base.h += 2 * pixels;
+    return this;
+}
+
+IsoCollider* IsoCollider::WithBase(Rect b) {
+    base = b;
+    return this;
 }
 
 bool IsoCollider::Is(CType type) { return type == CType::IsoCollider; }

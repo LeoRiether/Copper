@@ -5,7 +5,6 @@
 
 #include "GameObject.h"
 #include "component/IsoCollider.h"
-#include "component/Player.h"
 
 using std::shared_ptr;
 using std::vector;
@@ -21,6 +20,7 @@ class CollisionEngine {
     static vector<IsoCollider*> terrainColliders;
     static GameObject* player;
     static vector<GameObject*> entities;
+    static vector<GameObject*> bullets;
 
     static void ClearState();
 };

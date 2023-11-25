@@ -13,13 +13,14 @@ class IsoCollider : public Component {
     IsoCollider(GameObject& associated);
 
     tagset tags;
-    Rect offset, box;
+    Rect base, box;
 
     void Update(float dt);
     void Render(Vec2<Cart> camera);
 
-    void ScaleToSprite();
-    void ExpandBy(float pixels);
+    IsoCollider* ScaleToSprite();
+    IsoCollider* ExpandBy(float pixels);
+    IsoCollider* WithBase(Rect b);
 
     bool Is(CType type);
 };

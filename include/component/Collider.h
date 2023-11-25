@@ -21,4 +21,5 @@ class Collider : public Component {
     bool Is(CType type);
 
     Collider* WithBase(Rect base);
+    Collider* ScaleToSprite();
 };

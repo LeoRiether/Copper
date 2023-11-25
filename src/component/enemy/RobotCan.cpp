@@ -1,12 +1,8 @@
 #include "component/enemy/RobotCan.h"
 
-#include <algorithm>
-
 #include "Game.h"
 #include "component/Animation.h"
 #include "component/Bullet.h"
-#include "component/Collider.h"
-#include "component/Player.h"
 #include "component/Sprite.h"
 #include "math/Direction.h"
 #include "physics/Tags.h"
@@ -97,6 +93,13 @@ void RobotCan::Update(float) {}
 void RobotCan::Render(Vec2<Cart>) {}
 
 bool RobotCan::Is(CType type) { return type == CType::RobotCan; }
+
+void RobotCan::NotifyCollision(GameObject& other) {
+    if (other.GetComponent(CType::Bullet)) {
+        warn("RobotCan hit!");
+        other.RequestDelete();
+    }
+}
 
 RobotCan* RobotCan::WithStopDistance(float value) {
     stopDistance = value;

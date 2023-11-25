@@ -1,15 +1,18 @@
 #include "physics/CollisionEngine.h"
 
 #include "CType.h"
-#include "component/enemy/RobotCan.h"
+#include "component/Collider.h"
+#include "component/Player.h"
+#include "physics/Collision.h"
 #include "physics/IsoSolver.h"
-#include "util.h"
+#include "physics/Tags.h"
 
 #define MODULE "CollisionEngine"
 
 vector<IsoCollider*> CollisionEngine::terrainColliders;
 GameObject* CollisionEngine::player;
 vector<GameObject*> CollisionEngine::entities;
+vector<GameObject*> CollisionEngine::bullets;
 
 void CollisionEngine::Update(const vector<shared_ptr<GameObject>>& objects) {
     ClearState();
@@ -25,9 +28,8 @@ void CollisionEngine::Update(const vector<shared_ptr<GameObject>>& objects) {
             }
         }
 
-        if (obj->tags.test(tag::Entity)) {
-            entities.emplace_back(obj.get());
-        }
+        if (obj->tags.test(tag::Entity)) entities.emplace_back(obj.get());
+        if (obj->tags.test(tag::Bullet)) bullets.emplace_back(obj.get());
     }
 }
 
@@ -35,6 +37,7 @@ void CollisionEngine::ClearState() {
     terrainColliders.clear();
     player = Player::player ? &Player::player->Associated() : nullptr;
     entities.clear();
+    bullets.clear();
 }
 
 // Requires state to be `Update`d!
@@ -63,6 +66,31 @@ void CollisionEngine::Solve() {
         }
         pos.y += 15;  // !
         enemy->box.SetFoot(pos);
+    }
+
+    // Bullet--Player/Entity
+    for (auto bullet : bullets) {
+        auto hurtbox = (Collider*)bullet->GetComponent(CType::Collider);
+
+        // --Entity
+        for (auto entity : entities) {
+            auto hitbox = (Collider*)entity->GetComponent(CType::Collider);
+            if (hitbox &&
+                Collision::IsColliding(hurtbox->box, hitbox->box, bullet->angle,
+                                       entity->angle)) {
+                entity->NotifyCollision(*bullet);
+            }
+        }
+
+        // --Player
+        if (player) {
+            auto hitbox = (Collider*)player->GetComponent(CType::Collider);
+            if (hitbox &&
+                Collision::IsColliding(hurtbox->box, hitbox->box, bullet->angle,
+                                       player->angle)) {
+                player->NotifyCollision(*bullet);
+            }
+        }
     }
 }
 

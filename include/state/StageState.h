@@ -16,8 +16,6 @@ class StageState : public State {
    private:
     Music* music;
 
-    void AddMapColliders();
-
    public:
     ~StageState();
 

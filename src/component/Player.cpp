@@ -2,23 +2,17 @@
 
 #include <SDL2/SDL_render.h>
 
-#include <algorithm>
-#include <cmath>
 #include <string>
 
 #include "Game.h"
-#include "GameData.h"
 #include "GameObject.h"
 #include "InputManager.h"
 #include "component/Animation.h"
 #include "component/Collider.h"
-#include "component/EndStateDimmer.h"
-#include "component/KeepSoundAlive.h"
 #include "component/Sound.h"
 #include "component/Sprite.h"
 #include "component/Text.h"
 #include "math/Direction.h"
-#include "state/StageState.h"
 #include "util.h"
 
 #define MODULE "Player"
@@ -65,7 +59,9 @@ Player::Player(GameObject& associated) : Component(associated) {
         associated.AddComponent(anim);
     }
 
-    associated.AddComponent(new Collider{associated});
+    associated.AddComponent((new Collider{associated})
+                                ->WithBase({75.5414, 104.845, 127.273, 231.782})
+                                ->ScaleToSprite());
 }
 
 Player::~Player() { Player::player = nullptr; }
@@ -234,7 +230,12 @@ void Player::Render(Vec2<Cart> camera) {
 
 bool Player::Is(CType type) { return type == CType::Player; }
 
-void Player::NotifyCollision(GameObject&) {}
+void Player::NotifyCollision(GameObject& other) {
+    if (other.GetComponent(CType::Bullet)) {
+        warn("Player hit!");
+        other.RequestDelete();
+    }
+}
 
 void Player::RequestDelete() {
     associated.RequestDelete();

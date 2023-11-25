@@ -1,5 +1,5 @@
-#include <algorithm>
-#include <bitset>
+#pragma once
+
 #include <cmath>
 
 #include "math/Rect.h"
