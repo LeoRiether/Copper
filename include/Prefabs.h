@@ -8,4 +8,5 @@ GameObject* MakeEnemyDistancer();
 GameObject* MakeBarril();
 GameObject* MakeEscavadeira();
 GameObject* MakeBullet(Vec2<Cart> center, float angle);
+GameObject* MakeVigaB();
 vector<GameObject*> MakeMap1Colliders();

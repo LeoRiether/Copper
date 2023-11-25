@@ -48,7 +48,6 @@ GameObject* MakeBarril() {
     auto go = new GameObject{};
     auto sprite = new Sprite{*go, ASSETS "/img/Barris.png"};
     go->AddComponent(sprite);
-    go->box.SetFoot(Vec2<Cart>{1300, 600});
     auto collider1 = new IsoCollider{*go};
     collider1->tags.set(tag::Terrain);
     collider1->base = Rect{261.78, 69.441, 194.642, 130.417};
@@ -84,6 +83,15 @@ GameObject* MakeBullet(Vec2<Cart> center, float angle) {
         Rect{0, 0, (float)sprite->SheetWidth(), (float)sprite->SheetHeight()};
     go->box.SetCenter(center);
     go->tags.set(tag::Bullet);
+    return go;
+}
+
+GameObject* MakeVigaB() {
+    auto go = new GameObject{};
+    go->AddComponent(new Sprite{*go, ASSETS "/img/Viga_B.png"});
+    go->AddComponent((new IsoCollider{*go})
+                         ->WithBase({666.712, 507.125, 101.171, 147.866})
+                         ->WithTag(tag::Terrain));
     return go;
 }
 

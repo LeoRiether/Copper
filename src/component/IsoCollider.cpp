@@ -70,4 +70,9 @@ IsoCollider* IsoCollider::WithBase(Rect b) {
     return this;
 }
 
+IsoCollider* IsoCollider::WithTag(int t) {
+    tags.set(t);
+    return this;
+}
+
 bool IsoCollider::Is(CType type) { return type == CType::IsoCollider; }

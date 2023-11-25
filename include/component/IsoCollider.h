@@ -21,6 +21,7 @@ class IsoCollider : public Component {
     IsoCollider* ScaleToSprite();
     IsoCollider* ExpandBy(float pixels);
     IsoCollider* WithBase(Rect b);
+    IsoCollider* WithTag(int t);
 
     bool Is(CType type);
 };

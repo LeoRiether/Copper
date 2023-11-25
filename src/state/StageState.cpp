@@ -44,18 +44,24 @@ void StageState::Start() {
     RequestAddObject(MakeEnemyFollower()->WithFootAt({1700, 400}));
     RequestAddObject(MakeEnemyDistancer()->WithFootAt({1700, 400}));
 
+    auto isoOff = [&](GameObject* go, int xaxis = 1, int yaxis = 0) {
+        auto collider = (IsoCollider*)go->GetComponent(CType::IsoCollider);
+        auto center = go->box.Center().toIso();
+        auto offset =
+            Vec2<Iso>{collider->base.w * xaxis, collider->base.h * yaxis};
+        go->box.SetCenter((center + offset).toCart());
+        return go;
+    };
+
+    // Terrain
     RequestAddObject(MakeBarril()->WithFootAt({1300, 600}));
     RequestAddObject(MakeEscavadeira()->WithFootAt({1200, 700}));
+    RequestAddObject(isoOff(MakeEscavadeira()->WithFootAt({1200, 700})));
 
-    // Escavadeira 2
-    {
-        auto go = MakeEscavadeira()->WithFootAt({1200, 700});
-        auto collider = (IsoCollider*)go->GetComponent(CType::IsoCollider);
-        Vec2<Cart> center = go->box.Center();
-        go->box.SetCenter(
-            (center.toIso() + Vec2<Iso>{collider->base.w, 0}).toCart());
-        RequestAddObject(go);
-    }
+    RequestAddObject(MakeVigaB()->WithFootAt({2000, 500}));
+    RequestAddObject(isoOff(MakeVigaB()->WithFootAt({2000, 500}), 0, 1));
+    RequestAddObject(isoOff(MakeVigaB()->WithFootAt({2000, 500}), 0, 2));
+    RequestAddObject(isoOff(MakeVigaB()->WithFootAt({2000, 500}), 0, 3));
 
     StartArray();
     started = true;
