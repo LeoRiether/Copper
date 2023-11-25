@@ -5,7 +5,6 @@
 #include "CType.h"
 #include "Component.h"
 #include "SDL_include.h"
-#include "Timer.h"
 #include "wrap/Texture.h"
 using std::shared_ptr;
 using std::string;
@@ -18,6 +17,7 @@ class Sprite : public Component {
     SDL_Rect clipRect;
 
     bool hasShadow{false};
+    bool flash{false};
 
    public:
     Sprite(GameObject& associated, const string& file);
@@ -33,6 +33,8 @@ class Sprite : public Component {
     inline void SetScale(Vec2<Cart> s) { scale = s; }
     inline void SetScale(float x) { scale = {x, x}; }
     inline void SetHasShadow(bool flag) { hasShadow = flag; }
+
+    Sprite* WithFlash(bool f);
 
     inline bool IsOpen() { return texture != nullptr; }
 

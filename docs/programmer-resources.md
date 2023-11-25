@@ -7,6 +7,7 @@
 - [SDL Gamepad Tool](https://generalarcade.com/gamepadtool/)
 - [How can I add a shadow to a texture in SDL2? (SDL_SetTextureColorMod)](https://stackoverflow.com/questions/63346483/how-i-can-add-a-shadow-to-a-texture-on-sdl2)
 - [Parallel Realities SDL2 Tutorials](https://parallelrealities.co.uk/tutorials/)
+- [Ambient Light in SDL2](https://discourse.libsdl.org/t/is-possible-to-create-ambient-light-in-sdl2/28381) 
 
 ## Isometric
 - [How Isometric Coordinates Work in 2D games](https://www.youtube.com/watch?v=04oQ2jOUjkU)

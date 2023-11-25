@@ -3,8 +3,10 @@
 #include "Game.h"
 #include "GameObject.h"
 #include "Resources.h"
+#include "SDL_rect.h"
 #include "SDL_render.h"
 #include "math/Vec2.h"
+#include "util.h"
 
 #define MODULE "Sprite"
 
@@ -32,10 +34,17 @@ void Sprite::SetClip(int x, int y, int w, int h) {
 }
 void Sprite::SetClip(SDL_Rect rect) { clipRect = rect; }
 
+Sprite* Sprite::WithFlash(bool f) {
+    flash = f;
+    return this;
+}
+
 void Sprite::Update(float) {}
 
 void Sprite::RenderAt(int x, int y) {
     Game& game = Game::Instance();
+    SDL_Rect destRect{x, y, int(clipRect.w * scale.x),
+                      int(clipRect.h * scale.y)};
 
     if (hasShadow) {
         int shadowX = x;
@@ -52,10 +61,17 @@ void Sprite::RenderAt(int x, int y) {
         SDL_SetTextureColorMod(texture->inner, 255, 255, 255);
     }
 
-    SDL_Rect destRect{x, y, int(clipRect.w * scale.x),
-                      int(clipRect.h * scale.y)};
     SDL_RenderCopyEx(game.Renderer(), texture->inner, &clipRect, &destRect,
                      associated.angle * 180 / PI, nullptr, SDL_FLIP_NONE);
+
+    if (flash) {
+        SDL_SetTextureBlendMode(texture->inner, SDL_BLENDMODE_ADD);
+        for (int i = 0; i < 1; i++)
+            SDL_RenderCopyEx(game.Renderer(), texture->inner, &clipRect,
+                             &destRect, associated.angle * 180 / PI, nullptr,
+                             SDL_FLIP_NONE);
+        SDL_SetTextureBlendMode(texture->inner, SDL_BLENDMODE_BLEND);
+    }
 }
 
 void Sprite::Render(Vec2<Cart> camera) {

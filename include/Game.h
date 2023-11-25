@@ -32,6 +32,11 @@ class Game {
     int64_t frameStart;
     float dt;
 
+    struct {
+        float p;
+        float duration;
+    } slowdown;
+
     Game(const char* title, int width, int height);
 
     void CalculateDeltaTime();
@@ -49,4 +54,6 @@ class Game {
     SDL_Renderer* Renderer();
     State& GetState();
     static Game& Instance();
+
+    void Slowdown(float percentage, float durationS);
 };

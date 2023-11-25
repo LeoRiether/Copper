@@ -1,7 +1,6 @@
 #include "Game.h"
 
 #include "Consts.h"
-#include "InputManager.h"
 #include "Resources.h"
 #include "SDL_include.h"
 #include "SDL_timer.h"
@@ -115,6 +114,12 @@ Game& Game::Instance() {
 void Game::CalculateDeltaTime() {
     int64_t ticks = SDL_GetTicks64();
     dt = float(ticks - frameStart) / 1000.0f;
+
+    if (slowdown.duration > 0) {
+        slowdown.duration -= dt;
+        dt *= slowdown.p;
+    }
+
     frameStart = ticks;
 }
 
@@ -131,4 +136,8 @@ void Game::UpdateStateStack() {
         }
     }
     stateStackOperations.clear();
+}
+
+void Game::Slowdown(float percentage, float durationS) {
+    slowdown = {percentage, durationS};
 }

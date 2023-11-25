@@ -2,6 +2,7 @@
 
 #include <SDL2/SDL_render.h>
 
+#include <cmath>
 #include <string>
 
 #include "Game.h"
@@ -115,6 +116,13 @@ void Player::MaybeChangeState(State newState) {
 void Player::Update(float dt) {
     UpdateState(dt);
     UpdatePosition(dt);
+
+    flashTimeout -= dt;
+    if (flashTimeout <= 0) {
+        flashTimeout = INFINITY;  // won't trigger this part again very soon
+        auto sprite = (Sprite*)associated.GetComponent(CType::Sprite);
+        sprite->WithFlash(false);
+    }
 }
 
 void Player::UpdateState(float dt) {
@@ -164,6 +172,9 @@ void Player::UpdateState(float dt) {
 }
 
 void Player::UpdatePosition(float dt) {
+    associated.box.OffsetBy(knockbackVelocity * dt);
+    knockbackVelocity = knockbackVelocity * 0.70;
+
     switch (state) {
         case Idle: {
             break;
@@ -234,7 +245,17 @@ bool Player::Is(CType type) { return type == CType::Player; }
 void Player::NotifyCollision(GameObject& other) {
     auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
     if (bullet && bullet->TargetsPlayer()) {
-        warn("Player hit");
+        // Flash
+        auto sprite = (Sprite*)associated.GetComponent(CType::Sprite);
+        sprite->WithFlash(true);
+        flashTimeout = 0.05;
+
+        // Knockback
+        knockbackVelocity = (Vec2<Cart>{2500, 0}).GetRotated(other.angle);
+
+        // Slowdown
+        Game::Instance().Slowdown(0.1, 0.1);
+
         other.RequestDelete();
     }
 }

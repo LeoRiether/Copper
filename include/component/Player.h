@@ -32,6 +32,9 @@ class Player : public Component {
     Direction direction;
     DashState dashState;
 
+    float flashTimeout{0};
+    Vec2<Cart> knockbackVelocity{0, 0};
+
     /* Transitions the state from the current to `newState` */
     void ChangeState(State newState);
     /* Only calls ChangeState if state != newState */
