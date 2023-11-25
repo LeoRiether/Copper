@@ -8,6 +8,7 @@
 #include "Game.h"
 #include "GameObject.h"
 #include "InputManager.h"
+#include "Prefabs.h"
 #include "component/Animation.h"
 #include "component/Bullet.h"
 #include "component/Collider.h"
@@ -250,11 +251,16 @@ void Player::NotifyCollision(GameObject& other) {
         sprite->WithFlash(true);
         flashTimeout = 0.05;
 
+        // Explosion
+        auto hitpoint = other.box.Center();
+        hitpoint = hitpoint + Vec2<Cart>{30, 0}.GetRotated(other.angle);
+        associated.RequestAdd(MakeExplosion1()->WithCenterAt(hitpoint));
+
         // Knockback
-        knockbackVelocity = (Vec2<Cart>{2500, 0}).GetRotated(other.angle);
+        knockbackVelocity = Vec2<Cart>{2500, 0}.GetRotated(other.angle);
 
         // Slowdown
-        Game::Instance().Slowdown(0.1, 0.1);
+        Game::Instance().Slowdown(0.02, 0.1);
 
         other.RequestDelete();
     }

@@ -3,9 +3,11 @@
 #include <vector>
 
 #include "GameObject.h"
+#include "component/Animation.h"
 #include "component/Bullet.h"
 #include "component/Collider.h"
 #include "component/IsoCollider.h"
+#include "component/KillTimeout.h"
 #include "component/Player.h"
 #include "component/Sprite.h"
 #include "component/enemy/EnemyDistancer.h"
@@ -96,6 +98,18 @@ GameObject* MakeVigaB() {
     go->AddComponent((new IsoCollider{*go})
                          ->WithBase({666.712, 507.125, 101.171, 147.866})
                          ->WithTag(tag::Terrain));
+    return go;
+}
+
+GameObject* MakeExplosion1() {
+    auto go = new GameObject{};
+    auto sprite = new Sprite{*go, ASSETS "/img/explosion-1.png"};
+    auto animation = Animation::horizontal(*go, *sprite, 8, 0.03);
+    animation->Play("default");  // kickstart box
+    go->AddComponent(sprite);
+    go->AddComponent(animation);
+    go->AddComponent(new KillTimeout{*go, 8 * 0.03});
+    go->renderLayer = 2;
     return go;
 }
 

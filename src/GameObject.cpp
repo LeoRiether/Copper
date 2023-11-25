@@ -79,6 +79,11 @@ GameObject* GameObject::WithFootAt(Vec2<Cart> position) {
     return this;
 }
 
+GameObject* GameObject::WithCenterAt(Vec2<Cart> position) {
+    this->box.SetCenter(position);
+    return this;
+}
+
 void GameObject::NotifyCollision(GameObject& other) {
     for (auto& component : components) {
         component->NotifyCollision(other);

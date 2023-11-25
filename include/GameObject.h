@@ -46,6 +46,7 @@ class GameObject {
     vector<Component*> GetAllComponents(CType type) const;
 
     GameObject* WithFootAt(Vec2<Cart> position);
+    GameObject* WithCenterAt(Vec2<Cart> position);
 
     void NotifyCollision(GameObject& other);
 };

@@ -22,4 +22,5 @@ enum class CType {
     RigidBody,
     RobotCan,
     EnemyBehavior,
+    KillTimeout,
 };

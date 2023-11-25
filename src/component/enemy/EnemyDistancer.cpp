@@ -84,7 +84,7 @@ void EnemyDistancer::switchState(State newState) {
     }
 
     auto shoot = [&]() {
-        const auto playerPos = Player::player->Associated().box.Foot();
+        const auto playerPos = Player::player->Associated().box.Center();
         const auto delta = playerPos - associated.box.Center();
         auto go = MakeBullet(associated.box.Center(), delta.angle());
         Game::Instance().GetState().RequestAddObject(go);
