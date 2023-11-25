@@ -8,6 +8,7 @@
 #include "GameObject.h"
 #include "InputManager.h"
 #include "component/Animation.h"
+#include "component/Bullet.h"
 #include "component/Collider.h"
 #include "component/Sound.h"
 #include "component/Sprite.h"
@@ -231,8 +232,9 @@ void Player::Render(Vec2<Cart> camera) {
 bool Player::Is(CType type) { return type == CType::Player; }
 
 void Player::NotifyCollision(GameObject& other) {
-    if (other.GetComponent(CType::Bullet)) {
-        warn("Player hit!");
+    auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
+    if (bullet && bullet->TargetsPlayer()) {
+        warn("Player hit");
         other.RequestDelete();
     }
 }

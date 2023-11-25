@@ -31,6 +31,8 @@ GameObject* MakeEnemyFollower() {
     auto body = (new RobotCan{*go})->WithStopDistance(100);
     go->AddComponent(body);
     go->AddComponent((new EnemyFollower{*go})->WithRobotCan(body));
+    go->AddComponent(
+        (new Collider{*go})->WithBase({18.8157, 3.4533, 32.6644, 76.6754}));
     go->tags.set(tag::Entity);
     return go;
 }
@@ -40,6 +42,8 @@ GameObject* MakeEnemyDistancer() {
     auto body = (new RobotCan{*go})->WithStopDistance(300);
     go->AddComponent(body);
     go->AddComponent((new EnemyDistancer{*go})->WithRobotCan(body));
+    go->AddComponent(
+        (new Collider{*go})->WithBase({18.8157, 3.4533, 32.6644, 76.6754}));
     go->tags.set(tag::Entity);
     return go;
 }
