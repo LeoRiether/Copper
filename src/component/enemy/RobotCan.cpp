@@ -14,9 +14,11 @@ RobotCan::RobotCan(GameObject& associated) : Component(associated) {
     associated.tags.set(tag::Entity);
 
     auto baseSprite = new Sprite{associated, ASSETS "/img/RobotCanBase.png"};
+    baseSprite->SetHasShadow(true);
     associated.AddComponent(baseSprite);
 
     auto coreSprite = new Sprite{associated, ASSETS "/img/RobotCanCore.png"};
+    coreSprite->SetHasShadow(true);
     associated.AddComponent(coreSprite);
 
     // Animation

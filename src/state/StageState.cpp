@@ -25,7 +25,9 @@ StageState::~StageState() {
 void StageState::Start() {
     LoadAssets();
 
-    // Background
+    //////////////////////////////
+    //        Background        //
+    //////////////////////////////
     auto bgGO = new GameObject;
     bgGO->box = Rect{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
     bgGO->AddComponent(new InfiniteBg{*bgGO, ASSETS "/img/sala_v0.png"});
@@ -36,14 +38,22 @@ void StageState::Start() {
         RequestAddObject(go);
     }
 
+    //////////////////////////
+    //        Player        //
+    //////////////////////////
     auto player = MakePlayer();
     camera->Follow(player);
     RequestAddObject(player);
 
-    // Enemies
+    ///////////////////////////
+    //        Enemies        //
+    ///////////////////////////
     RequestAddObject(MakeEnemyFollower()->WithFootAt({1700, 400}));
     RequestAddObject(MakeEnemyDistancer()->WithFootAt({1700, 400}));
 
+    ///////////////////////////
+    //        Terrain        //
+    ///////////////////////////
     auto isoOff = [&](GameObject* go, int xaxis = 1, int yaxis = 0) {
         auto collider = (IsoCollider*)go->GetComponent(CType::IsoCollider);
         auto center = go->box.Center().toIso();
@@ -53,7 +63,6 @@ void StageState::Start() {
         return go;
     };
 
-    // Terrain
     RequestAddObject(MakeBarril()->WithFootAt({1300, 600}));
     RequestAddObject(MakeEscavadeira()->WithFootAt({1200, 700}));
     RequestAddObject(isoOff(MakeEscavadeira()->WithFootAt({1200, 700})));
