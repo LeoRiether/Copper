@@ -16,6 +16,8 @@ RULES = [
     Resize("img/Barris.png", 212),
     Trim("img/Escavadeira.png"),
     Resize("img/Escavadeira.png", 372),
+    Trim("img/Viga_B.png"),
+    Resize("img/Viga_B.png", 360),
     Concat("img/RobotCanCore.png", [
         "img/RobotCan/RobotCanWalkCore/spritesheet.png",
         "img/RobotCan/RobotCanFire1Core/spritesheet.png",

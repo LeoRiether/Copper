@@ -6,7 +6,6 @@
 #include "Component.h"
 #include "Game.h"
 #include "component/Collider.h"
-#include "util.h"
 
 #define MODULE "GameObject"
 
@@ -73,6 +72,11 @@ vector<Component*> GameObject::GetAllComponents(CType type) const {
         if (component->Is(type)) res.emplace_back(component.get());
     }
     return res;
+}
+
+GameObject* GameObject::WithFootAt(Vec2<Cart> position) {
+    this->box.SetFoot(position);
+    return this;
 }
 
 void GameObject::NotifyCollision(GameObject& other) {

@@ -31,6 +31,12 @@ void CollisionEngine::Update(const vector<shared_ptr<GameObject>>& objects) {
     }
 }
 
+void CollisionEngine::ClearState() {
+    terrainColliders.clear();
+    player = Player::player ? &Player::player->Associated() : nullptr;
+    entities.clear();
+}
+
 // Requires state to be `Update`d!
 void CollisionEngine::Solve() {
     // Player--Terrain collisions
@@ -68,10 +74,4 @@ bool CollisionEngine::TerrainContains(const Vec2<Iso> point) {
             return true;
     }
     return false;
-}
-
-void CollisionEngine::ClearState() {
-    terrainColliders.clear();
-    player = Player::player ? &Player::player->Associated() : nullptr;
-    entities.clear();
 }

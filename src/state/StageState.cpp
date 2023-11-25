@@ -2,58 +2,22 @@
 
 #include <algorithm>
 #include <memory>
-#include <random>
-#include <vector>
 
-#include "CType.h"
 #include "Consts.h"
 #include "Game.h"
 #include "GameObject.h"
 #include "InputManager.h"
-#include "component/CameraFollower.h"
-#include "component/Collider.h"
-#include "component/EndStateDimmer.h"
+#include "Prefabs.h"
 #include "component/InfiniteBg.h"
 #include "component/IsoCollider.h"
-#include "component/KeepSoundAlive.h"
-#include "component/Player.h"
 #include "component/Sound.h"
-#include "component/enemy/EnemyDistancer.h"
-#include "component/enemy/EnemyFollower.h"
 #include "component/enemy/RobotCan.h"
 #include "math/Rect.h"
 #include "physics/Collision.h"
 #include "physics/CollisionEngine.h"
-#include "state/TitleState.h"
 #include "util.h"
 
 #define MODULE "StageState"
-
-GameObject* StageState::CreatePlayer() {
-    auto go = new GameObject{};
-    auto body = new Player{*go};
-    go->AddComponent(body);
-    go->box.SetCenter(Vec2<Cart>{1300, 900});
-    return go;
-}
-
-GameObject* StageState::CreateEnemyFollower() {
-    auto go = new GameObject{};
-    auto body = (new RobotCan{*go})->WithStopDistance(100);
-    go->AddComponent(body);
-    go->AddComponent((new EnemyFollower{*go})->WithRobotCan(body));
-    go->box.SetFoot(Vec2<Cart>{1700, 400});
-    return go;
-}
-
-GameObject* StageState::CreateEnemyDistancer() {
-    auto go = new GameObject{};
-    auto body = (new RobotCan{*go})->WithStopDistance(300);
-    go->AddComponent(body);
-    go->AddComponent((new EnemyDistancer{*go})->WithRobotCan(body));
-    go->box.SetFoot(Vec2<Cart>{1700, 400});
-    return go;
-}
 
 void StageState::AddMapColliders() {
     const Rect rects[] = {
@@ -112,93 +76,24 @@ void StageState::Start() {
     AddMapColliders();
 
     // Player
-    auto player = CreatePlayer();
+    auto player = MakePlayer();
     camera->Follow(player);
     RequestAddObject(player);
 
     // Enemies
-    RequestAddObject(CreateEnemyFollower());
-    RequestAddObject(CreateEnemyDistancer());
+    RequestAddObject(MakeEnemyFollower()->WithFootAt({1700, 400}));
+    RequestAddObject(MakeEnemyDistancer()->WithFootAt({1700, 400}));
 
-    auto stayingHereForHistorySake = [&]() {
-        auto barrel = new GameObject{};
-        auto sprite = new Sprite{*barrel, ASSETS "/img/Barris.png"};
-        sprite->SetScale(0.2);
-        barrel->AddComponent(sprite);
-        barrel->box = {0, 0, (float)sprite->SheetWidth() * sprite->Scale().x,
-                       (float)sprite->SheetHeight() * sprite->Scale().y};
-        barrel->box.SetFoot(Vec2<Cart>{870, 600});
-        auto collider1 = new IsoCollider{*barrel};
-        collider1->tags.set(tag::Terrain);
-        collider1->offset = Rect{1333.5, 605.7, 385, 623};
-        collider1->ScaleToSprite();
-        collider1->ExpandBy(10);
-        collider1->offset.w += 15;
-        auto collider2 = new IsoCollider{*barrel};
-        collider2->tags.set(tag::Terrain);
-        collider2->offset = Rect{1344.7, 465.7, 931, 469};
-        collider2->ScaleToSprite();
-        barrel->AddComponent(collider1);
-        barrel->AddComponent(collider2);
-        RequestAddObject(barrel);
-    };
-
-    // Barril
-    {
-        auto barrel = new GameObject{};
-        auto sprite = new Sprite{*barrel, ASSETS "/img/Barris.png"};
-        barrel->AddComponent(sprite);
-        barrel->box.SetFoot(Vec2<Cart>{1300, 600});
-        auto collider1 = new IsoCollider{*barrel};
-        collider1->tags.set(tag::Terrain);
-        collider1->offset = Rect{261.78, 69.441, 194.642, 130.417};
-        auto collider2 = new IsoCollider{*barrel};
-        collider2->tags.set(tag::Terrain);
-        collider2->offset = Rect{260.797, 57.3168, 87.1629, 201.196};
-        barrel->AddComponent(collider1);
-        barrel->AddComponent(collider2);
-        RequestAddObject(barrel);
-    }
-
-    // Escavadeira
-    {
-        auto go = new GameObject{};
-        auto sprite = new Sprite{*go, ASSETS "/img/Escavadeira.png"};
-        go->AddComponent(sprite);
-        go->box.SetFoot(Vec2<Cart>{1200, 700});
-        auto collider = new IsoCollider{*go};
-        collider->tags.set(tag::Terrain);
-        collider->offset = Rect{638.71, 138.915, 240.517, 247.071};
-        collider->ScaleToSprite();
-        collider->ExpandBy(5);
-        go->AddComponent(collider);
-        RequestAddObject(go);
-    }
+    RequestAddObject(MakeBarril()->WithFootAt({1300, 600}));
+    RequestAddObject(MakeEscavadeira()->WithFootAt({1200, 700}));
 
     // Escavadeira 2
     {
-        auto go = new GameObject{};
-        auto sprite = new Sprite{*go, ASSETS "/img/Escavadeira.png"};
-        go->AddComponent(sprite);
-        go->box.SetFoot(Vec2<Cart>{1200, 700});
-        auto collider = new IsoCollider{*go};
-        collider->tags.set(tag::Terrain);
-        collider->offset = Rect{638.71, 138.915, 240.517, 247.071};
-        collider->ScaleToSprite();
-        go->AddComponent(collider);
+        auto go = MakeEscavadeira()->WithFootAt({1200, 700});
+        auto collider = (IsoCollider*)go->GetComponent(CType::IsoCollider);
         Vec2<Cart> center = go->box.Center();
         go->box.SetCenter(
             (center.toIso() + Vec2<Iso>{collider->offset.w, 0}).toCart());
-        collider->ExpandBy(5);
-        RequestAddObject(go);
-    }
-
-    // RobotCan
-    {
-        auto go = new GameObject{};
-        auto robotcan = new RobotCan{*go};
-        go->AddComponent(robotcan);
-        go->box.SetCenter(Vec2<Cart>{1700, 600});
         RequestAddObject(go);
     }
 

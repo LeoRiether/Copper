@@ -4,13 +4,9 @@
 #include <vector>
 
 #include "Camera.h"
-#include "GameObject.h"
 #include "Music.h"
 #include "SDL_include.h"
 #include "State.h"
-#include "component/IsoCollider.h"
-#include "component/Sprite.h"
-#include "math/Vec2.h"
 
 using std::shared_ptr;
 using std::unique_ptr;
@@ -20,9 +16,6 @@ class StageState : public State {
    private:
     Music* music;
 
-    GameObject* CreatePlayer();
-    GameObject* CreateEnemyFollower();
-    GameObject* CreateEnemyDistancer();
     void AddMapColliders();
 
    public:

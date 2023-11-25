@@ -19,13 +19,14 @@ def main():
     classname = classpath.split("/")[-1]
 
     if os.path.exists(f"include/{classpath}.h"):
-        print(f"\033[91merror!\033[0m file include/{classpath}.h already exists")
+        print(f"\033[91merror!\033[0m file include/{classpath}.h already exists") # ]]
         return
     if os.path.exists(f"src/{classpath}.cpp"):
-        print(f"\033[91merror!\033[0m file src/{classpath}.cpp already exists")
+        print(f"\033[91merror!\033[0m file src/{classpath}.cpp already exists") # ]]
         return
 
-    os.makedirs(os.path.join(*classpath.split('/')[:-1]))
+    if len(classpath.split('/')) > 1:
+        os.makedirs(os.path.join(*classpath.split('/')[:-1]))
 
     includes = ""
     inherit = ""

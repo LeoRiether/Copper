@@ -39,9 +39,13 @@ class GameObject {
     bool IsDead() const;
     void RequestDelete();
     void RequestAdd(GameObject* go);
+
     void AddComponent(Component* cmp);
     void RemoveComponent(Component* cmp);
     Component* GetComponent(CType type) const;
     vector<Component*> GetAllComponents(CType type) const;
+
+    GameObject* WithFootAt(Vec2<Cart> position);
+
     void NotifyCollision(GameObject& other);
 };
