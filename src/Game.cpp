@@ -1,5 +1,7 @@
 #include "Game.h"
 
+#include <algorithm>
+
 #include "Consts.h"
 #include "Resources.h"
 #include "SDL_include.h"
@@ -65,6 +67,8 @@ void Game::Run() {
     UpdateStateStack();
     while (!stateStack.empty() && !stateStack.back()->QuitRequested()) {
         auto state = stateStack.back().get();
+
+        trauma *= 0.9;
 
         CalculateDeltaTime();
         state->Update(dt);
@@ -141,3 +145,5 @@ void Game::UpdateStateStack() {
 void Game::Slowdown(float percentage, float durationS) {
     slowdown = {percentage, durationS};
 }
+
+void Game::AddTrauma(float x) { trauma = std::min(1.0f, trauma + x); }

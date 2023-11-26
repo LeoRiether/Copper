@@ -42,6 +42,7 @@ void StageState::Start() {
     //        Player        //
     //////////////////////////
     auto player = MakePlayer();
+    camera->SetPos(player->box.Center());
     camera->Follow(player);
     RequestAddObject(player);
 

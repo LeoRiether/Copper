@@ -36,6 +36,7 @@ class Game {
         float p;
         float duration;
     } slowdown;
+    float trauma;
 
     Game(const char* title, int width, int height);
 
@@ -56,4 +57,6 @@ class Game {
     static Game& Instance();
 
     void Slowdown(float percentage, float durationS);
+    void AddTrauma(float delta);
+    inline float Trauma() { return trauma; }
 };

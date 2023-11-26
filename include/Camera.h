@@ -8,14 +8,16 @@ class Camera {
     Vec2<Cart> pos{0, 0}, speed{0, 0};
     GameObject* focus = nullptr;
 
+    Vec2<Cart> shakeDelta{0, 0};
+
    public:
     inline GameObject* Focus() { return focus; }
     void Follow(GameObject* newFocus);
     void Unfollow();
     void Update(float dt);
 
-    inline Vec2<Cart> Pos() { return pos; }
-    inline void SetPos(Vec2<Cart> p) { pos = p; }
+    Vec2<Cart> Pos();
+    void SetPos(Vec2<Cart> p);
     inline Vec2<Cart> Speed() { return speed; }
     inline void SetSpeed(const Vec2<Cart> s) { speed = s; }
 };

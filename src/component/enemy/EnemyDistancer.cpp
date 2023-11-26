@@ -89,7 +89,6 @@ void EnemyDistancer::switchState(State newState) {
         auto go = MakeBullet(associated.box.Center(), delta.angle());
         Game::Instance().GetState().RequestAddObject(go);
 
-        // TODO: shoot animation
         const auto dir = Direction::approxFromVec(delta);
         allAnimsPlay("fire1_" + dir.toString());
     };

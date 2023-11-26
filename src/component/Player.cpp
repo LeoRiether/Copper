@@ -249,7 +249,7 @@ void Player::NotifyCollision(GameObject& other) {
         // Flash
         auto sprite = (Sprite*)associated.GetComponent(CType::Sprite);
         sprite->WithFlash(true);
-        flashTimeout = 0.05;
+        flashTimeout = 0.03;
 
         // Explosion
         auto hitpoint = other.box.Center();
@@ -260,7 +260,10 @@ void Player::NotifyCollision(GameObject& other) {
         knockbackVelocity = Vec2<Cart>{2500, 0}.GetRotated(other.angle);
 
         // Slowdown
-        Game::Instance().Slowdown(0.02, 0.1);
+        Game::Instance().Slowdown(0.03, 0.1);
+
+        // Add trauma
+        Game::Instance().AddTrauma(0.4);
 
         other.RequestDelete();
     }
