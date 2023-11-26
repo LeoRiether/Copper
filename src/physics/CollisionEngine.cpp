@@ -3,6 +3,7 @@
 #include "CType.h"
 #include "component/Collider.h"
 #include "component/Player.h"
+#include "math/Vec2.h"
 #include "physics/Collision.h"
 #include "physics/IsoSolver.h"
 #include "physics/Tags.h"
@@ -17,7 +18,11 @@ vector<GameObject*> CollisionEngine::bullets;
 void CollisionEngine::Update(const vector<shared_ptr<GameObject>>& objects) {
     ClearState();
 
+    player = Player::player ? &Player::player->Associated() : nullptr;
+
     for (auto& obj : objects) {
+        obj->prevFrameBox = obj->box;
+
         auto isoColliders = obj->GetAllComponents(CType::IsoCollider);
         for (auto component : isoColliders) {
             auto isoCollider = (IsoCollider*)component;
@@ -35,7 +40,7 @@ void CollisionEngine::Update(const vector<shared_ptr<GameObject>>& objects) {
 
 void CollisionEngine::ClearState() {
     terrainColliders.clear();
-    player = Player::player ? &Player::player->Associated() : nullptr;
+    player = nullptr;
     entities.clear();
     bullets.clear();
 }
@@ -45,10 +50,12 @@ void CollisionEngine::Solve() {
     // Player--Terrain collisions
     if (player) {
         Vec2<Cart> pos = player->box.Foot();
+        Vec2<Cart> prevFrame = player->prevFrameBox.Foot();
         pos.y -= 15;  // !
-        for (int i = 0; i < 2; i++) {
+        prevFrame.y -= 15;
+        for (int i = 0; i < 1; i++) {
             for (auto& collider : terrainColliders) {
-                pos = IsoSolver::Solve(*collider, pos);
+                pos = IsoSolver::Solve(*collider, pos, prevFrame);
             }
         }
         pos.y += 15;  // !
@@ -58,10 +65,12 @@ void CollisionEngine::Solve() {
     // Enemy--Terrain collisions
     for (auto enemy : entities) {
         Vec2<Cart> pos = enemy->box.Foot();
+        Vec2<Cart> prevFrame = enemy->prevFrameBox.Foot();
         pos.y -= 15;  // !
-        for (int i = 0; i < 2; i++) {
+        prevFrame.y -= 15;
+        for (int i = 0; i < 1; i++) {
             for (auto& collider : terrainColliders) {
-                pos = IsoSolver::Solve(*collider, pos);
+                pos = IsoSolver::Solve(*collider, pos, prevFrame);
             }
         }
         pos.y += 15;  // !

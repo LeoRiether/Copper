@@ -73,7 +73,6 @@ GameObject* MakeEscavadeira() {
     collider->tags.set(tag::Terrain);
     collider->base = Rect{638.71, 138.915, 240.517, 247.071};
     collider->ScaleToSprite();
-    collider->ExpandBy(5);
     go->AddComponent(collider);
     return go;
 }
@@ -81,7 +80,7 @@ GameObject* MakeEscavadeira() {
 GameObject* MakeBullet(Vec2<Cart> center, float angle) {
     auto go = new GameObject{};
     auto sprite = new Sprite{*go, ASSETS "/img/laser-bullet.png"};
-    go->AddComponent(new Bullet{*go, 700, angle, 20, 1000, true});
+    go->AddComponent(new Bullet{*go, 700, angle, 20, 4000, true});
     go->AddComponent(sprite);
     go->AddComponent(
         (new Collider{*go})->WithBase(Rect{46.555, 55.1247, 28.3535, 11.9118}));

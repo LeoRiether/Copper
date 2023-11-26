@@ -22,7 +22,7 @@ class GameObject {
     bool started{false};
 
    public:
-    Rect box;
+    Rect box, prevFrameBox;
     double angle{0};
     int renderLayer{0};
     const char* debugName;

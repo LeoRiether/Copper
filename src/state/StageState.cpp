@@ -58,8 +58,8 @@ void StageState::Start() {
     auto isoOff = [&](GameObject* go, int xaxis = 1, int yaxis = 0) {
         auto collider = (IsoCollider*)go->GetComponent(CType::IsoCollider);
         auto center = go->box.Center().toIso();
-        auto offset =
-            Vec2<Iso>{collider->base.w * xaxis, collider->base.h * yaxis};
+        auto offset = Vec2<Iso>{collider->base.w * xaxis * 0.9f,
+                                collider->base.h * yaxis * 0.9f};
         go->box.SetCenter((center + offset).toCart());
         return go;
     };

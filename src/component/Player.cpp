@@ -234,7 +234,7 @@ void Player::Render(Vec2<Cart> camera) {
                                     SDL_Color{255, 255, 0, 255}});
     }
     auto textComponent = (Text*)text->GetComponent(CType::Text);
-    auto pos = associated.box.Foot();
+    auto pos = associated.box.Foot().toIso();
     textComponent->SetText(std::to_string(pos.x) + ", " +
                            std::to_string(pos.y));
     text->box.SetFoot({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 10});
