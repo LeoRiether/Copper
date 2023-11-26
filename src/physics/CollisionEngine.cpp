@@ -7,6 +7,7 @@
 #include "physics/Collision.h"
 #include "physics/IsoSolver.h"
 #include "physics/Tags.h"
+#include "util.h"
 
 #define MODULE "CollisionEngine"
 
@@ -27,6 +28,8 @@ void CollisionEngine::Update(const vector<shared_ptr<GameObject>>& objects) {
         for (auto component : isoColliders) {
             auto isoCollider = (IsoCollider*)component;
             auto& tags = isoCollider->tags;
+
+            isoCollider->prevFrameBox = isoCollider->box;
 
             if (tags.test(tag::Terrain)) {
                 terrainColliders.emplace_back(isoCollider);
@@ -49,32 +52,40 @@ void CollisionEngine::ClearState() {
 void CollisionEngine::Solve() {
     // Player--Terrain collisions
     if (player) {
-        Vec2<Cart> pos = player->box.Foot();
-        Vec2<Cart> prevFrame = player->prevFrameBox.Foot();
-        pos.y -= 15;  // !
-        prevFrame.y -= 15;
+        auto playerIso = (IsoCollider*)player->GetComponent(CType::IsoCollider);
+        auto before = playerIso->box.TopLeft();
+
         for (int i = 0; i < 1; i++) {
             for (auto& collider : terrainColliders) {
-                pos = IsoSolver::Solve(*collider, pos, prevFrame);
+                playerIso->box = IsoSolver::Solve(
+                    playerIso->box, playerIso->prevFrameBox, collider->box);
             }
         }
-        pos.y += 15;  // !
-        player->box.SetFoot(pos);
+
+        auto after = playerIso->box.TopLeft();
+        auto movedDelta = (after - before).transmute<Iso>().toCart();
+        player->box.SetTopLeft(player->box.TopLeft() + movedDelta);
     }
 
-    // Enemy--Terrain collisions
-    for (auto enemy : entities) {
-        Vec2<Cart> pos = enemy->box.Foot();
-        Vec2<Cart> prevFrame = enemy->prevFrameBox.Foot();
-        pos.y -= 15;  // !
-        prevFrame.y -= 15;
+    // Entity--Terrain collisions
+    for (auto entity : entities) {
+        auto entityIso = (IsoCollider*)entity->GetComponent(CType::IsoCollider);
+        if (!entityIso) {
+            warn("Entity didn't have IsoCollider!");
+            continue;
+        }
+        auto before = entityIso->box.TopLeft();
+
         for (int i = 0; i < 1; i++) {
             for (auto& collider : terrainColliders) {
-                pos = IsoSolver::Solve(*collider, pos, prevFrame);
+                entityIso->box = IsoSolver::Solve(
+                    entityIso->box, entityIso->prevFrameBox, collider->box);
             }
         }
-        pos.y += 15;  // !
-        enemy->box.SetFoot(pos);
+
+        auto after = entityIso->box.TopLeft();
+        auto movedDelta = (after - before).transmute<Iso>().toCart();
+        entity->box.SetTopLeft(entity->box.TopLeft() + movedDelta);
     }
 
     // Bullet--Player/Entity

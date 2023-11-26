@@ -14,6 +14,7 @@ class IsoCollider : public Component {
 
     tagset tags;
     Rect base, box;
+    Rect prevFrameBox;
 
     void Update(float dt);
     void Render(Vec2<Cart> camera);

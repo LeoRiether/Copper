@@ -61,10 +61,6 @@ Player::Player(GameObject& associated) : Component(associated) {
         anim->Play("idle_S");  // just to kickstart the associated.box...
         associated.AddComponent(anim);
     }
-
-    associated.AddComponent((new Collider{associated})
-                                ->WithBase({75.5414, 104.845, 127.273, 231.782})
-                                ->ScaleToSprite());
 }
 
 Player::~Player() { Player::player = nullptr; }

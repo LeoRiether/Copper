@@ -1,13 +1,8 @@
 #include "physics/IsoSolver.h"
 
 #include <cmath>
-#include <iterator>
-
-#include "util.h"
 
 #define MODULE "IsoSolver"
-
-bool AAA = true;
 
 Vec2<Cart> IsoSolver::Solve(const IsoCollider& collider, Vec2<Cart> point,
                             Vec2<Cart> prevFrame) {
@@ -26,10 +21,6 @@ Vec2<Iso> IsoSolver::Solve(const IsoCollider& collider, Vec2<Iso> point,
 
     if (!inside(point, box)) return point;
 
-    // auto pos = [&](float x) {
-    //     if (x < -0.001) return INFINITY;
-    //     return x;
-    // };
     float left = abs(box.x - point.x);
     float right = abs(point.x - (box.x + box.w));
     float up = abs(box.y - point.y);
@@ -46,4 +37,31 @@ Vec2<Iso> IsoSolver::Solve(const IsoCollider& collider, Vec2<Iso> point,
     }
 
     return point;
+}
+
+Rect IsoSolver::Solve(Rect A, Rect prevA, const Rect& B) {
+    auto inside = [&](Rect a, Rect b) {
+        constexpr float eps = 0.01;
+        return !(a.x + eps > b.x + b.w || a.x + a.w < b.x + eps ||
+                 a.y + eps > b.y + b.h || a.y + a.h < b.y + eps);
+    };
+
+    if (!inside(A, B)) return A;
+
+    auto xmove = prevA;
+    xmove.OffsetBy({A.x - prevA.x, 0});
+    auto ymove = prevA;
+    ymove.OffsetBy({0, A.y - prevA.y});
+    if (inside(xmove, B)) {
+        float left = abs(A.x + A.w - B.x);
+        float right = abs(B.x + B.w - A.x);
+        A.x = left <= right ? (B.x - A.w) : (B.x + B.w);
+    }
+    if (inside(ymove, B)) {
+        float up = abs(A.y + A.h - B.y);
+        float down = abs(B.y + B.h - A.y);
+        A.y = up <= down ? (B.y - A.h) : (B.y + B.h);
+    }
+
+    return A;
 }

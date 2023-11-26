@@ -22,8 +22,14 @@ using std::vector;
 
 GameObject* MakePlayer() {
     auto go = new GameObject{};
-    auto body = new Player{*go};
-    go->AddComponent(body);
+    go->AddComponent(new Player{*go});
+    go->AddComponent((new IsoCollider{*go})
+                         ->WithTag(tag::Player)
+                         ->WithBase({681.329, 425.945, 107.613, 107.613})
+                         ->ScaleToSprite());
+    go->AddComponent((new Collider{*go})
+                         ->WithBase({75.5414, 104.845, 127.273, 231.782})
+                         ->ScaleToSprite());
     go->box.SetCenter(Vec2<Cart>{1300, 900});
     return go;
 }
@@ -35,6 +41,9 @@ GameObject* MakeEnemyFollower() {
     go->AddComponent((new EnemyFollower{*go})->WithRobotCan(body));
     go->AddComponent(
         (new Collider{*go})->WithBase({18.8157, 3.4533, 32.6644, 76.6754}));
+    go->AddComponent((new IsoCollider{*go})
+                         ->WithTag(tag::Entity)
+                         ->WithBase({147.784, 76.4568, 51.9192, 52.6069}));
     go->tags.set(tag::Entity);
     return go;
 }
@@ -46,6 +55,9 @@ GameObject* MakeEnemyDistancer() {
     go->AddComponent((new EnemyDistancer{*go})->WithRobotCan(body));
     go->AddComponent(
         (new Collider{*go})->WithBase({18.8157, 3.4533, 32.6644, 76.6754}));
+    go->AddComponent((new IsoCollider{*go})
+                         ->WithTag(tag::Entity)
+                         ->WithBase({147.784, 76.4568, 51.9192, 52.6069}));
     go->tags.set(tag::Entity);
     return go;
 }

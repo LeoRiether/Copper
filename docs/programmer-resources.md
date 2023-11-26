@@ -29,6 +29,7 @@
 - [(!) Indie Game Devlog 18 : Comparing 2 custom Collision Methods](https://www.youtube.com/watch?v=KP7Nj3U4uuM)
 - [Writing a Physics Engine from scratch - collision detection optimization](https://www.youtube.com/watch?v=9IULfQH7E90)
 - [Circle-Rectangle collision detection](https://stackoverflow.com/a/402019)
+- [Giving Personality to Procedural Animations using Math (easing functions, ODEs)](https://www.youtube.com/watch?v=KPoeNZZ6H4s) 
 
 ## Who knows
 - [The Pain of Compiling an SDL game written in C for Windows](https://anna-singleton.github.io/posts/compiling-sdl-c-windows/)
