@@ -10,6 +10,7 @@ from collections import namedtuple
 Resize = namedtuple("Resize", ["path", "width", "height"], defaults=(None, None, None))
 Trim = namedtuple("Trim", ["path"])
 Concat = namedtuple("Concat", ["path", "inputs"])
+HConcat = namedtuple("HConcat", ["path", "inputs"])
 
 RULES = [
     Trim("img/Barris.png"),
@@ -34,6 +35,13 @@ RULES = [
             "img/RobotCan/RobotCanFire1Base/spritesheet.png",
             "img/RobotCan/RobotCanFire2Base/spritesheet.png",
             "img/RobotCan/RobotCanHideBase/spritesheet.png",
+        ],
+    ),
+    HConcat(
+        "img/FoozleExplosion.png",
+        [
+            f"img/Foozle_2DE0001_Pixel_Magic_Effects/Explosion/00{x}.png"
+            for x in range(1, 8)
         ],
     ),
 ]
@@ -94,6 +102,25 @@ def concat(path, inputs):
     result.save(path)
 
 
+def hconcat(path, inputs):
+    print(f"{Fore.MAGENTA}H-Concatenating{Fore.RESET} {path} from")
+    for inp in inputs:
+        print(f"  {Style.DIM}{inp}{Style.RESET_ALL}")
+
+    inputs = (os.path.join("assets/", inp) for inp in inputs)
+    imgs = [Image.open(inp) for inp in inputs]
+    total_width = sum(img.width for img in imgs)
+    total_height = max(img.height for img in imgs)
+    result = Image.new("RGBA", (total_width, total_height))
+
+    current_width = 0
+    for img in imgs:
+        result.paste(img, (current_width, 0))
+        current_width += img.width
+
+    result.save(path)
+
+
 def main():
     paths = {os.path.join("assets/", rule.path) for rule in RULES}
     for path in paths:
@@ -108,6 +135,8 @@ def main():
             trim(path)
         elif isinstance(rule, Concat):
             concat(path, rule.inputs)
+        elif isinstance(rule, HConcat):
+            hconcat(path, rule.inputs)
         else:
             print(f"Rule not registered: {rule}")
 

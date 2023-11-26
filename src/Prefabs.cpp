@@ -103,9 +103,9 @@ GameObject* MakeVigaB() {
 
 GameObject* MakeExplosion1() {
     auto go = new GameObject{};
-    auto sprite = new Sprite{*go, ASSETS "/img/explosion-1.png"};
-    auto animation = Animation::horizontal(*go, *sprite, 8, 0.03);
-    animation->Play("default");  // kickstart box
+    auto sprite = new Sprite{*go, ASSETS "/img/FoozleExplosion.png"};
+    auto animation = Animation::horizontal(*go, *sprite, 7, 0.03);
+    animation->Play("default", false);  // kickstart box
     go->AddComponent(sprite);
     go->AddComponent(animation);
     go->AddComponent(new KillTimeout{*go, 8 * 0.03});

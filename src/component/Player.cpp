@@ -253,7 +253,7 @@ void Player::NotifyCollision(GameObject& other) {
 
         // Explosion
         auto hitpoint = other.box.Center();
-        hitpoint = hitpoint + Vec2<Cart>{30, 0}.GetRotated(other.angle);
+        hitpoint = hitpoint + Vec2<Cart>{25, 0}.GetRotated(other.angle);
         associated.RequestAdd(MakeExplosion1()->WithCenterAt(hitpoint));
 
         // Knockback
