@@ -54,14 +54,12 @@ GameObject* MakeBarril() {
     auto go = new GameObject{};
     auto sprite = new Sprite{*go, ASSETS "/img/Barris.png"};
     go->AddComponent(sprite);
-    auto collider1 = new IsoCollider{*go};
-    collider1->tags.set(tag::Terrain);
-    collider1->base = Rect{261.78, 69.441, 194.642, 130.417};
-    auto collider2 = new IsoCollider{*go};
-    collider2->tags.set(tag::Terrain);
-    collider2->base = Rect{260.797, 57.3168, 87.1629, 201.196};
-    go->AddComponent(collider1);
-    go->AddComponent(collider2);
+    go->AddComponent((new IsoCollider{*go})
+                         ->WithTag(tag::Terrain)
+                         ->WithBase({338.457, 91.8543, 110.887, 109.314}));
+    go->AddComponent((new IsoCollider{*go})
+                         ->WithTag(tag::Terrain)
+                         ->WithBase({260.338, 86.0871, 82.0511, 166.461}));
     return go;
 }
 

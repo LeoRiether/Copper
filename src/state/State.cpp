@@ -1,9 +1,7 @@
 #include "state/State.h"
 
 #include <algorithm>
-#include <fstream>
 #include <memory>
-#include <tuple>
 
 #include "CType.h"
 #include "GameObject.h"
@@ -72,70 +70,17 @@ void State::RenderArray() {
     }
 }
 
-// TODO: separate cartesians and isos, sort them separately, then merge
 void State::ZSort() {
-    auto pointLessThanIso = [&](const Vec2<Cart> point,
-                                const IsoCollider* iso) {
-        auto pointIso = point.toIso();
-        auto lineFrom = iso->box.BotLeft().transmute<Iso>();
-        auto lineTo = iso->box.TopRight().transmute<Iso>();
+    auto key = [&](std::shared_ptr<GameObject> x) {
+        auto iso = (IsoCollider*)x->GetComponent(CType::IsoCollider);
+        if (iso) {
+            auto center = iso->box.Center().transmute<Iso>().toCart();
+            return std::tuple{x->renderLayer, center.y};
+        }
 
-        auto P = lineTo - lineFrom;
-        auto Q = pointIso - lineFrom;
-
-        auto cross = P.x * Q.y - P.y * Q.x;
-        return cross < 0;
+        return std::tuple{x->renderLayer, x->box.Foot().y};
     };
 
-    // Sort by render layer
-    std::stable_sort(objects.begin(), objects.end(), [&](auto& a, auto& b) {
-        return a->renderLayer < b->renderLayer;
-    });
-
-    // For each layer, separate cartesian objects and isocollider objects,
-    // sort them separately, then merge them back into `objects`
-    int n = objects.size();
-    for (int l = 0; l < n;) {
-        static vector<shared_ptr<GameObject>> cartesians, isos;
-        cartesians.clear();
-        isos.clear();
-
-        // We'll process a range in which every object has the same renderLayer
-        int r = l;
-        while (r < n && objects[r]->renderLayer == objects[l]->renderLayer) {
-            auto isoA =
-                (IsoCollider*)objects[r]->GetComponent(CType::IsoCollider);
-
-            if (isoA)
-                isos.emplace_back(objects[r]);
-            else
-                cartesians.emplace_back(objects[r]);
-
-            r++;
-        }
-
-        std::stable_sort(cartesians.begin(), cartesians.end(),
-                         [&](auto& a, auto& b) {
-                             return a->box.Foot().y < b->box.Foot().y;
-                         });
-
-        std::stable_sort(isos.begin(), isos.end(), [&](auto& a, auto& b) {
-            auto isoA = (IsoCollider*)a->GetComponent(CType::IsoCollider);
-            auto isoB = (IsoCollider*)b->GetComponent(CType::IsoCollider);
-            return isoA->box.Center().toCart().y <
-                   isoB->box.Center().toCart().y;
-        });
-
-        // Merge cartesians and isos
-        int nc = cartesians.size(), ni = isos.size();
-        int ic = 0, ii = 0;
-        while (ic < nc && ii < ni) {
-            auto iso = (IsoCollider*)isos[ii]->GetComponent(CType::IsoCollider);
-            auto cart = cartesians[ic]->box.Foot();
-            objects[l++] =
-                pointLessThanIso(cart, iso) ? cartesians[ic++] : isos[ii++];
-        }
-        while (ic < nc) objects[l++] = cartesians[ic++];
-        while (ii < ni) objects[l++] = isos[ii++];
-    }
+    std::stable_sort(objects.begin(), objects.end(),
+                     [&](auto& a, auto& b) { return key(a) < key(b); });
 }
