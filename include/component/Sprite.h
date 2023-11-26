@@ -40,6 +40,6 @@ class Sprite : public Component {
 
     void Update(float dt);
     void Render(Vec2<Cart> camera);
-    void RenderAt(int x, int y);
+    void RenderAt(float x, float y);
     bool Is(CType type);
 };

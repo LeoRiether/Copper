@@ -41,42 +41,40 @@ Sprite* Sprite::WithFlash(bool f) {
 
 void Sprite::Update(float) {}
 
-void Sprite::RenderAt(int x, int y) {
+void Sprite::RenderAt(float x, float y) {
     Game& game = Game::Instance();
-    SDL_Rect destRect{x, y, int(clipRect.w * scale.x),
-                      int(clipRect.h * scale.y)};
+    SDL_FRect destRect{x, y, clipRect.w * scale.x, clipRect.h * scale.y};
 
     if (hasShadow) {
-        int shadowX = x;
-        int shadowY = y + clipRect.h * scale.y - 20;
+        float shadowX = x;
+        float shadowY = y + clipRect.h * scale.y - 20;
 
-        SDL_Rect destRect{shadowX, shadowY, int(clipRect.w * scale.x),
-                          int(clipRect.w * scale.x * 0.5)};
-        SDL_Point rotationPoint{destRect.w / 2, 0};
+        SDL_FRect destRect{shadowX, shadowY, clipRect.w * scale.x,
+                           clipRect.w * scale.x * 0.5f};
+        SDL_FPoint rotationPoint{destRect.w / 2.0f, 0};
         SDL_SetTextureColorMod(texture->inner, 0, 0, 0);
         SDL_SetTextureAlphaMod(texture->inner, 128);
-        SDL_RenderCopyEx(game.Renderer(), texture->inner, &clipRect, &destRect,
-                         0, &rotationPoint, SDL_FLIP_VERTICAL);
+        SDL_RenderCopyExF(game.Renderer(), texture->inner, &clipRect, &destRect,
+                          0, &rotationPoint, SDL_FLIP_VERTICAL);
         SDL_SetTextureAlphaMod(texture->inner, 255);
         SDL_SetTextureColorMod(texture->inner, 255, 255, 255);
     }
 
-    SDL_RenderCopyEx(game.Renderer(), texture->inner, &clipRect, &destRect,
-                     associated.angle * 180 / PI, nullptr, SDL_FLIP_NONE);
+    SDL_RenderCopyExF(game.Renderer(), texture->inner, &clipRect, &destRect,
+                      associated.angle * 180 / PI, nullptr, SDL_FLIP_NONE);
 
     if (flash) {
         SDL_SetTextureBlendMode(texture->inner, SDL_BLENDMODE_ADD);
         for (int i = 0; i < 1; i++)
-            SDL_RenderCopyEx(game.Renderer(), texture->inner, &clipRect,
-                             &destRect, associated.angle * 180 / PI, nullptr,
-                             SDL_FLIP_NONE);
+            SDL_RenderCopyExF(game.Renderer(), texture->inner, &clipRect,
+                              &destRect, associated.angle * 180 / PI, nullptr,
+                              SDL_FLIP_NONE);
         SDL_SetTextureBlendMode(texture->inner, SDL_BLENDMODE_BLEND);
     }
 }
 
 void Sprite::Render(Vec2<Cart> camera) {
-    RenderAt((int)(associated.box.x - camera.x),
-             (int)(associated.box.y - camera.y));
+    RenderAt(associated.box.x - camera.x, associated.box.y - camera.y);
 }
 
 bool Sprite::Is(CType type) { return type == CType::Sprite; }
