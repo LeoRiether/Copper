@@ -60,6 +60,7 @@ void Sprite::RenderAt(float x, float y) {
         SDL_SetTextureColorMod(texture->inner, 255, 255, 255);
     }
 
+    SDL_SetTextureAlphaMod(texture->inner, Alpha);
     SDL_RenderCopyExF(game.Renderer(), texture->inner, &clipRect, &destRect,
                       associated.angle * 180 / PI, nullptr, SDL_FLIP_NONE);
 

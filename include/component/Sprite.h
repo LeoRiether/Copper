@@ -14,12 +14,14 @@ class Sprite : public Component {
     shared_ptr<Texture> texture;
     int sheetWidth, sheetHeight;
     Vec2<Cart> scale{1, 1};
-    SDL_Rect clipRect;
 
     bool hasShadow{false};
     bool flash{false};
 
    public:
+    SDL_Rect clipRect;
+    uint8_t Alpha{255};
+
     Sprite(GameObject& associated, const string& file);
     ~Sprite();
 

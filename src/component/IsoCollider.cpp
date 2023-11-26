@@ -1,8 +1,11 @@
 #include "component/IsoCollider.h"
 
+#include <algorithm>
+
 #include "CType.h"
 #include "Consts.h"
 #include "Game.h"
+#include "component/Player.h"
 #include "component/Sprite.h"
 #include "math/Vec2.h"
 #include "util.h"
@@ -18,6 +21,24 @@ void IsoCollider::Update(float) {
     Vec2<Iso> something = associated.box.TopLeft().toIso();
     box.x = base.x + something.x;
     box.y = base.y + something.y;
+
+    // Terrains get more transparent if the player walks behind them
+    if (tags.test(tag::Terrain)) {
+        auto sprite = (Sprite*)associated.GetComponent(CType::Sprite);
+        auto player = Player::player;
+        if (sprite && player) {
+            auto p = player->associated.box.Foot();
+            Rect spritebox{associated.box.x + 30, associated.box.y + 30,
+                           sprite->clipRect.w * sprite->Scale().x - 60,
+                           sprite->clipRect.h * sprite->Scale().y - 60};
+            bool aboveCenter = p.y <= box.Center().transmute<Iso>().toCart().y;
+            bool occludingPlayer = aboveCenter && spritebox.Contains(p);
+
+            auto target = occludingPlayer ? 128 : 300;
+            auto alpha = sprite->Alpha + (target - (int)sprite->Alpha) * 0.05;
+            sprite->Alpha = std::min<int>(255, alpha);
+        }
+    }
 }
 
 void IsoCollider::Render(Vec2<Cart> camera) {
