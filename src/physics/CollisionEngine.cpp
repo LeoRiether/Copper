@@ -64,7 +64,7 @@ void CollisionEngine::Solve() {
 
         auto after = playerIso->box.TopLeft();
         auto movedDelta = (after - before).transmute<Iso>().toCart();
-        player->box.SetTopLeft(player->box.TopLeft() + movedDelta);
+        player->box.OffsetBy(movedDelta);
     }
 
     // Entity--Terrain collisions
@@ -85,7 +85,33 @@ void CollisionEngine::Solve() {
 
         auto after = entityIso->box.TopLeft();
         auto movedDelta = (after - before).transmute<Iso>().toCart();
-        entity->box.SetTopLeft(entity->box.TopLeft() + movedDelta);
+        entity->box.OffsetBy(movedDelta);
+    }
+
+    // Player--Entity and Entity--Entity
+    for (int i = (int)entities.size() - 1; i >= 0; i--) {
+        auto solve = [&](GameObject* a, GameObject* b) {
+            auto a_iso = (IsoCollider*)a->GetComponent(CType::IsoCollider);
+            auto b_iso = (IsoCollider*)b->GetComponent(CType::IsoCollider);
+            if (!a_iso || !b_iso) {
+                warn("[2] entity didn't have IsoCollider!");
+                return;
+            }
+
+            auto before_a = a_iso->box;
+            auto after_a =
+                IsoSolver::Solve(a_iso->box, a_iso->prevFrameBox, b_iso->box);
+            Vec2<Cart> delta =
+                Vec2<Iso>{after_a.x - before_a.x, after_a.y - before_a.y}
+                    .toCart();
+            a->box.OffsetBy(delta * 0.5f);
+            b->box.OffsetBy(delta * -0.5f);
+        };
+
+        if (player) solve(entities[i], player);
+        for (int j = i - 1; j >= 0; j--) {
+            solve(entities[i], entities[j]);
+        }
     }
 
     // Bullet--Player/Entity
