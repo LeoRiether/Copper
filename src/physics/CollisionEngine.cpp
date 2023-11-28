@@ -54,17 +54,13 @@ void CollisionEngine::Solve() {
     if (player) {
         auto playerIso = (IsoCollider*)player->GetComponent(CType::IsoCollider);
         auto before = playerIso->box.TopLeft();
-
-        for (int i = 0; i < 1; i++) {
-            for (auto& collider : terrainColliders) {
-                playerIso->box = IsoSolver::Solve(
-                    playerIso->box, playerIso->prevFrameBox, collider->box);
-            }
+        for (auto& collider : terrainColliders) {
+            playerIso->box = IsoSolver::Solve(
+                playerIso->box, playerIso->prevFrameBox, collider->box);
         }
-
         auto after = playerIso->box.TopLeft();
-        auto movedDelta = (after - before).transmute<Iso>().toCart();
-        player->box.OffsetBy(movedDelta);
+        auto delta = (after - before).transmute<Iso>().toCart();
+        player->box.OffsetBy(delta);
     }
 
     // Entity--Terrain collisions
@@ -75,17 +71,13 @@ void CollisionEngine::Solve() {
             continue;
         }
         auto before = entityIso->box.TopLeft();
-
-        for (int i = 0; i < 1; i++) {
-            for (auto& collider : terrainColliders) {
-                entityIso->box = IsoSolver::Solve(
-                    entityIso->box, entityIso->prevFrameBox, collider->box);
-            }
+        for (auto& collider : terrainColliders) {
+            entityIso->box = IsoSolver::Solve(
+                entityIso->box, entityIso->prevFrameBox, collider->box);
         }
-
         auto after = entityIso->box.TopLeft();
-        auto movedDelta = (after - before).transmute<Iso>().toCart();
-        entity->box.OffsetBy(movedDelta);
+        auto delta = (after - before).transmute<Iso>().toCart();
+        entity->box.OffsetBy(delta);
     }
 
     // Player--Entity and Entity--Entity
@@ -101,9 +93,9 @@ void CollisionEngine::Solve() {
             auto before_a = a_iso->box;
             auto after_a =
                 IsoSolver::Solve(a_iso->box, a_iso->prevFrameBox, b_iso->box);
-            Vec2<Cart> delta =
-                Vec2<Iso>{after_a.x - before_a.x, after_a.y - before_a.y}
-                    .toCart();
+            Vec2<Cart> delta = (after_a.TopLeft() - before_a.TopLeft())
+                                   .transmute<Iso>()
+                                   .toCart();
             a->box.OffsetBy(delta * 0.5f);
             b->box.OffsetBy(delta * -0.5f);
         };
@@ -142,10 +134,7 @@ void CollisionEngine::Solve() {
 
 bool CollisionEngine::TerrainContains(const Vec2<Iso> point) {
     for (auto terrain : terrainColliders) {
-        auto& box = terrain->box;  // already in Iso I think...
-        if (point.x >= box.x && point.x <= box.x + box.w && point.y >= box.y &&
-            point.y <= box.y + box.h)
-            return true;
+        if (terrain->box.Contains(point)) return true;
     }
     return false;
 }
