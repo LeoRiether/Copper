@@ -5,6 +5,7 @@
 #include "Consts.h"
 #include "Resources.h"
 #include "SDL_include.h"
+#include "SDL_render.h"
 #include "SDL_timer.h"
 #include "state/TitleState.h"
 
@@ -39,7 +40,8 @@ Game::Game(const char* title, int width, int height) {
                               SDL_WINDOWPOS_CENTERED, width, height, 0);
     if (!window) sdlfail("couldn't create window");
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
+    // renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (!renderer) sdlfail("couldn't create renderer");
 
     frameStart = SDL_GetTicks();
@@ -70,8 +72,14 @@ void Game::Run() {
 
         trauma *= 0.9;
 
+        auto loopstart = SDL_GetTicks();
+
         CalculateDeltaTime();
         state->Update(dt);
+        auto loopend = SDL_GetTicks();
+
+        if (loopend - loopstart > 5)
+            warn2("game loop took %dms!", loopend - loopstart);
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
         SDL_RenderClear(renderer);

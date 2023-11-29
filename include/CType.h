@@ -25,4 +25,5 @@ enum class CType {
     EnemyBehavior,
     KillTimeout,
     BulletShaker,
+    FPSCounter,
 };

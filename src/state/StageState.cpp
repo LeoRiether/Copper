@@ -8,6 +8,7 @@
 #include "GameObject.h"
 #include "InputManager.h"
 #include "Prefabs.h"
+#include "component/FPSCounter.h"
 #include "component/InfiniteBg.h"
 #include "component/IsoCollider.h"
 #include "component/Sound.h"
@@ -26,6 +27,13 @@ StageState::~StageState() {
 
 void StageState::Start() {
     LoadAssets();
+
+    ///////////////////////////////
+    //        FPS Counter        //
+    ///////////////////////////////
+    auto fpsGo = new GameObject;
+    fpsGo->AddComponent(new FPSCounter{*fpsGo});
+    RequestAddObject(fpsGo);
 
     //////////////////////////////
     //        Background        //
