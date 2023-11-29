@@ -32,6 +32,9 @@ class Player : public Component {
     Direction direction;
     DashState dashState;
 
+    float flashTimeout{0};
+    Vec2<Cart> knockbackVelocity{0, 0};
+
     /* Transitions the state from the current to `newState` */
     void ChangeState(State newState);
     /* Only calls ChangeState if state != newState */
@@ -52,7 +55,7 @@ class Player : public Component {
     void Start();
     void Update(float dt);
     void Render(Vec2<Cart> camera);
-    bool Is(CType type);
+    inline CType Key() const { return CType::Player; }
     void NotifyCollision(GameObject& other);
     void RequestDelete();
 };

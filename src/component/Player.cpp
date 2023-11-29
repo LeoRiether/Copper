@@ -2,23 +2,20 @@
 
 #include <SDL2/SDL_render.h>
 
-#include <algorithm>
 #include <cmath>
 #include <string>
 
 #include "Game.h"
-#include "GameData.h"
 #include "GameObject.h"
 #include "InputManager.h"
+#include "Prefabs.h"
 #include "component/Animation.h"
+#include "component/Bullet.h"
 #include "component/Collider.h"
-#include "component/EndStateDimmer.h"
-#include "component/KeepSoundAlive.h"
 #include "component/Sound.h"
 #include "component/Sprite.h"
 #include "component/Text.h"
 #include "math/Direction.h"
-#include "state/StageState.h"
 #include "util.h"
 
 #define MODULE "Player"
@@ -64,8 +61,6 @@ Player::Player(GameObject& associated) : Component(associated) {
         anim->Play("idle_S");  // just to kickstart the associated.box...
         associated.AddComponent(anim);
     }
-
-    associated.AddComponent(new Collider{associated});
 }
 
 Player::~Player() { Player::player = nullptr; }
@@ -118,6 +113,13 @@ void Player::MaybeChangeState(State newState) {
 void Player::Update(float dt) {
     UpdateState(dt);
     UpdatePosition(dt);
+
+    flashTimeout -= dt;
+    if (flashTimeout <= 0) {
+        flashTimeout = INFINITY;  // won't trigger this part again very soon
+        auto sprite = (Sprite*)associated.GetComponent(CType::Sprite);
+        sprite->WithFlash(false);
+    }
 }
 
 void Player::UpdateState(float dt) {
@@ -167,6 +169,9 @@ void Player::UpdateState(float dt) {
 }
 
 void Player::UpdatePosition(float dt) {
+    associated.box.OffsetBy(knockbackVelocity * dt);
+    knockbackVelocity = knockbackVelocity * 0.70;
+
     switch (state) {
         case Idle: {
             break;
@@ -225,16 +230,38 @@ void Player::Render(Vec2<Cart> camera) {
                                     SDL_Color{255, 255, 0, 255}});
     }
     auto textComponent = (Text*)text->GetComponent(CType::Text);
-    auto pos = associated.box.Foot();
+    auto pos = associated.box.Foot().toCart();
     textComponent->SetText(std::to_string(pos.x) + ", " +
                            std::to_string(pos.y));
     text->box.SetFoot({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 10});
     textComponent->Render(Vec2<Cart>{0, 0});
 }
 
-bool Player::Is(CType type) { return type == CType::Player; }
+void Player::NotifyCollision(GameObject& other) {
+    auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
+    if (bullet && bullet->TargetsPlayer()) {
+        // Flash
+        auto sprite = (Sprite*)associated.GetComponent(CType::Sprite);
+        sprite->WithFlash(true);
+        flashTimeout = 0.03;
 
-void Player::NotifyCollision(GameObject&) {}
+        // Explosion
+        auto hitpoint = other.box.Center();
+        hitpoint = hitpoint + Vec2<Cart>{25, 0}.GetRotated(other.angle);
+        associated.RequestAdd(MakeExplosion1()->WithCenterAt(hitpoint));
+
+        // Knockback
+        knockbackVelocity = Vec2<Cart>{2500, 0}.GetRotated(other.angle);
+
+        // Slowdown
+        Game::Instance().Slowdown(0.03, 0.1);
+
+        // Add trauma
+        Game::Instance().AddTrauma(0.4);
+
+        other.RequestDelete();
+    }
+}
 
 void Player::RequestDelete() {
     associated.RequestDelete();

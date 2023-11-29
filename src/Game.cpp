@@ -1,7 +1,8 @@
 #include "Game.h"
 
+#include <algorithm>
+
 #include "Consts.h"
-#include "InputManager.h"
 #include "Resources.h"
 #include "SDL_include.h"
 #include "SDL_timer.h"
@@ -67,6 +68,8 @@ void Game::Run() {
     while (!stateStack.empty() && !stateStack.back()->QuitRequested()) {
         auto state = stateStack.back().get();
 
+        trauma *= 0.9;
+
         CalculateDeltaTime();
         state->Update(dt);
 
@@ -115,6 +118,12 @@ Game& Game::Instance() {
 void Game::CalculateDeltaTime() {
     int64_t ticks = SDL_GetTicks64();
     dt = float(ticks - frameStart) / 1000.0f;
+
+    if (slowdown.duration > 0) {
+        slowdown.duration -= dt;
+        dt *= slowdown.p;
+    }
+
     frameStart = ticks;
 }
 
@@ -132,3 +141,9 @@ void Game::UpdateStateStack() {
     }
     stateStackOperations.clear();
 }
+
+void Game::Slowdown(float percentage, float durationS) {
+    slowdown = {percentage, durationS};
+}
+
+void Game::AddTrauma(float x) { trauma = std::min(1.0f, trauma + x); }

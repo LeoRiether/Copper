@@ -1,12 +1,8 @@
 #include "component/enemy/RobotCan.h"
 
-#include <algorithm>
-
 #include "Game.h"
 #include "component/Animation.h"
 #include "component/Bullet.h"
-#include "component/Collider.h"
-#include "component/Player.h"
 #include "component/Sprite.h"
 #include "math/Direction.h"
 #include "physics/Tags.h"
@@ -18,9 +14,11 @@ RobotCan::RobotCan(GameObject& associated) : Component(associated) {
     associated.tags.set(tag::Entity);
 
     auto baseSprite = new Sprite{associated, ASSETS "/img/RobotCanBase.png"};
+    baseSprite->SetHasShadow(true);
     associated.AddComponent(baseSprite);
 
     auto coreSprite = new Sprite{associated, ASSETS "/img/RobotCanCore.png"};
+    coreSprite->SetHasShadow(true);
     associated.AddComponent(coreSprite);
 
     // Animation
@@ -84,7 +82,7 @@ RobotCan::RobotCan(GameObject& associated) : Component(associated) {
             baseAnim->AddKeyframes(idles[i], row(baseGrid, i, 0, 1, 1.0));
         }
 
-        coreAnim->Play("walk_S");  // just to kickstart the associated.box...
+        baseAnim->Play("walk_S");  // just to kickstart the associated.box...
         associated.AddComponent(coreAnim);
         associated.AddComponent(baseAnim);
     }
@@ -96,7 +94,13 @@ void RobotCan::Update(float) {}
 
 void RobotCan::Render(Vec2<Cart>) {}
 
-bool RobotCan::Is(CType type) { return type == CType::RobotCan; }
+void RobotCan::NotifyCollision(GameObject& other) {
+    auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
+    if (bullet && !bullet->TargetsPlayer()) {
+        warn("RobotCan hit!");
+        other.RequestDelete();
+    }
+}
 
 RobotCan* RobotCan::WithStopDistance(float value) {
     stopDistance = value;

@@ -27,5 +27,3 @@ void EndStateDimmer::Render(Vec2<Cart>) {
     SDL_Rect rect{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
     SDL_RenderFillRect(renderer, &rect);
 }
-
-bool EndStateDimmer::Is(CType type) { return type == CType::EndStageDimmer; }

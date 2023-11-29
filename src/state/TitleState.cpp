@@ -4,8 +4,9 @@
 #include "Game.h"
 #include "GameObject.h"
 #include "InputManager.h"
+#include "Music.h"
 #include "component/Text.h"
-#include "component/TextBlinker.h"
+#include "component/TextFadeIn.h"
 #include "state/StageState.h"
 #include "state/ViewerState.h"
 #include "util.h"
@@ -16,7 +17,12 @@ TitleState::TitleState() {}
 
 TitleState::~TitleState() {}
 
-void TitleState::LoadAssets() {}
+void TitleState::LoadAssets() {
+    mechanismGlitch =
+        unique_ptr<Music>(new Music(
+            ASSETS "/audio/Gregor Quendel - Designed Series/Mecha/Sequences - "
+                   "Mechanisms 01.wav"));
+}
 
 void TitleState::Update(float dt) {
     ProcessAddRequests();
@@ -44,9 +50,11 @@ void TitleState::Update(float dt) {
 void TitleState::Render() { RenderArray(); }
 
 void TitleState::Start() {
+    LoadAssets();
+
     {
         auto bgGO = new GameObject{};
-        auto sprite = new Sprite{*bgGO, ASSETS "/img/splashscreen.png"};
+        auto sprite = new Sprite{*bgGO, ASSETS "/img/dim_splashscreen.png"};
         sprite->SetScale((float)SCREEN_WIDTH / sprite->SheetWidth());
         bgGO->AddComponent(sprite);
         RequestAddObject(bgGO);
@@ -54,15 +62,30 @@ void TitleState::Start() {
 
     {
         auto go = new GameObject{};
-        go->AddComponent(new Text{*go, ASSETS "/font/Call me maybe.ttf", 120,
+        go->AddComponent(new Text{*go, ASSETS "/font/THEROOTS.TTF", 120,
                                   Text::Blended, "COPPER",
-                                  colorFromHex("e23400")});
-        go->AddComponent(new TextBlinker{*go, 3.0f});
-        go->box.SetFoot(Vec2<Cart>{SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 64});
+                                  colorFromHex("CB6D51")});
+        go->AddComponent(new TextFadeIn{*go, 4.0f});
+        // go->box.SetFoot(Vec2<Cart>{SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 64});
+        go->box.SetCenter({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f});
         RequestAddObject(go);
     }
+
+    // {
+    //     auto go = new GameObject{};
+    //     auto sprite = new Sprite{*go, ASSETS "/img/title.png"};
+    //     go->AddComponent(sprite);
+    //     go->box = {0, 0, (float)sprite->SheetWidth(),
+    //                (float)sprite->SheetHeight()};
+    //     go->box.SetCenter({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f});
+    //     RequestAddObject(go);
+    // }
+
+    // mechanismGlitch->Play();
 }
 
-void TitleState::Pause() {}
+void TitleState::Pause() { /* mechanismGlitch->Stop(); */
+}
 
-void TitleState::Resume() {}
+void TitleState::Resume() { /* mechanismGlitch->Play(); */
+}

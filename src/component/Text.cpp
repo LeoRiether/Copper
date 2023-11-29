@@ -43,8 +43,6 @@ void Text::Render(Vec2<Cart> camera) {
                      nullptr, SDL_FLIP_NONE);
 }
 
-bool Text::Is(CType type) { return type == CType::Text; }
-
 void Text::SetText(string t) {
     if (t.empty()) {
         warn(

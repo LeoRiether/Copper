@@ -1,5 +1,7 @@
 #include "physics/Collision.h"
 
+#include <algorithm>
+
 bool Collision::IsColliding(const Rect& a, const Rect& b, float angleOfA,
                             float angleOfB) {
     Vec2<Cart> A[] = {Vec2<Cart>{a.x, a.y + a.h},

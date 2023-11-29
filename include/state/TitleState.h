@@ -1,6 +1,9 @@
 #pragma once
 
+#include "Music.h"
 #include "State.h"
+
+using std::unique_ptr;
 
 class TitleState : public State {
    public:
@@ -14,4 +17,7 @@ class TitleState : public State {
     void Start();
     void Pause();
     void Resume();
+
+   private:
+    unique_ptr<Music> mechanismGlitch;
 };

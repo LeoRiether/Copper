@@ -2,11 +2,15 @@
 
 #include "Game.h"
 #include "GameObject.h"
+#include "Prefabs.h"
 #include "component/Animation.h"
 #include "component/Bullet.h"
 #include "component/Player.h"
 #include "component/enemy/RobotCan.h"
 #include "math/Vec2.h"
+#include "physics/CollisionEngine.h"
+
+#define MODULE "EnemyDistancer"
 
 EnemyDistancer::EnemyDistancer(GameObject& go) : Component(go) {}
 
@@ -80,14 +84,27 @@ void EnemyDistancer::switchState(State newState) {
     }
 
     auto shoot = [&]() {
-        const auto playerPos = Player::player->Associated().box.Foot();
+        const auto playerPos = Player::player->Associated().box.Center();
         const auto delta = playerPos - associated.box.Center();
-        auto go = Bullet::Make(associated.box.Center(), delta.angle());
+        auto go = MakeBullet(associated.box.Center(), delta.angle());
         Game::Instance().GetState().RequestAddObject(go);
 
-        // TODO: shoot animation
         const auto dir = Direction::approxFromVec(delta);
-        allAnimsPlay("fire2_" + dir.toString());
+        allAnimsPlay("fire1_" + dir.toString());
+    };
+
+    // Try to find an angle that doesn't immediately meet with a wall
+    auto findRoamingDelta = [&]() {
+        for (int tries = 0; tries < 10; tries++) {
+            auto angle = randf(0, 2 * PI);
+            roamingDelta = Vec2<Cart>{1, 0}.GetRotated(angle);
+
+            auto aFrameForward =
+                associated.box.Center() + roamingDelta * speed / 16.0;
+            if (!CollisionEngine::TerrainContains(aFrameForward.toIso()))
+                return;
+        }
+        warn("couldn't find roamingDelta");
     };
 
     // Get in new state
@@ -97,8 +114,7 @@ void EnemyDistancer::switchState(State newState) {
             break;
         }
         case Roaming: {
-            auto angle = randf(0, 2 * PI);
-            roamingDelta = Vec2<Cart>{1, 0}.GetRotated(angle);
+            findRoamingDelta();
             auto dir = Direction::approxFromVec(roamingDelta);
             allAnimsPlay("walk_" + dir.toString());
 
@@ -116,8 +132,8 @@ void EnemyDistancer::switchState(State newState) {
 }
 
 void EnemyDistancer::allAnimsPlay(const string& id) {
-    auto anims = associated.GetAllComponents(CType::Animation);
+    auto& anims = associated.GetAllComponents(CType::Animation);
     for (auto& anim : anims) {
-        ((Animation*)anim)->SoftPlay(id);
+        ((Animation*)anim.get())->SoftPlay(id);
     }
 }

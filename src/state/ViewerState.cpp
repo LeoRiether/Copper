@@ -91,7 +91,10 @@ void ViewerState::Update(float dt) {
     }
 
     if (input.IsKeyDown(SDL_SCANCODE_SPACE)) {
-        camera->SetPos(camera->Pos() + lastMousePos - input.RawMouse());
+        const Vec2<Cart> screenCenter{(float)SCREEN_WIDTH / 2.0f,
+                                      (float)SCREEN_HEIGHT / 2.0f};
+        camera->SetPos(camera->Pos() + lastMousePos - input.RawMouse() +
+                       screenCenter);
     }
 
     lastMousePos = input.RawMouse();

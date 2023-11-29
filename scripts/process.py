@@ -7,27 +7,43 @@ from collections import namedtuple
 ############################
 #        Rule Types        #
 ############################
-Resize = namedtuple("Resize", ["path", "target_width"])
+Resize = namedtuple("Resize", ["path", "width", "height"], defaults=(None, None, None))
 Trim = namedtuple("Trim", ["path"])
 Concat = namedtuple("Concat", ["path", "inputs"])
+HConcat = namedtuple("HConcat", ["path", "inputs"])
 
 RULES = [
     Trim("img/Barris.png"),
-    Resize("img/Barris.png", 212),
+    Resize("img/Barris.png", width=212),
     Trim("img/Escavadeira.png"),
-    Resize("img/Escavadeira.png", 372),
-    Concat("img/RobotCanCore.png", [
-        "img/RobotCan/RobotCanWalkCore/spritesheet.png",
-        "img/RobotCan/RobotCanFire1Core/spritesheet.png",
-        "img/RobotCan/RobotCanFire2Core/spritesheet.png",
-        "img/RobotCan/RobotCanHideCore/spritesheet.png",
-    ]),
-    Concat("img/RobotCanBase.png", [
-        "img/RobotCan/RobotCanWalkBase/spritesheet.png",
-        "img/RobotCan/RobotCanFire1Base/spritesheet.png",
-        "img/RobotCan/RobotCanFire2Base/spritesheet.png",
-        "img/RobotCan/RobotCanHideBase/spritesheet.png",
-    ]),
+    Resize("img/Escavadeira.png", width=372),
+    Trim("img/Viga_B.png"),
+    Resize("img/Viga_B.png", height=360),
+    Concat(
+        "img/RobotCanCore.png",
+        [
+            "img/RobotCan/RobotCanWalkCore/spritesheet.png",
+            "img/RobotCan/RobotCanFire1Core/spritesheet.png",
+            "img/RobotCan/RobotCanFire2Core/spritesheet.png",
+            "img/RobotCan/RobotCanHideCore/spritesheet.png",
+        ],
+    ),
+    Concat(
+        "img/RobotCanBase.png",
+        [
+            "img/RobotCan/RobotCanWalkBase/spritesheet.png",
+            "img/RobotCan/RobotCanFire1Base/spritesheet.png",
+            "img/RobotCan/RobotCanFire2Base/spritesheet.png",
+            "img/RobotCan/RobotCanHideBase/spritesheet.png",
+        ],
+    ),
+    HConcat(
+        "img/FoozleExplosion.png",
+        [
+            f"img/Foozle_2DE0001_Pixel_Magic_Effects/Explosion/00{x}.png"
+            for x in range(1, 8)
+        ],
+    ),
 ]
 
 
@@ -41,16 +57,22 @@ def backup(path):
         shutil.copyfile(path, bakpath)
 
 
-def resize(path, target_width):
+def resize(path, target_width, target_height):
     print(
         f"{Fore.CYAN}Resizing{Fore.RESET} {path} to "
-        f"{Fore.CYAN}{target_width}{Fore.RESET} pixels wide"
+        f"{Fore.CYAN}{target_width if target_width is not None else target_height}{Fore.RESET} pixels "
+        f"{'wide' if target_width is not None else 'tall'}"
     )
 
     with Image.open(path) as image:
         width, height = image.size
-        ratio = target_width / width
-        new_size = (target_width, int(height * ratio))
+        new_size = None
+        if target_width is not None:
+            ratio = target_width / width
+            new_size = target_width, int(height * ratio)
+        else:
+            ratio = target_height / height
+            new_size = int(width * ratio), target_height
         image.resize(new_size, Image.Resampling.LANCZOS).save(path)
 
 
@@ -60,13 +82,14 @@ def trim(path):
         bounding_box = image.getbbox()
         image.crop(bounding_box).save(path)
 
+
 def concat(path, inputs):
     print(f"{Fore.MAGENTA}Concatenating{Fore.RESET} {path} from")
     for inp in inputs:
         print(f"  {Style.DIM}{inp}{Style.RESET_ALL}")
 
     inputs = (os.path.join("assets/", inp) for inp in inputs)
-    imgs = [ Image.open(inp) for inp in inputs ]
+    imgs = [Image.open(inp) for inp in inputs]
     total_width = max(img.width for img in imgs)
     total_height = sum(img.height for img in imgs)
     result = Image.new("RGBA", (total_width, total_height))
@@ -75,6 +98,25 @@ def concat(path, inputs):
     for img in imgs:
         result.paste(img, (0, current_height))
         current_height += img.height
+
+    result.save(path)
+
+
+def hconcat(path, inputs):
+    print(f"{Fore.MAGENTA}H-Concatenating{Fore.RESET} {path} from")
+    for inp in inputs:
+        print(f"  {Style.DIM}{inp}{Style.RESET_ALL}")
+
+    inputs = (os.path.join("assets/", inp) for inp in inputs)
+    imgs = [Image.open(inp) for inp in inputs]
+    total_width = sum(img.width for img in imgs)
+    total_height = max(img.height for img in imgs)
+    result = Image.new("RGBA", (total_width, total_height))
+
+    current_width = 0
+    for img in imgs:
+        result.paste(img, (current_width, 0))
+        current_width += img.width
 
     result.save(path)
 
@@ -88,11 +130,13 @@ def main():
         path = os.path.join("assets/", rule.path)
 
         if isinstance(rule, Resize):
-            resize(path, rule.target_width)
+            resize(path, rule.width, rule.height)
         elif isinstance(rule, Trim):
             trim(path)
         elif isinstance(rule, Concat):
             concat(path, rule.inputs)
+        elif isinstance(rule, HConcat):
+            hconcat(path, rule.inputs)
         else:
             print(f"Rule not registered: {rule}")
 

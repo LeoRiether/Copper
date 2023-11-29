@@ -13,10 +13,10 @@ EnemyFollower* EnemyFollower::WithRobotCan(RobotCan* rc) {
 void EnemyFollower::Update(float dt) {
     if (!Player::player) return;
 
-    auto allAnimsPlay = [&](const string& id) {
-        auto anims = associated.GetAllComponents(CType::Animation);
+    auto allAnimsPlay = [&](const string& id, bool loops = true) {
+        auto& anims = associated.GetAllComponents(CType::Animation);
         for (auto& anim : anims) {
-            ((Animation*)anim)->SoftPlay(id);
+            ((Animation*)anim.get())->SoftPlay(id, loops);
         }
     };
 
@@ -24,11 +24,11 @@ void EnemyFollower::Update(float dt) {
     auto enemyPos = associated.box.Foot();
     auto distVec = playerPos - enemyPos;
     if (distVec.norm2() <= self->stopDistance * self->stopDistance) {
-        allAnimsPlay("idle_" + self->direction.toString());
+        allAnimsPlay("hide_" + self->direction.toString(), false);
         return;
     }
 
     self->direction = Direction::approxFromVec(distVec);
     allAnimsPlay("walk_" + self->direction.toString());
-    self->associated.box.OffsetBy(distVec.normalize() * 300 * dt);
+    self->associated.box.OffsetBy(distVec.normalize() * speed * dt);
 }

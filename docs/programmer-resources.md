@@ -7,6 +7,8 @@
 - [SDL Gamepad Tool](https://generalarcade.com/gamepadtool/)
 - [How can I add a shadow to a texture in SDL2? (SDL_SetTextureColorMod)](https://stackoverflow.com/questions/63346483/how-i-can-add-a-shadow-to-a-texture-on-sdl2)
 - [Parallel Realities SDL2 Tutorials](https://parallelrealities.co.uk/tutorials/)
+- [Ambient Light in SDL2](https://discourse.libsdl.org/t/is-possible-to-create-ambient-light-in-sdl2/28381) 
+- [How to mask a texture in SDL](https://www.reddit.com/r/sdl/comments/ndeq7s/solved_how_to_mask_a_texture_in_sdl/) 
 
 ## Isometric
 - [How Isometric Coordinates Work in 2D games](https://www.youtube.com/watch?v=04oQ2jOUjkU)
@@ -27,9 +29,11 @@
 - [(!) Indie Game Devlog 18 : Comparing 2 custom Collision Methods](https://www.youtube.com/watch?v=KP7Nj3U4uuM)
 - [Writing a Physics Engine from scratch - collision detection optimization](https://www.youtube.com/watch?v=9IULfQH7E90)
 - [Circle-Rectangle collision detection](https://stackoverflow.com/a/402019)
+- [Giving Personality to Procedural Animations using Math (easing functions, ODEs)](https://www.youtube.com/watch?v=KPoeNZZ6H4s) 
 
 ## Who knows
 - [The Pain of Compiling an SDL game written in C for Windows](https://anna-singleton.github.io/posts/compiling-sdl-c-windows/)
 - [Integration Basics](https://gafferongames.com/post/integration_basics/)
 - [CVar System](https://vkguide.dev/docs/extra-chapter/cvar_system/)
 - [How to Make Attack Feel Great: animations, particles, and other cool tricks](https://www.youtube.com/watch?v=_qxl7CalhDM)
+- [Juicing Kit](https://pigdev.itch.io/juicing-kit) 

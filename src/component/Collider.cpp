@@ -3,6 +3,9 @@
 #include "CType.h"
 #include "Consts.h"
 #include "Game.h"
+#include "util.h"
+
+#define MODULE "Collider"
 
 Collider::Collider(GameObject& associated) : Component(associated) {}
 
@@ -50,9 +53,24 @@ void Collider::Render(Vec2<Cart> camera) {
     }
 }
 
-bool Collider::Is(CType type) { return type == CType::Collider; }
-
 Collider* Collider::WithBase(Rect b) {
     base = b;
+    return this;
+}
+
+Collider* Collider::WithTag(int tag) {
+    tags.set(tag);
+    return this;
+}
+
+Collider* Collider::ScaleToSprite() {
+    auto sprite = (Sprite*)associated.GetComponent(CType::Sprite);
+    if (!sprite) {
+        fail("no Sprite component found");
+    }
+    base.x *= sprite->Scale().x;
+    base.y *= sprite->Scale().y;
+    base.w *= sprite->Scale().x;
+    base.h *= sprite->Scale().y;
     return this;
 }
