@@ -12,6 +12,7 @@
 #define MODULE "CollisionEngine"
 
 vector<IsoCollider*> CollisionEngine::terrainColliders;
+vector<CollisionEngine::VT> CollisionEngine::vterrainColliders;
 GameObject* CollisionEngine::player;
 vector<GameObject*> CollisionEngine::entities;
 vector<GameObject*> CollisionEngine::bullets;
@@ -26,13 +27,23 @@ void CollisionEngine::Update(const vector<shared_ptr<GameObject>>& objects) {
 
         auto& isoColliders = obj->GetAllComponents(CType::IsoCollider);
         for (auto& component : isoColliders) {
-            auto isoCollider = (IsoCollider*)(component.get());
+            auto isoCollider = (IsoCollider*)component.get();
             auto& tags = isoCollider->tags;
 
             isoCollider->prevFrameBox = isoCollider->box;
 
             if (tags.test(tag::Terrain)) {
                 terrainColliders.emplace_back(isoCollider);
+            }
+        }
+
+        auto& vterrains = obj->GetAllComponents(CType::Collider);
+        for (auto& component : vterrains) {
+            auto collider = (Collider*)component.get();
+            auto& tags = collider->tags;
+
+            if (tags.test(tag::VTerrain)) {
+                vterrainColliders.push_back(VT{collider, obj.get()});
             }
         }
 
@@ -43,6 +54,7 @@ void CollisionEngine::Update(const vector<shared_ptr<GameObject>>& objects) {
 
 void CollisionEngine::ClearState() {
     terrainColliders.clear();
+    vterrainColliders.clear();
     player = nullptr;
     entities.clear();
     bullets.clear();
@@ -106,7 +118,7 @@ void CollisionEngine::Solve() {
         }
     }
 
-    // Bullet--Player/Entity
+    // Bullet--Player/Entity/VTerrain
     for (auto bullet : bullets) {
         auto hurtbox = (Collider*)bullet->GetComponent(CType::Collider);
 
@@ -127,6 +139,14 @@ void CollisionEngine::Solve() {
                 Collision::IsColliding(hurtbox->box, hitbox->box, bullet->angle,
                                        player->angle)) {
                 player->NotifyCollision(*bullet);
+            }
+        }
+
+        // --VTerrain
+        for (auto& vterrain : vterrainColliders) {
+            if (Collision::IsColliding(hurtbox->box, vterrain.c->box,
+                                       bullet->angle, vterrain.go->angle)) {
+                vterrain.go->NotifyCollision(*bullet);
             }
         }
     }

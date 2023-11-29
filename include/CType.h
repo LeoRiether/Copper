@@ -24,4 +24,5 @@ enum class CType {
     RobotCan,
     EnemyBehavior,
     KillTimeout,
+    BulletShaker,
 };

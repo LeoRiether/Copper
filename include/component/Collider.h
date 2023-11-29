@@ -14,6 +14,7 @@ class Collider : public Component {
    public:
     Collider(GameObject& associated);
 
+    tagset tags;
     Rect box;
 
     void Update(float dt);
@@ -21,5 +22,6 @@ class Collider : public Component {
     inline CType Key() const { return CType::Collider; }
 
     Collider* WithBase(Rect base);
+    Collider* WithTag(int tag);
     Collider* ScaleToSprite();
 };

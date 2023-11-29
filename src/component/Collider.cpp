@@ -58,6 +58,11 @@ Collider* Collider::WithBase(Rect b) {
     return this;
 }
 
+Collider* Collider::WithTag(int tag) {
+    tags.set(tag);
+    return this;
+}
+
 Collider* Collider::ScaleToSprite() {
     auto sprite = (Sprite*)associated.GetComponent(CType::Sprite);
     if (!sprite) {

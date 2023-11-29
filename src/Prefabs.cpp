@@ -5,6 +5,7 @@
 #include "GameObject.h"
 #include "component/Animation.h"
 #include "component/Bullet.h"
+#include "component/BulletShaker.h"
 #include "component/Collider.h"
 #include "component/IsoCollider.h"
 #include "component/KillTimeout.h"
@@ -71,6 +72,13 @@ GameObject* MakeBarril() {
     go->AddComponent((new IsoCollider{*go})
                          ->WithTag(tag::Terrain)
                          ->WithBase({260.338, 86.0871, 82.0511, 166.461}));
+    go->AddComponent((new Collider{*go})
+                         ->WithTag(tag::VTerrain)
+                         ->WithBase({74.5427, 2.52368, 96.0102, 154.993}));
+    go->AddComponent((new Collider{*go})
+                         ->WithTag(tag::VTerrain)
+                         ->WithBase({1.47008, 42.173, 79.2986, 103.219}));
+    go->AddComponent((new BulletShaker{*go}));
     return go;
 }
 

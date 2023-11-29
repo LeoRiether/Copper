@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "GameObject.h"
+#include "component/Collider.h"
 #include "component/IsoCollider.h"
 
 using std::shared_ptr;
@@ -17,7 +18,13 @@ class CollisionEngine {
     static bool TerrainContains(const Vec2<Iso> point);
 
    private:
+    struct VT {
+        Collider* c;
+        GameObject* go;
+    };
+
     static vector<IsoCollider*> terrainColliders;
+    static vector<VT> vterrainColliders;
     static GameObject* player;
     static vector<GameObject*> entities;
     static vector<GameObject*> bullets;
