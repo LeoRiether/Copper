@@ -251,7 +251,8 @@ void Player::NotifyCollision(GameObject& other) {
         associated.RequestAdd(MakeExplosion1()->WithCenterAt(hitpoint));
 
         // Knockback
-        knockbackVelocity = Vec2<Cart>{2500, 0}.GetRotated(other.angle);
+        float kb = 1'500'000 * Game::Instance().DeltaTime();
+        knockbackVelocity = Vec2<Cart>{kb, 0}.GetRotated(other.angle);
 
         // Slowdown
         Game::Instance().Slowdown(0.03, 0.1);
