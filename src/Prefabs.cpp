@@ -30,7 +30,6 @@ GameObject* MakePlayer() {
     go->AddComponent((new Collider{*go})
                          ->WithBase({75.5414, 104.845, 127.273, 231.782})
                          ->ScaleToSprite());
-    go->box.SetCenter(Vec2<Cart>{1300, 900});
     return go;
 }
 

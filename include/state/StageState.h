@@ -11,10 +11,12 @@
 using std::shared_ptr;
 using std::unique_ptr;
 using std::vector;
+using std::weak_ptr;
 
 class StageState : public State {
    private:
     Music* music;
+    weak_ptr<GameObject> mainMap;
 
    public:
     ~StageState();

@@ -11,6 +11,8 @@
 #include "component/InfiniteBg.h"
 #include "component/IsoCollider.h"
 #include "component/Sound.h"
+#include "component/Tilemap.h"
+#include "component/Tileset.h"
 #include "math/Rect.h"
 #include "physics/CollisionEngine.h"
 #include "util.h"
@@ -28,20 +30,20 @@ void StageState::Start() {
     //////////////////////////////
     //        Background        //
     //////////////////////////////
-    auto bgGO = new GameObject;
-    bgGO->box = Rect{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-    bgGO->AddComponent(new InfiniteBg{*bgGO, ASSETS "/img/sala_v0.png"});
-    bgGO->renderLayer = -1;
-    RequestAddObject(bgGO);
+    // auto bgGO = new GameObject;
+    // bgGO->box = Rect{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+    // bgGO->AddComponent(new InfiniteBg{*bgGO, ASSETS "/img/sala_v0.png"});
+    // bgGO->renderLayer = -2;
+    // RequestAddObject(bgGO);
 
-    for (auto go : MakeMap1Colliders()) {
-        RequestAddObject(go);
-    }
+    // for (auto go : MakeMap1Colliders()) {
+    //     RequestAddObject(go);
+    // }
 
     //////////////////////////
     //        Player        //
     //////////////////////////
-    auto player = MakePlayer();
+    auto player = MakePlayer()->WithFootAt({0, 0});
     camera->SetPos(player->box.Center());
     camera->Follow(player);
     RequestAddObject(player);
@@ -64,14 +66,49 @@ void StageState::Start() {
         return go;
     };
 
-    RequestAddObject(MakeBarril()->WithFootAt({1300, 600}));
-    RequestAddObject(MakeEscavadeira()->WithFootAt({1200, 700}));
-    RequestAddObject(isoOff(MakeEscavadeira()->WithFootAt({1200, 700})));
+    RequestAddObject(MakeBarril()->WithFootAt({-100, -300}));
+    RequestAddObject(MakeEscavadeira()->WithFootAt({-300, 200}));
+    RequestAddObject(isoOff(MakeEscavadeira()->WithFootAt({-300, 200})));
 
-    RequestAddObject(MakeVigaB()->WithFootAt({2000, 500}));
-    RequestAddObject(isoOff(MakeVigaB()->WithFootAt({2000, 500}), 0, 1));
-    RequestAddObject(isoOff(MakeVigaB()->WithFootAt({2000, 500}), 0, 2));
-    RequestAddObject(isoOff(MakeVigaB()->WithFootAt({2000, 500}), 0, 3));
+    RequestAddObject(MakeVigaB()->WithFootAt({400, 100}));
+    RequestAddObject(isoOff(MakeVigaB()->WithFootAt({400, 100}), 0, 1));
+    RequestAddObject(isoOff(MakeVigaB()->WithFootAt({400, 100}), 0, 2));
+    RequestAddObject(isoOff(MakeVigaB()->WithFootAt({400, 100}), 0, 3));
+
+    auto addTilemap = [&](const char* tileset, int tscols, int tsrows,
+                          const char* csv, Vec2<Cart> offset,
+                          bool mainMap = false) {
+        auto go = new GameObject{};
+        go->AddComponent((new Tileset{*go, tileset, tscols, tsrows})
+                             ->WithScale(128.0f / 256.0f));
+        auto tilemap = (new Tilemap{*go, csv})->WithOffset(offset);
+        go->AddComponent(tilemap);
+        go->renderLayer = -1;
+        go->box.SetTopLeft((Vec2<Iso>{154, 122} * -128).toCart());
+        auto wgo = RequestAddObject(go);
+        if (mainMap) {
+            this->mainMap = wgo;
+            tilemap->ComputeComponents();
+            for (auto& c : tilemap->Components) {
+                info2("component [%d, %d]", c.i, c.j);
+            }
+        }
+    };
+    addTilemap(ASSETS "/map/Padrão.png", 13, 19,
+               ASSETS "/map/Salas copper V2_Copy of Group 2_FLOOR.csv", {0, 0},
+               true);
+    addTilemap(ASSETS "/map/Ferrugem.png", 13, 19,
+               ASSETS "/map/Salas copper V2_Copy of Group 2_Tile Layer 11.csv",
+               {65, -2});
+    // addTilemap(ASSETS "/map/Ferrugem.png", 13, 19,
+    //            ASSETS "/map/Salas copper V2_Copy of Group 2_Tile
+    //            Layer 13.csv");
+    // addTilemap(ASSETS "/map/Ferrugem.png", 13, 19,
+    //            ASSETS "/map/Salas copper V2_Copy of Group 2_Tile
+    //            Layer 12.csv");
+    // addTilemap(ASSETS "/map/Ferrugem.png", 13, 19,
+    //            ASSETS "/map/Salas copper V2_Copy of Group 2_Tile
+    //            Layer 12.csv");
 
     StartArray();
     started = true;
