@@ -76,12 +76,14 @@ void StageState::Start() {
     RequestAddObject(isoOff(MakeVigaB()->WithFootAt({400, 100}), 0, 3));
 
     auto addTilemap = [&](const char* tileset, int tscols, int tsrows,
-                          const char* csv, Vec2<Cart> offset,
-                          bool mainMap = false) {
+                          const char* csv, Vec2<Cart> offset, bool colliders,
+                          bool mainMap) {
         auto go = new GameObject{};
         go->AddComponent((new Tileset{*go, tileset, tscols, tsrows})
                              ->WithScale(128.0f / 256.0f));
         auto tilemap = (new Tilemap{*go, csv})->WithOffset(offset);
+        if (colliders)
+            tilemap->WithColliders({883.55, 637.564, 248.128, 251.03});
         go->AddComponent(tilemap);
         go->renderLayer = -1;
         go->box.SetTopLeft((Vec2<Iso>{154, 122} * -128).toCart());
@@ -96,10 +98,10 @@ void StageState::Start() {
     };
     addTilemap(ASSETS "/map/Padrão.png", 13, 19,
                ASSETS "/map/Salas copper V2_Copy of Group 2_FLOOR.csv", {0, 0},
-               true);
+               false, true);
     addTilemap(ASSETS "/map/Ferrugem.png", 13, 19,
                ASSETS "/map/Salas copper V2_Copy of Group 2_Tile Layer 11.csv",
-               {65, -2});
+               {65, -2}, true, false);
     // addTilemap(ASSETS "/map/Ferrugem.png", 13, 19,
     //            ASSETS "/map/Salas copper V2_Copy of Group 2_Tile
     //            Layer 13.csv");

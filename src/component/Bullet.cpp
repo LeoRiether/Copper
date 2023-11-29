@@ -25,8 +25,6 @@ void Bullet::Update(float dt) {
 
 void Bullet::Render(Vec2<Cart>) {}
 
-bool Bullet::Is(CType type) { return type == CType::Bullet; }
-
 void Bullet::NotifyCollision(GameObject& other) {
     if (targetsPlayer && other.GetComponent(CType::Player))
         associated.RequestDelete();

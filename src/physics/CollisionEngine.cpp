@@ -24,9 +24,9 @@ void CollisionEngine::Update(const vector<shared_ptr<GameObject>>& objects) {
     for (auto& obj : objects) {
         obj->prevFrameBox = obj->box;
 
-        auto isoColliders = obj->GetAllComponents(CType::IsoCollider);
-        for (auto component : isoColliders) {
-            auto isoCollider = (IsoCollider*)component;
+        auto& isoColliders = obj->GetAllComponents(CType::IsoCollider);
+        for (auto& component : isoColliders) {
+            auto isoCollider = (IsoCollider*)(component.get());
             auto& tags = isoCollider->tags;
 
             isoCollider->prevFrameBox = isoCollider->box;

@@ -6,6 +6,7 @@
 #include <sstream>
 #include <stack>
 
+#include "component/IsoCollider.h"
 #include "component/Tileset.h"
 #include "util.h"
 
@@ -84,6 +85,48 @@ void Tilemap::load(const string& csv) {
     file.close();
 }
 
+Tilemap* Tilemap::WithOffset(Vec2<Cart> c) {
+    offset.i = c.x;
+    offset.j = c.y;
+    return this;
+}
+
+// This really really looks like the Render function
+Tilemap* Tilemap::WithColliders(Rect base) {
+    auto tileset = (Tileset*)associated.GetComponent(CType::Tileset);
+    if (!tileset) {
+        warn("Tilemap does not have an associated tileset!");
+        return this;
+    }
+
+    auto& sprite = tileset->sprite;
+
+    const float tileWidth = tileset->TileWidth * tileset->sprite->Scale().x;
+    const float tileHeight = tileset->TileHeight * tileset->sprite->Scale().y;
+
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            int id = map[At(i, j)];
+            if (id < 0) continue;
+
+            Vec2<Iso> pos = {(j + offset.j) * tileWidth,
+                             (i + offset.i) * tileHeight / 2.0f};
+
+            auto b = base;
+            b.x *= sprite->Scale().x;
+            b.y *= sprite->Scale().y;
+            b.w *= sprite->Scale().x;
+            b.h *= sprite->Scale().y;
+            b.OffsetBy(pos.toIso().transmute<Cart>());
+            associated.AddComponent((new IsoCollider{associated})
+                                        ->WithTag(tag::Terrain)
+                                        ->WithBase(b));
+        }
+    }
+
+    return this;
+}
+
 void Tilemap::ComputeComponents() {
     vector<vector<bool>> visited(height, vector<bool>(width));
     vector<std::pair<int, int>> deltas{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
@@ -126,10 +169,4 @@ void Tilemap::ComputeComponents() {
             if (!visited[i][j] && map[At(i, j)] >= 0) dfs(i, j);
         }
     }
-}
-
-Tilemap* Tilemap::WithOffset(Vec2<Cart> c) {
-    offset.i = c.x;
-    offset.j = c.y;
-    return this;
 }

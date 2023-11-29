@@ -77,5 +77,3 @@ void Sprite::RenderAt(float x, float y) {
 void Sprite::Render(Vec2<Cart> camera) {
     RenderAt(associated.box.x - camera.x, associated.box.y - camera.y);
 }
-
-bool Sprite::Is(CType type) { return type == CType::Sprite; }

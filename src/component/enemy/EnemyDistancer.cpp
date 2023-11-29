@@ -132,8 +132,8 @@ void EnemyDistancer::switchState(State newState) {
 }
 
 void EnemyDistancer::allAnimsPlay(const string& id) {
-    auto anims = associated.GetAllComponents(CType::Animation);
+    auto& anims = associated.GetAllComponents(CType::Animation);
     for (auto& anim : anims) {
-        ((Animation*)anim)->SoftPlay(id);
+        ((Animation*)anim.get())->SoftPlay(id);
     }
 }

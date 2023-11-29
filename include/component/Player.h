@@ -55,7 +55,7 @@ class Player : public Component {
     void Start();
     void Update(float dt);
     void Render(Vec2<Cart> camera);
-    bool Is(CType type);
+    inline CType Key() const { return CType::Player; }
     void NotifyCollision(GameObject& other);
     void RequestDelete();
 };

@@ -237,8 +237,6 @@ void Player::Render(Vec2<Cart> camera) {
     textComponent->Render(Vec2<Cart>{0, 0});
 }
 
-bool Player::Is(CType type) { return type == CType::Player; }
-
 void Player::NotifyCollision(GameObject& other) {
     auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
     if (bullet && bullet->TargetsPlayer()) {

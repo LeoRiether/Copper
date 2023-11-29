@@ -94,8 +94,6 @@ void RobotCan::Update(float) {}
 
 void RobotCan::Render(Vec2<Cart>) {}
 
-bool RobotCan::Is(CType type) { return type == CType::RobotCan; }
-
 void RobotCan::NotifyCollision(GameObject& other) {
     auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
     if (bullet && !bullet->TargetsPlayer()) {

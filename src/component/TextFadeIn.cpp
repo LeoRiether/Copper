@@ -30,5 +30,3 @@ void TextFadeIn::Update(float dt) {
 }
 
 void TextFadeIn::Render(Vec2<Cart>) {}
-
-bool TextFadeIn::Is(CType type) { return type == CType::TextFadeIn; }

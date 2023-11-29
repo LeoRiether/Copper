@@ -8,7 +8,7 @@ class KillTimeout : public Component {
 
     void Update(float dt);
 
-    inline bool Is(CType type) { return type == CType::KillTimeout; }
+    inline CType Key() const { return CType::KillTimeout; }
 
    private:
     float timeout;

@@ -24,5 +24,5 @@ class IsoCollider : public Component {
     IsoCollider* WithBase(Rect b);
     IsoCollider* WithTag(int t);
 
-    bool Is(CType type);
+    inline CType Key() const { return CType::IsoCollider; }
 };

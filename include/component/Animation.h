@@ -62,5 +62,5 @@ class Animation : public Component {
     inline void Render(Vec2<Cart>) {
         // it's the sprite that's rendered
     }
-    bool Is(CType type);
+    inline CType Key() const { return CType::Animation; }
 };

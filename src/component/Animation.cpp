@@ -94,5 +94,3 @@ void Animation::Update(float dt) {
     associated.box.w = frame.clipRect.w * sprite.Scale().x;
     associated.box.h = frame.clipRect.h * sprite.Scale().y;
 }
-
-bool Animation::Is(CType type) { return type == CType::Animation; }

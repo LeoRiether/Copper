@@ -33,5 +33,5 @@ class EnemyDistancer : public Component {
     EnemyDistancer* WithRobotCan(RobotCan* rc);
     void Update(float dt);
 
-    inline bool Is(CType type) { return type == CType::EnemyBehavior; }
+    inline CType Key() const { return CType::EnemyBehavior; }
 };

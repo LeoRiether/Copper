@@ -35,7 +35,7 @@ class Text : public Component {
 
     void Update(float dt);
     void Render(Vec2<Cart> camera);
-    bool Is(CType type);
+    inline CType Key() const { return CType::Text; }
 
     inline SDL_Color Color() { return color; }
 

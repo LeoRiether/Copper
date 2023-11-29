@@ -13,5 +13,5 @@ class TextBlinker : public Component {
 
     void Update(float dt);
     void Render(Vec2<Cart> camera);
-    bool Is(CType type);
+    inline CType Key() const { return CType::TextBlinker; }
 };

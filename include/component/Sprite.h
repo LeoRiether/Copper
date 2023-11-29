@@ -43,5 +43,5 @@ class Sprite : public Component {
     void Update(float dt);
     void Render(Vec2<Cart> camera);
     void RenderAt(float x, float y);
-    bool Is(CType type);
+    inline CType Key() const { return CType::Sprite; }
 };

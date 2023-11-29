@@ -53,8 +53,6 @@ void Collider::Render(Vec2<Cart> camera) {
     }
 }
 
-bool Collider::Is(CType type) { return type == CType::Collider; }
-
 Collider* Collider::WithBase(Rect b) {
     base = b;
     return this;

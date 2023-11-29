@@ -17,7 +17,7 @@ class Tileset : public Component {
 
     Tileset(GameObject& go, const string& filename, int columns, int rows);
 
-    inline bool Is(CType type) { return type == CType::Tileset; }
+    inline CType Key() const { return CType::Tileset; }
 
     struct Coords {
         int row;

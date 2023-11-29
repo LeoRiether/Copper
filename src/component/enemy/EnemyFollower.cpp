@@ -14,9 +14,9 @@ void EnemyFollower::Update(float dt) {
     if (!Player::player) return;
 
     auto allAnimsPlay = [&](const string& id, bool loops = true) {
-        auto anims = associated.GetAllComponents(CType::Animation);
+        auto& anims = associated.GetAllComponents(CType::Animation);
         for (auto& anim : anims) {
-            ((Animation*)anim)->SoftPlay(id, loops);
+            ((Animation*)anim.get())->SoftPlay(id, loops);
         }
     };
 

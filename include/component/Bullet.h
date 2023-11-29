@@ -21,7 +21,7 @@ class Bullet : public Component {
 
     void Update(float dt);
     void Render(Vec2<Cart> camera);
-    bool Is(CType type);
+    inline CType Key() const { return CType::Bullet; }
     void NotifyCollision(GameObject& other);
     inline int Damage() { return damage; }
     inline bool TargetsPlayer() { return targetsPlayer; }

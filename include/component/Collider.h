@@ -18,7 +18,7 @@ class Collider : public Component {
 
     void Update(float dt);
     void Render(Vec2<Cart> camera);
-    bool Is(CType type);
+    inline CType Key() const { return CType::Collider; }
 
     Collider* WithBase(Rect base);
     Collider* ScaleToSprite();

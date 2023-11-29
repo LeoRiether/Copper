@@ -19,5 +19,5 @@ class InfiniteBg : public Component {
     virtual void Update(float dt);
     virtual void Render(Vec2<Cart> camera);
 
-    virtual bool Is(CType type);
+    inline CType Key() const { return CType::InfiniteBg; }
 };

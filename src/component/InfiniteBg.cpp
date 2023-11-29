@@ -42,5 +42,3 @@ void InfiniteBg::Render(Vec2<Cart> camera) {
         }
     }
 }
-
-bool InfiniteBg::Is(CType type) { return type == CType::InfiniteBg; }
