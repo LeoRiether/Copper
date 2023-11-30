@@ -16,9 +16,10 @@ using std::weak_ptr;
 class StageState : public State {
    private:
     Music* music;
-    weak_ptr<GameObject> mainMap;
 
    public:
+    weak_ptr<GameObject> mainMap;
+
     ~StageState();
 
     void Start();

@@ -2,13 +2,16 @@
 
 #include <string>
 
+#include "Colors.h"
 #include "util.h"
 
 #define MODULE "FPSCounter"
 
 FPSCounter::FPSCounter(GameObject& go) : Component(go) {
-    text = new Text{go,  ASSETS "/font/AldotheApache.ttf", 30, Text::Blended,
-                    "?", SDL_Color{255, 128, 0, 255}};
+    text = new Text{go,  ASSETS "/font/AldotheApache.ttf",
+                    30,  Text::Blended,
+                    "?", colorFromHex("f4c36e")};
+    associated.renderLayer = 50;
 }
 
 void FPSCounter::Update(float dt) {

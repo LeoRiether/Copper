@@ -10,4 +10,6 @@ GameObject* MakeEscavadeira();
 GameObject* MakeBullet(Vec2<Cart> center, float angle);
 GameObject* MakeVigaB();
 GameObject* MakeExplosion1();
+GameObject* MakeStageTransitionDimmer_FadeIn();
+GameObject* MakeStageTransitionDimmer_FadeOut();
 vector<GameObject*> MakeMap1Colliders();

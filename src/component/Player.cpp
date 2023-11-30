@@ -11,7 +11,6 @@
 #include "Prefabs.h"
 #include "component/Animation.h"
 #include "component/Bullet.h"
-#include "component/Collider.h"
 #include "component/Sound.h"
 #include "component/Sprite.h"
 #include "component/Text.h"
@@ -84,6 +83,9 @@ void Player::ChangeState(State newState) {
             dashState.timeout.Restart();
             break;
         }
+        case StageTransition: {
+            break;
+        }
     }
 
     // Transition into new state
@@ -101,6 +103,11 @@ void Player::ChangeState(State newState) {
         }
         case Dashing: {
             dashState.timeSinceStart.Restart();
+            break;
+        }
+        case StageTransition: {
+            auto anim = (Animation*)associated.GetComponent(CType::Animation);
+            anim->SoftPlay(direction.toString());
             break;
         }
     }
@@ -165,6 +172,10 @@ void Player::UpdateState(float dt) {
             }
             break;
         }
+        case StageTransition: {
+            // TODO: check if stage is completely transitioned
+            break;
+        }
     }
 }
 
@@ -176,7 +187,8 @@ void Player::UpdatePosition(float dt) {
         case Idle: {
             break;
         }
-        case Walking: {
+        case Walking:
+        case StageTransition: {
             Vec2<Cart> speed = direction.toVec() * walkingSpeed * dt;
             associated.box.OffsetBy(speed);
             break;
@@ -221,20 +233,21 @@ void Player::Render(Vec2<Cart> camera) {
         }
     };
 
-    // Cartesian player position
-    static GameObject* text;
-    if (text == nullptr) {
-        text = new GameObject{};
-        text->AddComponent(new Text{*text, ASSETS "/font/Call me maybe.ttf", 30,
-                                    Text::Blended, "?",
-                                    SDL_Color{255, 255, 0, 255}});
-    }
-    auto textComponent = (Text*)text->GetComponent(CType::Text);
-    auto pos = associated.box.Foot().toCart();
-    textComponent->SetText(std::to_string(pos.x) + ", " +
-                           std::to_string(pos.y));
-    text->box.SetFoot({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 10});
-    textComponent->Render(Vec2<Cart>{0, 0});
+    auto drawPlayerPosition = [&]() {
+        static GameObject* text;
+        if (text == nullptr) {
+            text = new GameObject{};
+            text->AddComponent(new Text{*text, ASSETS "/font/Call me maybe.ttf",
+                                        30, Text::Blended, "?",
+                                        SDL_Color{255, 255, 0, 255}});
+        }
+        auto textComponent = (Text*)text->GetComponent(CType::Text);
+        auto pos = associated.box.Foot().toCart();
+        textComponent->SetText(std::to_string(pos.x) + ", " +
+                               std::to_string(pos.y));
+        text->box.SetFoot({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 10});
+        textComponent->Render(Vec2<Cart>{0, 0});
+    };
 }
 
 void Player::NotifyCollision(GameObject& other) {

@@ -9,4 +9,5 @@ inline constexpr int VTerrain = 1;
 inline constexpr int Player = 2;
 inline constexpr int Entity = 3;
 inline constexpr int Bullet = 4;
+inline constexpr int Trigger = 5;
 }  // namespace tag

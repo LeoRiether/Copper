@@ -26,4 +26,6 @@ enum class CType {
     KillTimeout,
     BulletShaker,
     FPSCounter,
+    StageTransitionDimmer,
+    EndOfStageTrigger,
 };

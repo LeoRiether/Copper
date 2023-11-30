@@ -18,7 +18,7 @@ class RobotCan : public Component {
     float stopDistance{300};
     Component* behavior;
 
-    Direction direction{Direction{NoneX, NoneY}};
+    Direction direction{Direction{NoneX, Down}};
 
     RobotCan(GameObject& associated);
 

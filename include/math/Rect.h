@@ -10,6 +10,10 @@ struct Rect {
         return p.x >= x && p.x <= x + w && p.y >= y && p.y <= y + h;
     }
 
+    inline bool CollidesWith(const Rect r) {
+        return !(x + w < r.x || x > r.x + r.w || y + h < r.y || y > r.y + r.h);
+    }
+
     inline Vec2<Cart> Center() const {
         return Vec2<Cart>{x + w / 2, y + h / 2};
     }

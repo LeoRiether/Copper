@@ -5,6 +5,7 @@
 #include <iostream>
 #include <sstream>
 #include <stack>
+#include <unordered_set>
 
 #include "component/IsoCollider.h"
 #include "component/Tileset.h"
@@ -99,6 +100,8 @@ Tilemap* Tilemap::WithColliders(Rect base) {
         return this;
     }
 
+    std::unordered_set<int> ignoredTileIds = {173};
+
     auto& sprite = tileset->sprite;
 
     const float tileWidth = tileset->TileWidth * tileset->sprite->Scale().x;
@@ -107,7 +110,7 @@ Tilemap* Tilemap::WithColliders(Rect base) {
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             int id = map[At(i, j)];
-            if (id < 0) continue;
+            if (id < 0 || ignoredTileIds.count(id)) continue;
 
             Vec2<Iso> pos = {(j + offset.j) * tileWidth,
                              (i + offset.i) * tileHeight / 2.0f};

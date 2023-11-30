@@ -25,20 +25,16 @@ class Player : public Component {
         Idle,
         Walking,
         Dashing,
+        StageTransition,
     };
 
    private:
     float& walkingSpeed{Consts::GetFloat("player.walking_speed")};
-    Direction direction;
+    Direction direction{NoneX, Down};
     DashState dashState;
 
     float flashTimeout{0};
     Vec2<Cart> knockbackVelocity{0, 0};
-
-    /* Transitions the state from the current to `newState` */
-    void ChangeState(State newState);
-    /* Only calls ChangeState if state != newState */
-    void MaybeChangeState(State newState);
 
     void UpdateState(float dt);
     void UpdatePosition(float dt);
@@ -58,4 +54,9 @@ class Player : public Component {
     inline CType Key() const { return CType::Player; }
     void NotifyCollision(GameObject& other);
     void RequestDelete();
+
+    /* Transitions the state from the current to `newState` */
+    void ChangeState(State newState);
+    /* Only calls ChangeState if state != newState */
+    void MaybeChangeState(State newState);
 };

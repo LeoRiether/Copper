@@ -79,7 +79,7 @@ void Game::Run() {
         auto loopend = SDL_GetTicks();
 
         if (loopend - loopstart > 5)
-            warn2("game loop took %dms!", loopend - loopstart);
+            warn2("game update took %dms!", loopend - loopstart);
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
         SDL_RenderClear(renderer);
@@ -146,6 +146,12 @@ void Game::UpdateStateStack() {
             stateStack.emplace_back(state);
             stateStack.back()->Start();
         }
+    }
+    if (!stateStackOperations.empty()) {
+        // Resources sometimes takes a long time to load, we
+        // should disconsider that time to calculate dt for
+        // the next frame
+        CalculateDeltaTime();
     }
     stateStackOperations.clear();
 }

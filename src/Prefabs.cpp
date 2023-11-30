@@ -11,6 +11,7 @@
 #include "component/KillTimeout.h"
 #include "component/Player.h"
 #include "component/Sprite.h"
+#include "component/StageTransitionDimmer.h"
 #include "component/enemy/EnemyDistancer.h"
 #include "component/enemy/EnemyFollower.h"
 #include "component/enemy/RobotCan.h"
@@ -23,6 +24,7 @@ using std::vector;
 
 GameObject* MakePlayer() {
     auto go = new GameObject{};
+    go->tags.set(tag::Player);
     go->AddComponent(new Player{*go});
     go->AddComponent((new IsoCollider{*go})
                          ->WithTag(tag::Player)
@@ -126,6 +128,19 @@ GameObject* MakeExplosion1() {
     go->AddComponent(animation);
     go->AddComponent(new KillTimeout{*go, 8 * 0.03});
     go->renderLayer = 2;
+    return go;
+}
+
+GameObject* MakeStageTransitionDimmer_FadeIn() {
+    auto go = new GameObject{};
+    go->AddComponent((new StageTransitionDimmer{*go, 0, 255, 0.7})
+                         ->WithEasing(StageTransitionDimmer::In));
+    return go;
+}
+GameObject* MakeStageTransitionDimmer_FadeOut() {
+    auto go = new GameObject{};
+    go->AddComponent((new StageTransitionDimmer{*go, 255, 0, 0.7})
+                         ->WithEasing(StageTransitionDimmer::Out));
     return go;
 }
 

@@ -68,3 +68,9 @@ inline float randf(float low, float high) {
     auto dist = std::uniform_real_distribution<float>(low, high);
     return dist(rng);
 }
+
+// [low, high]
+inline int randi(int low, int high) {
+    auto dist = std::uniform_int_distribution<int>(low, high);
+    return dist(rng);
+}

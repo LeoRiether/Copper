@@ -13,6 +13,7 @@
 
 vector<IsoCollider*> CollisionEngine::terrainColliders;
 vector<CollisionEngine::VT> CollisionEngine::vterrainColliders;
+vector<CollisionEngine::IG> CollisionEngine::triggers;
 GameObject* CollisionEngine::player;
 vector<GameObject*> CollisionEngine::entities;
 vector<GameObject*> CollisionEngine::bullets;
@@ -35,6 +36,9 @@ void CollisionEngine::Update(const vector<shared_ptr<GameObject>>& objects) {
             if (tags.test(tag::Terrain)) {
                 terrainColliders.emplace_back(isoCollider);
             }
+            if (tags.test(tag::Trigger)) {
+                triggers.push_back(IG{isoCollider, obj.get()});
+            }
         }
 
         auto& vterrains = obj->GetAllComponents(CType::Collider);
@@ -55,6 +59,7 @@ void CollisionEngine::Update(const vector<shared_ptr<GameObject>>& objects) {
 void CollisionEngine::ClearState() {
     terrainColliders.clear();
     vterrainColliders.clear();
+    triggers.clear();
     player = nullptr;
     entities.clear();
     bullets.clear();
@@ -148,6 +153,25 @@ void CollisionEngine::Solve() {
                                        bullet->angle, vterrain.go->angle)) {
                 vterrain.go->NotifyCollision(*bullet);
             }
+        }
+    }
+
+    // Trigger--Player/Entity
+    for (auto& trigger : triggers) {
+        auto& tbox = trigger.c->box;
+        auto process = [&](GameObject& entity) {
+            auto e = (IsoCollider*)entity.GetComponent(CType::IsoCollider);
+            if (!e) return;
+
+            if (e->box.CollidesWith(tbox)) {
+                trigger.go->NotifyCollision(entity);
+                entity.NotifyCollision(*trigger.go);
+            }
+        };
+
+        if (player) process(*player);
+        for (auto entity : entities) {
+            process(*entity);
         }
     }
 }
