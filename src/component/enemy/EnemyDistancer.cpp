@@ -9,10 +9,14 @@
 #include "component/enemy/RobotCan.h"
 #include "math/Vec2.h"
 #include "physics/CollisionEngine.h"
+#include "util.h"
 
 #define MODULE "EnemyDistancer"
 
-EnemyDistancer::EnemyDistancer(GameObject& go) : Component(go) {}
+EnemyDistancer::EnemyDistancer(GameObject& go) : Component(go) {
+    shotTimeout.Delay(randf(0, 1));
+    roamingTimeout.Delay(randf(0, 1));
+}
 
 EnemyDistancer* EnemyDistancer::WithRobotCan(RobotCan* rc) {
     self = rc;
@@ -91,6 +95,13 @@ void EnemyDistancer::switchState(State newState) {
 
         const auto dir = Direction::approxFromVec(delta);
         allAnimsPlay("fire1_" + dir.toString());
+
+        auto decay = [&](float x) { return -x * x / 20'000.0f + 100.0f; };
+        auto volume = decay(delta.norm());
+        if (volume > 0) {
+            associated.RequestAdd(
+                MakeOneOffAudio(ASSETS "/audio/Bullet_1.wav", round(volume)));
+        }
     };
 
     // Try to find an angle that doesn't immediately meet with a wall
@@ -119,11 +130,13 @@ void EnemyDistancer::switchState(State newState) {
             allAnimsPlay("walk_" + dir.toString());
 
             roamingTimeout.Restart();
+            roamingTimeout.Delay(randf(0, 0.5));
             break;
         }
         case Shooting: {
             shoot();
             shotTimeout.Restart();
+            shotTimeout.Delay(randf(0, 0.5));
             break;
         }
     }

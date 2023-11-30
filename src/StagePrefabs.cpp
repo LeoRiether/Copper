@@ -1,5 +1,8 @@
 #include "StagePrefabs.h"
 
+#include <functional>
+#include <unordered_map>
+
 #include "Consts.h"
 #include "Game.h"
 #include "GameObject.h"
@@ -16,32 +19,83 @@
 #define MODULE "StagePrefabs"
 
 struct __Component {
-    Vec2<Iso> offset;
     const char* id;
+    const char* description;
+    Vec2<Iso> offset;
 };
+
+using ObjectGenerator = std::function<vector<GameObject*>()>;
+using std::string;
 
 void MakeStage1(StageState& s, int stage) {
     constexpr float tilescale = 128.0f;
 
+    // Translates from "tiled coordinates" to cartesian screen coordinates
+    auto worldPos = [&](Vec2<Iso> isoPos) {
+        return ((isoPos + Vec2<Iso>{-2, -8}) * tilescale).toCart();
+    };
+
+    auto isoOff = [&](GameObject* go, int xaxis = 1, int yaxis = 0) {
+        auto collider = (IsoCollider*)go->GetComponent(CType::IsoCollider);
+        auto center = go->box.Center().toIso();
+        auto offset =
+            Vec2<Iso>{collider->base.w * xaxis, collider->base.h * yaxis};
+        go->box.SetCenter((center + offset).toCart());
+        return go;
+    };
+
     vector<__Component> components = {
-        {{165, 166}, "bottom of main map"},
-        {{132, 133}, "left of main map"},
-        {{160, 103}, "top of main map"},
-        {{113, 190}, "top left of building map"},
-        {{138, 177}, "top right of building map"},
-        {{267, 130}, "the one that has a lot of stuff in the center"},
+        {"main", "bottom of main map", {165, 166}},
+        {"main", "left of main map", {132, 133}},
+        {"main", "top of main map", {160, 103}},
+        {"building", "top left of building map", {113, 190}},
+        {"building", "top right of building map", {138, 177}},
+        {"center", "the one that has a lot of stuff in the center", {267, 130}},
+    };
+
+    std::unordered_map<string, ObjectGenerator> generators{
+        {"main",
+         [&]() {
+             GameObject* go;
+             return vector<GameObject*>{
+                 // Terrain
+                 MakeBarril()->WithFootAt(worldPos({149, 135})),
+                 MakeEscavadeira()->WithFootAt(worldPos({156, 148})),
+                 MakeEscavadeira()->WithFootAt(worldPos({160, 148})),
+                 MakeVigaB()->WithFootAt(worldPos({162, 133})),
+                 MakeVigaB()->WithFootAt(worldPos({162, 132})),
+                 MakeVigaB()->WithFootAt(worldPos({162, 131})),
+                 MakeVigaB()->WithFootAt(worldPos({162, 130})),
+
+                 // Enemies
+                 MakeEnemyFollower()->WithFootAt(worldPos({149, 127})),
+                 MakeEnemyDistancer()->WithFootAt(worldPos({150, 146})),
+                 MakeEnemyDistancer()->WithFootAt(worldPos({172, 145})),
+                 MakeEnemyDistancer()->WithFootAt(worldPos({170, 117})),
+                 MakeEnemyDistancer()->WithFootAt(worldPos({169, 117})),
+                 MakeEnemyDistancer()->WithFootAt(worldPos({170, 116})),
+                 MakeEnemyDistancer()->WithFootAt(worldPos({179, 124})),
+                 MakeEnemyDistancer()->WithFootAt(worldPos({178, 124})),
+                 MakeEnemyDistancer()->WithFootAt(worldPos({179, 123})),
+
+                 // End of stage triggers are kind of weird sorry
+                 (go = new GameObject{})
+                     ->AddComponent((new IsoCollider{*go})
+                                        ->WithTag(tag::Trigger)
+                                        ->WithBase({19628, 11948, 1162, 522}))
+                     ->AddComponent(new EndOfStageTrigger{*go}),
+             };
+         }},
     };
 
     if (stage < 0) {
         stage = randi(0, components.size() - 1);
     }
 
-    {
-        // Fix some coordinates
-        auto& c = components[stage];
-        c.offset = c.offset + Vec2<Iso>{-2, -8};
-        c.offset = c.offset * tilescale;
-    }
+    // Fix some coordinates
+    auto& c = components[stage];
+    c.offset = c.offset + Vec2<Iso>{-2, -8};
+    c.offset = c.offset * tilescale;
     auto base = components[stage].offset.toCart();
 
     //////////////////////////////
@@ -65,32 +119,11 @@ void MakeStage1(StageState& s, int stage) {
     s.GetCamera().Follow(player);
     s.RequestAddObject(player);
 
-    ///////////////////////////
-    //        Enemies        //
-    ///////////////////////////
-    s.RequestAddObject(MakeEnemyFollower()->WithFootAt({300, 400}));
-    s.RequestAddObject(MakeEnemyDistancer()->WithFootAt({500, 200}));
-
-    ///////////////////////////
-    //        Terrain        //
-    ///////////////////////////
-    auto isoOff = [&](GameObject* go, int xaxis = 1, int yaxis = 0) {
-        auto collider = (IsoCollider*)go->GetComponent(CType::IsoCollider);
-        auto center = go->box.Center().toIso();
-        auto offset =
-            Vec2<Iso>{collider->base.w * xaxis, collider->base.h * yaxis};
-        go->box.SetCenter((center + offset).toCart());
-        return go;
-    };
-
-    s.RequestAddObject(MakeBarril()->WithFootAt({-100, -300}));
-    s.RequestAddObject(MakeEscavadeira()->WithFootAt({-300, 200}));
-    s.RequestAddObject(isoOff(MakeEscavadeira()->WithFootAt({-300, 200})));
-
-    s.RequestAddObject(MakeVigaB()->WithFootAt({400, 100}));
-    s.RequestAddObject(isoOff(MakeVigaB()->WithFootAt({400, 100}), 0, 1));
-    s.RequestAddObject(isoOff(MakeVigaB()->WithFootAt({400, 100}), 0, 2));
-    s.RequestAddObject(isoOff(MakeVigaB()->WithFootAt({400, 100}), 0, 3));
+    if (generators.count(c.id)) {
+        for (auto go : generators[c.id]()) {
+            s.RequestAddObject(go);
+        }
+    }
 
     auto tilemapRenderLayer = -10;
     auto addTilemap = [&](const char* tileset, int tscols, int tsrows,
@@ -133,18 +166,6 @@ void MakeStage1(StageState& s, int stage) {
     addTilemap(ASSETS "/map/Ferrugem.png", 13, 19,
                ASSETS "/map/Salas copper V2_Copy of Group 2_Tile Layer 18.csv",
                {34, 39}, false, false);
-
-    /////////////////////////////////////////
-    //        End of Stage Triggers        //
-    /////////////////////////////////////////
-    {
-        auto go = new GameObject{};
-        go->AddComponent((new IsoCollider{*go})
-                             ->WithTag(tag::Trigger)
-                             ->WithBase({19628, 11948, 1162, 522}));
-        go->AddComponent(new EndOfStageTrigger{*go});
-        s.RequestAddObject(go);
-    }
 
     s.RequestAddObject(MakeStageTransitionDimmer_FadeIn());
 }

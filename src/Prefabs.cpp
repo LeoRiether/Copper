@@ -8,8 +8,10 @@
 #include "component/BulletShaker.h"
 #include "component/Collider.h"
 #include "component/IsoCollider.h"
+#include "component/KeepSoundAlive.h"
 #include "component/KillTimeout.h"
 #include "component/Player.h"
+#include "component/Sound.h"
 #include "component/Sprite.h"
 #include "component/StageTransitionDimmer.h"
 #include "component/enemy/EnemyDistancer.h"
@@ -142,6 +144,13 @@ GameObject* MakeStageTransitionDimmer_FadeOut() {
     go->AddComponent((new StageTransitionDimmer{*go, 255, 0, 0.7})
                          ->WithEasing(StageTransitionDimmer::Out));
     return go;
+}
+
+GameObject* MakeOneOffAudio(std::string file, int volume) {
+    auto go = new GameObject{};
+    auto sound = new Sound{*go, file, volume};
+    sound->Play();
+    return go->AddComponent(sound)->AddComponent(new KeepSoundAlive{*go});
 }
 
 vector<GameObject*> MakeMap1Colliders() {
