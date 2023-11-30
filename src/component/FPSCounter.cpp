@@ -17,6 +17,7 @@ FPSCounter::FPSCounter(GameObject& go) : Component(go) {
 void FPSCounter::Update(float dt) {
     sum -= dts[i];
     dts[i] = 1.0 / dt;
+    if (dt <= 0) dts[i] = 1000;
     sum += dts[i];
 
     i++;
