@@ -5,6 +5,7 @@
 #include <cmath>
 #include <string>
 
+#include "CType.h"
 #include "Game.h"
 #include "GameObject.h"
 #include "InputManager.h"
@@ -97,6 +98,7 @@ void Player::ChangeState(State newState) {
             break;
         }
         case Walking: {
+            stepsTimer.Restart();
             auto anim = (Animation*)associated.GetComponent(CType::Animation);
             anim->SoftPlay(direction.toString());
             break;
@@ -106,6 +108,7 @@ void Player::ChangeState(State newState) {
             break;
         }
         case StageTransition: {
+            stepsTimer.Restart();
             auto anim = (Animation*)associated.GetComponent(CType::Animation);
             anim->SoftPlay(direction.toString());
             break;
@@ -140,6 +143,21 @@ void Player::UpdateState(float dt) {
         }
     };
 
+    auto makeStepSound = [&]() {
+        stepsTimer.Update(dt);
+        if (stepsTimer.Get() >= stepsTiming) {
+            stepsTimer.Restart();
+            stepsTimer.Delay(0.1);
+
+            auto sound = (Sound*)associated.GetComponent(CType::Sound);
+            if (!sound) {
+                warn("no associated Sound?");
+                return;
+            }
+            sound->Play();
+        }
+    };
+
     switch (state) {
         case Idle: {
             auto currentDirection = Direction::fromInput();
@@ -163,6 +181,7 @@ void Player::UpdateState(float dt) {
                 direction = currentDirection;
             }
             checkDashEvent();
+            makeStepSound();
             break;
         }
         case Dashing: {
@@ -173,7 +192,7 @@ void Player::UpdateState(float dt) {
             break;
         }
         case StageTransition: {
-            // TODO: check if stage is completely transitioned
+            makeStepSound();
             break;
         }
     }

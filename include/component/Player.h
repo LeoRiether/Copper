@@ -30,8 +30,11 @@ class Player : public Component {
 
    private:
     float& walkingSpeed{Consts::GetFloat("player.walking_speed")};
+    float& stepsTiming{Consts::GetFloat("player.steps_timing")};
+
     Direction direction{NoneX, Down};
     DashState dashState;
+    Timer stepsTimer{};
 
     float flashTimeout{0};
     Vec2<Cart> knockbackVelocity{0, 0};

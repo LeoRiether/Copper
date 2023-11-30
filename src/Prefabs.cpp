@@ -35,6 +35,7 @@ GameObject* MakePlayer() {
     go->AddComponent((new Collider{*go})
                          ->WithBase({75.5414, 104.845, 127.273, 231.782})
                          ->ScaleToSprite());
+    go->AddComponent((new Sound{*go, ASSETS "/audio/Gravel - Run.wav", 90}));
     return go;
 }
 
