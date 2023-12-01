@@ -1,12 +1,12 @@
 #include "component/Tilemap.h"
 
-#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <stack>
 #include <unordered_set>
 
+#include "Game.h"
 #include "component/IsoCollider.h"
 #include "component/Tileset.h"
 #include "util.h"
@@ -27,9 +27,15 @@ void Tilemap::Render(Vec2<Cart> camera) {
     const float tileWidth = tileset->TileWidth * tileset->sprite->Scale().x;
     const float tileHeight = tileset->TileHeight * tileset->sprite->Scale().y;
 
-    //  PERF: don't render tiles out of sight
-    for (int i = 0; i < height; i++) {
-        for (int j = 0; j < width; j++) {
+    // ~Culling~
+    const Vec2<Cart> screenCenter{SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
+    const Vec2<Iso> P =
+        (screenCenter + camera - associated.box.TopLeft()).toIso();
+    int mid_j = P.x / tileWidth - offset.j;
+    int mid_i = P.y * 2.0f / tileHeight - offset.i;
+
+    for (int i = mid_i - 14; i < mid_i + 11 && i < height; i++) {
+        for (int j = mid_j - 15; j < mid_j + 10 && j < width; j++) {
             int id = map[At(i, j)];
             if (id < 0) continue;
 
