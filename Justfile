@@ -30,6 +30,7 @@ publish-docs:
 publish-linux:
     rm -rf bin/
     rm -rf copper-linux
+    rm copper-linux.zip
     premake5 gmake2
     make config=release
 
@@ -42,6 +43,7 @@ publish-linux:
 publish-win:
     rm -r bin/
     rm -rf copper-windows
+    rm copper-windows.zip
     premake5 --file=./premake5-windows.lua gmake2 
     python3 ./scripts/lib64.py
     make config=release

@@ -154,11 +154,11 @@ GameObject* MakeVigaB() {
 GameObject* MakeExplosion1() {
     auto go = new GameObject{};
     auto sprite = new Sprite{*go, ASSETS "/img/FoozleExplosion.png"};
-    auto animation = Animation::horizontal(*go, *sprite, 7, 0.03);
+    auto animation = Animation::horizontal(*go, *sprite, 7, 0.06);
     animation->Play("default", false);  // kickstart box
     go->AddComponent(sprite);
     go->AddComponent(animation);
-    go->AddComponent(new KillTimeout{*go, 8 * 0.03});
+    go->AddComponent(new KillTimeout{*go, 8 * 0.09});
     go->renderLayer = 2;
     return go;
 }
@@ -166,11 +166,11 @@ GameObject* MakeExplosion1() {
 GameObject* MakeExplosion3() {
     auto go = new GameObject{};
     auto sprite = new Sprite{*go, ASSETS "/img/explosion-3.png"};
-    auto animation = Animation::horizontal(*go, *sprite, 10, 0.04);
+    auto animation = Animation::horizontal(*go, *sprite, 10, 0.09);
     animation->Play("default", false);  // kickstart box
     go->AddComponent(sprite);
     go->AddComponent(animation);
-    go->AddComponent(new KillTimeout{*go, 10 * 0.04});
+    go->AddComponent(new KillTimeout{*go, 10 * 0.09});
     go->renderLayer = 2;
     return go;
 }

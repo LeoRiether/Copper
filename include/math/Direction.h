@@ -10,8 +10,8 @@ using std::vector;
 // it's a normalizing factor in toVec() :)
 constexpr float SQRT_5 = 2.23606797749979f;
 
-enum DirectionX : int8_t { NoneX = 0, Left = -1, Right = 1 };
-enum DirectionY : int8_t { NoneY = 0, Up = -1, Down = 1 };
+enum DirectionX { NoneX = 0, Left = -1, Right = 1 };
+enum DirectionY { NoneY = 0, Up = -1, Down = 1 };
 
 struct Direction {
     DirectionX x;
