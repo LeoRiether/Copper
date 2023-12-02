@@ -1,7 +1,6 @@
 #include "component/Sound.h"
 
 #include "Resources.h"
-#include "SDL_mixer.h"
 
 #define MODULE "Sound"
 

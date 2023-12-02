@@ -7,7 +7,6 @@
 #include "Component.h"
 #include "GameObject.h"
 #include "SDL_include.h"
-#include "SDL_mixer.h"
 #include "wrap/SoundChunk.h"
 
 using std::shared_ptr;
