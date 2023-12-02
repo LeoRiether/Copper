@@ -107,10 +107,6 @@ void MakeStage1(StageState& s, int stage) {
     // bgGO->renderLayer = -2;
     // RequestAddObject(bgGO);
 
-    // for (auto go : MakeMap1Colliders()) {
-    //     RequestAddObject(go);
-    // }
-
     //////////////////////////
     //        Player        //
     //////////////////////////
@@ -118,6 +114,8 @@ void MakeStage1(StageState& s, int stage) {
     s.GetCamera().SetPos(player->box.Center());
     s.GetCamera().Follow(player);
     s.RequestAddObject(player);
+    s.RequestAddObject(
+        MakeCompanion()->WithFootAt(base - Vec2<Cart>{-100, -100}));
 
     if (generators.count(c.id)) {
         for (auto go : generators[c.id]()) {

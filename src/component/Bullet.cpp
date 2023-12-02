@@ -32,3 +32,8 @@ void Bullet::NotifyCollision(GameObject& other) {
         (other.GetComponent(CType::Alien) || other.GetComponent(CType::Minion)))
         associated.RequestDelete();
 }
+
+Bullet* Bullet::WithTargetsPlayer(bool tp) {
+    targetsPlayer = tp;
+    return this;
+}

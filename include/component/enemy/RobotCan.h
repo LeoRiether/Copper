@@ -18,7 +18,7 @@ class RobotCan : public Component {
     float stopDistance{300};
     Component* behavior;
 
-    Direction direction{Direction{NoneX, Down}};
+    Direction direction{NoneX, Down};
 
     RobotCan(GameObject& associated);
 
@@ -29,4 +29,12 @@ class RobotCan : public Component {
     void NotifyCollision(GameObject&);
 
     RobotCan* WithStopDistance(float value);
+    RobotCan* WithHp(int hp);
+
+    void Die();
+
+   private:
+    Vec2<Cart> knockbackVelocity{0, 0};
+    float flashTimeout{0};
+    int hp{100};
 };

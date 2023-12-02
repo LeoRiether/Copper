@@ -96,12 +96,13 @@ void EnemyDistancer::switchState(State newState) {
         const auto dir = Direction::approxFromVec(delta);
         allAnimsPlay("fire1_" + dir.toString());
 
-        auto decay = [&](float x) { return -x * x / 20'000.0f + 100.0f; };
-        auto volume = decay(delta.norm());
-        if (volume > 0) {
-            associated.RequestAdd(
-                MakeOneOffAudio(ASSETS "/audio/Bullet_1.wav", round(volume)));
-        }
+        // auto decay = [&](float x) { return -x * x / 20'000.0f + 100.0f; };
+        // auto volume = decay(delta.norm());
+        // if (volume > 0) {
+        //     associated.RequestAdd(
+        //         MakeOneOffAudio(ASSETS "/audio/Bullet_1.wav",
+        //         round(volume)));
+        // }
     };
 
     // Try to find an angle that doesn't immediately meet with a wall

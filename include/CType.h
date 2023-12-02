@@ -28,4 +28,5 @@ enum class CType {
     FPSCounter,
     StageTransitionDimmer,
     EndOfStageTrigger,
+    Companion,
 };

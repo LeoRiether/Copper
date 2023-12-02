@@ -144,6 +144,7 @@ void Player::UpdateState(float dt) {
     };
 
     auto makeStepSound = [&]() {
+        return;
         stepsTimer.Update(dt);
         if (stepsTimer.Get() >= stepsTiming) {
             stepsTimer.Restart();

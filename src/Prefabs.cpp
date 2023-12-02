@@ -7,6 +7,7 @@
 #include "component/Bullet.h"
 #include "component/BulletShaker.h"
 #include "component/Collider.h"
+#include "component/Companion.h"
 #include "component/IsoCollider.h"
 #include "component/KeepSoundAlive.h"
 #include "component/KillTimeout.h"
@@ -36,6 +37,19 @@ GameObject* MakePlayer() {
                          ->WithBase({75.5414, 104.845, 127.273, 231.782})
                          ->ScaleToSprite());
     go->AddComponent((new Sound{*go, ASSETS "/audio/Gravel - Run.wav", 90}));
+    return go;
+}
+
+GameObject* MakeCompanion() {
+    auto go = new GameObject{};
+    go->AddComponent(new RobotCan{*go});
+    go->AddComponent(new Companion{*go});
+    go->AddComponent(
+        (new Collider{*go})->WithBase({18.8157, 3.4533, 32.6644, 76.6754}));
+    go->AddComponent((new IsoCollider{*go})
+                         ->WithTag(tag::Entity)
+                         ->WithBase({147.784, 76.4568, 51.9192, 52.6069}));
+    go->tags.set(tag::Entity);
     return go;
 }
 
@@ -113,6 +127,21 @@ GameObject* MakeBullet(Vec2<Cart> center, float angle) {
     return go;
 }
 
+GameObject* MakePlayerBullet(Vec2<Cart> center, float angle) {
+    // Code reuse? Where we're going, we don't need code reuse
+    auto go = new GameObject{};
+    auto sprite = new Sprite{*go, ASSETS "/img/yellow-laser-bullet.png"};
+    go->AddComponent(new Bullet{*go, 700, angle, 20, 4000, false});
+    go->AddComponent(sprite);
+    go->AddComponent(
+        (new Collider{*go})->WithBase(Rect{46.555, 55.1247, 28.3535, 11.9118}));
+    go->box =
+        Rect{0, 0, (float)sprite->SheetWidth(), (float)sprite->SheetHeight()};
+    go->box.SetCenter(center);
+    go->tags.set(tag::Bullet);
+    return go;
+}
+
 GameObject* MakeVigaB() {
     auto go = new GameObject{};
     go->AddComponent(new Sprite{*go, ASSETS "/img/Viga_B.png"});
@@ -130,6 +159,30 @@ GameObject* MakeExplosion1() {
     go->AddComponent(sprite);
     go->AddComponent(animation);
     go->AddComponent(new KillTimeout{*go, 8 * 0.03});
+    go->renderLayer = 2;
+    return go;
+}
+
+GameObject* MakeExplosion3() {
+    auto go = new GameObject{};
+    auto sprite = new Sprite{*go, ASSETS "/img/explosion-3.png"};
+    auto animation = Animation::horizontal(*go, *sprite, 10, 0.04);
+    animation->Play("default", false);  // kickstart box
+    go->AddComponent(sprite);
+    go->AddComponent(animation);
+    go->AddComponent(new KillTimeout{*go, 10 * 0.04});
+    go->renderLayer = 2;
+    return go;
+}
+
+GameObject* MakeExplosion4() {
+    auto go = new GameObject{};
+    auto sprite = new Sprite{*go, ASSETS "/img/explosion-4.png"};
+    auto animation = Animation::horizontal(*go, *sprite, 12, 0.09);
+    animation->Play("default", false);  // kickstart box
+    go->AddComponent(sprite);
+    go->AddComponent(animation);
+    go->AddComponent(new KillTimeout{*go, 12 * 0.09});
     go->renderLayer = 2;
     return go;
 }
