@@ -20,6 +20,11 @@ class StageState : public State {
    public:
     weak_ptr<GameObject> mainMap;
 
+    /** Counts number of GameObjects where go->tag.test(tag::Enemy) is true.
+     * It's automatically updated when RequestAdds and RequestDeletes are
+     * processed  */
+    int EnemyCount{0};
+
     ~StageState();
 
     void Start();

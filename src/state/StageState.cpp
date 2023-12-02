@@ -14,6 +14,7 @@
 #include "component/Tilemap.h"
 #include "component/Tileset.h"
 #include "physics/CollisionEngine.h"
+#include "physics/Tags.h"
 #include "util.h"
 
 #define MODULE "StageState"
@@ -92,6 +93,9 @@ void StageState::Update(float dt) {
     for (size_t i = 0; i < objects.size();) {
         if (objects[i]->IsDead()) {
             if (camera->Focus() == objects[i].get()) camera->Unfollow();
+
+            if (objects[i]->tags.test(tag::Enemy)) EnemyCount--;
+
             std::swap(objects[i], objects.back());
             objects.pop_back();
         } else {

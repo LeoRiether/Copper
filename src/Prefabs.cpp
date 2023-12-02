@@ -64,6 +64,7 @@ GameObject* MakeEnemyFollower() {
                          ->WithTag(tag::Entity)
                          ->WithBase({147.784, 76.4568, 51.9192, 52.6069}));
     go->tags.set(tag::Entity);
+    go->tags.set(tag::Enemy);
     return go;
 }
 
@@ -78,6 +79,7 @@ GameObject* MakeEnemyDistancer() {
                          ->WithTag(tag::Entity)
                          ->WithBase({147.784, 76.4568, 51.9192, 52.6069}));
     go->tags.set(tag::Entity);
+    go->tags.set(tag::Enemy);
     return go;
 }
 

@@ -22,6 +22,12 @@ void EndOfStageTrigger::Update(float dt) {
 }
 
 void EndOfStageTrigger::NotifyCollision(GameObject& other) {
+    // Only actually triggers if there are no enemies in the scene
+    auto& state = (StageState&)Game::Instance().GetState();
+    if (state.EnemyCount > 0) {
+        return;
+    }
+
     if (other.tags.test(tag::Player) && !active) {
         // Start countdown!
         active = true;

@@ -115,6 +115,7 @@ void RobotCan::NotifyCollision(GameObject& other) {
             hp -= 25;
             if (hp <= 0) {
                 Die();
+                other.RequestDelete();
                 return;
             }
         }

@@ -120,6 +120,8 @@ void MakeStage1(StageState& s, int stage) {
     if (generators.count(c.id)) {
         for (auto go : generators[c.id]()) {
             s.RequestAddObject(go);
+
+            if (go->tags.test(tag::Enemy)) s.EnemyCount++;
         }
     }
 
