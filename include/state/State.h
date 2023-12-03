@@ -8,6 +8,7 @@
 #include "Music.h"
 #include "SDL_include.h"
 #include "component/Sprite.h"
+#include "component/Tilemap.h"
 
 using std::shared_ptr;
 using std::unique_ptr;
@@ -28,8 +29,14 @@ class State {
     virtual void UpdateArray(float dt);
     virtual void RenderArray();
 
+    struct SortableObject {
+        enum { Object, Tile } tag;
+        GameObject* go;
+        Tilemap::TileToRender tile;
+    };
+
     /* Sorts objects by some notion of depth */
-    void ZSort();
+    vector<SortableObject> ZSort();
 
    public:
     State();

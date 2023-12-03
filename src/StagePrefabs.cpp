@@ -134,7 +134,7 @@ void MakeStage1(StageState& s, int stage) {
                              ->WithScale(tilescale / 256.0f));
         auto tilemap = (new Tilemap{*go, csv})->WithOffset(offset);
         if (colliders)
-            tilemap->WithColliders({883.55, 637.564, 248.128, 251.03});
+            tilemap->WithColliders({894.404, 662.715, 236.788, 236.788});
         go->AddComponent(tilemap);
         go->renderLayer = tilemapRenderLayer++;
         // go->box.SetTopLeft((base * -scale).toCart());
@@ -150,6 +150,7 @@ void MakeStage1(StageState& s, int stage) {
     addTilemap(ASSETS "/map/Padrão.png", 13, 19,
                ASSETS "/map/Salas copper V2_Copy of Group 2_FLOOR.csv", {0, 0},
                false, true);
+    tilemapRenderLayer = 0;
     addTilemap(ASSETS "/map/Ferrugem.png", 13, 19,
                ASSETS "/map/Salas copper V2_Copy of Group 2_Tile Layer 11.csv",
                {65, -2}, true, false);
