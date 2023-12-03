@@ -17,7 +17,7 @@ class StageTransitionDimmer : public Component {
     void Render(Vec2<Cart>);
 
    private:
-    float from, to, duration;
+    float from{0}, to{0}, duration{0};
     Easing easing{In};
 
     float now{0};
