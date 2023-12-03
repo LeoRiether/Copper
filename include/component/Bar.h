@@ -19,14 +19,13 @@ private:
   int barState;            // estado da barra (0 a maxBar)
   int space;               // espacamento entre barras
   Vec2<Cart> barDimension; // (w, h)
-  float teste;
 
 public:
   Bar(GameObject &associated, string file, int maxBar, Vec2<Cart> barDimension,
       int space);
   int GetBarState();
   void SetBarState(int barState);
-  void Update(float dt);
-  void Render(Vec2<Cart> camera){};
-  bool Is(CType type);
+  void Update(float dt){};
+  inline void Render(Vec2<Cart>) {}
+  inline CType Key() const { return CType::Bar; }
 };
