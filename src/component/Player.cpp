@@ -124,11 +124,20 @@ void Player::Update(float dt) {
     UpdateState(dt);
     UpdatePosition(dt);
 
+    // Flash reset
     flashTimeout -= dt;
     if (flashTimeout <= 0) {
         flashTimeout = INFINITY;  // won't trigger this part again very soon
         auto sprite = (Sprite*)associated.GetComponent(CType::Sprite);
         sprite->WithFlash(false);
+    }
+
+    // Leave trail
+    trailTimer.Update(dt);
+    if (trailTimer.Get() >= 0.3) {
+        trailTimer.Restart();
+        if (Trail.size() >= 20) Trail.erase(Trail.begin());
+        Trail.push_back(associated.box.Center().toIso());
     }
 }
 
@@ -268,6 +277,19 @@ void Player::Render(Vec2<Cart> camera) {
         text->box.SetFoot({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 10});
         textComponent->Render(Vec2<Cart>{0, 0});
     };
+
+    // Draw trail
+    static int& showTrail = Consts::GetInt("debug.show_trail");
+    if (showTrail && !Trail.empty()) {
+        SDL_FRect rects[Trail.size()];
+        for (int i = 0; i < (int)Trail.size(); i++) {
+            auto pos = Trail[i].toCart() - camera;
+            rects[i] = {pos.x - 5, pos.y - 5, 10, 10};
+        }
+        auto renderer = Game::Instance().Renderer();
+        SDL_SetRenderDrawColor(renderer, 209, 32, 229, 128);
+        SDL_RenderFillRectsF(renderer, rects, Trail.size());
+    }
 }
 
 void Player::NotifyCollision(GameObject& other) {

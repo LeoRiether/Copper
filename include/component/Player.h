@@ -28,6 +28,8 @@ class Player : public Component {
         StageTransition,
     };
 
+    vector<Vec2<Iso>> Trail{};
+
    private:
     float& walkingSpeed{Consts::GetFloat("player.walking_speed")};
     float& stepsTiming{Consts::GetFloat("player.steps_timing")};
@@ -35,6 +37,7 @@ class Player : public Component {
     Direction direction{NoneX, Down};
     DashState dashState;
     Timer stepsTimer{};
+    Timer trailTimer{};
 
     float flashTimeout{0};
     Vec2<Cart> knockbackVelocity{0, 0};
