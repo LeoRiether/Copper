@@ -16,6 +16,7 @@ class CollisionEngine {
     static void Update(const vector<shared_ptr<GameObject>>& objects);
     static void Solve();
     static bool TerrainContains(const Vec2<Iso> point);
+    static bool TerrainContainsSegment(const Vec2<Iso> A, const Vec2<Iso> B);
 
    private:
     struct VT {

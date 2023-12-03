@@ -3,6 +3,7 @@
 #include "CType.h"
 #include "component/Collider.h"
 #include "component/Player.h"
+#include "math/CohenSutherland.h"
 #include "math/Vec2.h"
 #include "physics/Collision.h"
 #include "physics/IsoSolver.h"
@@ -179,6 +180,17 @@ void CollisionEngine::Solve() {
 bool CollisionEngine::TerrainContains(const Vec2<Iso> point) {
     for (auto terrain : terrainColliders) {
         if (terrain->box.Contains(point)) return true;
+    }
+    return false;
+}
+
+// PERF: sort colliders so we don't have to look at so many of them?
+bool CollisionEngine::TerrainContainsSegment(const Vec2<Iso> A,
+                                             const Vec2<Iso> B) {
+    const auto At = A.transmute<Cart>();
+    const auto Bt = B.transmute<Cart>();
+    for (auto terrain : terrainColliders) {
+        if (cohen_sutherland::LineClip(At, Bt, terrain->box)) return true;
     }
     return false;
 }
