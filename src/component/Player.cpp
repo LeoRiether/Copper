@@ -4,6 +4,7 @@
 
 #include <cmath>
 #include <string>
+#include <system_error>
 
 #include "CType.h"
 #include "Game.h"
@@ -16,6 +17,7 @@
 #include "component/Sprite.h"
 #include "component/Text.h"
 #include "math/Direction.h"
+#include "physics/CollisionEngine.h"
 #include "util.h"
 
 #define MODULE "Player"
@@ -137,7 +139,10 @@ void Player::Update(float dt) {
     if (trailTimer.Get() >= 0.3) {
         trailTimer.Restart();
         if (Trail.size() >= 20) Trail.erase(Trail.begin());
-        Trail.push_back(associated.box.Center().toIso());
+
+        auto iso = (IsoCollider*)associated.GetComponent(CType::IsoCollider);
+        if (!iso) fail("player without IsoCollider...");
+        Trail.push_back(iso->box.Center().transmute<Iso>());
     }
 }
 
@@ -322,4 +327,25 @@ void Player::NotifyCollision(GameObject& other) {
 void Player::RequestDelete() {
     associated.RequestDelete();
     Player::player = nullptr;
+}
+
+std::optional<Vec2<Iso>> Player::LookForMe(Rect iv) {
+    auto ok = [&](Vec2<Iso> me) {
+        auto c = [&](Vec2<Cart> p) {
+            auto pi = p.transmute<Iso>();
+            return !CollisionEngine::TerrainContainsSegment(pi, me);
+        };
+        return c(iv.Center());
+        // return c(iv.TopLeft()) && c(iv.TopRight()) && c(iv.BotLeft()) &&
+        //        c(iv.BotRight());
+    };
+
+    if (ok(associated.box.Center().toIso()))
+        return associated.box.Center().toIso();
+
+    for (int i = (int)Trail.size() - 1; i >= 0; i--) {
+        if (ok(Trail[i])) return Trail[i];
+    }
+
+    return {};
 }

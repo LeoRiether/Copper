@@ -24,10 +24,6 @@
     { fprintf(stderr, GREEN MODULE ":: " RESET fmt "\n"); }
 #define info2(fmt, ...) \
     { fprintf(stderr, GREEN MODULE ":: " RESET fmt "\n", __VA_ARGS__); }
-#define trace(fmt) \
-    { fprintf(stderr, WHITE MODULE ":: " RESET fmt "\n"); }
-#define trace2(fmt, ...) \
-    { fprintf(stderr, WHITE MODULE ":: " RESET fmt "\n", __VA_ARGS__); }
 #define debug(fmt) \
     { fprintf(stderr, CYAN MODULE ":: " RESET fmt "\n"); }
 #define debug2(fmt, ...) \

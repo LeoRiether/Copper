@@ -190,7 +190,15 @@ bool CollisionEngine::TerrainContainsSegment(const Vec2<Iso> A,
     const auto At = A.transmute<Cart>();
     const auto Bt = B.transmute<Cart>();
     for (auto terrain : terrainColliders) {
-        if (cohen_sutherland::LineClip(At, Bt, terrain->box)) return true;
+        // expand box so enemies don't get stuck on corners as often
+        auto box = terrain->box;
+        box.x -= 30;
+        box.y -= 30;
+        box.w += 60;
+        box.h += 60;
+        if (cohen_sutherland::LineClip(At, Bt, box)) {
+            return true;
+        }
     }
     return false;
 }

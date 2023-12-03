@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 
 #include "CType.h"
 #include "Component.h"
@@ -60,6 +61,9 @@ class Player : public Component {
     inline CType Key() const { return CType::Player; }
     void NotifyCollision(GameObject& other);
     void RequestDelete();
+
+    /* Finds the player if in view, or a point in the trail that's visible */
+    std::optional<Vec2<Iso>> LookForMe(Rect isoViewpoint);
 
     /* Transitions the state from the current to `newState` */
     void ChangeState(State newState);

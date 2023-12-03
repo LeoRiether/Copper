@@ -35,7 +35,9 @@ struct Vec2 {
 
     inline float norm2() const { return (double)x * x + (double)y * y; }
     inline float norm() const { return sqrt((double)x * x + (double)y * y); }
-    inline Vec2 normalize() const { return *this / norm(); }
+    inline Vec2 normalize() const {
+        return x == 0 && y == 0 ? Vec2{0, 0} : (*this / norm());
+    }
 
     inline float angle() const { return std::atan2(y, x); }
 

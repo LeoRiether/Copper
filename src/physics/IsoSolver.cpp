@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+#include "util.h"
+
 #define MODULE "IsoSolver"
 
 Vec2<Cart> IsoSolver::Solve(const IsoCollider& collider, Vec2<Cart> point,

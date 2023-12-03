@@ -3,6 +3,7 @@
 #include "InputManager.h"
 #include "Prefabs.h"
 #include "component/Animation.h"
+#include "component/IsoCollider.h"
 #include "component/Player.h"
 #include "component/enemy/RobotCan.h"
 #include "math/Direction.h"
@@ -24,13 +25,20 @@ void Companion::Update(float dt) {
 }
 
 void Companion::updatePosition(float dt) {
-    auto playerPos = Player::player->Associated().box.Foot();
-    auto selfPos = associated.box.Foot();
-    auto distVec = playerPos - selfPos;
+    auto iso = (IsoCollider*)associated.GetComponent(CType::IsoCollider);
+    if (!iso) fail("companion without IsoCollider...");
+    auto selfPos = iso->box.Center().transmute<Iso>();
+    auto maybePlayerPos = Player::player->LookForMe(iso->box);
+    auto playerPos = maybePlayerPos.value_or(selfPos);
+    auto distVec = (playerPos - selfPos).toCart();
+
+    // Distance to the real player, not some trail
+    auto realPlayerPos = Player::player->associated.box.Center();
+    auto realDistVec = realPlayerPos - selfPos.toCart();
 
     // If too far away, just move companion close really fast
-    if (distVec.norm2() >= 40000) {
-        associated.box.OffsetBy(distVec * 0.01);
+    if (realDistVec.norm2() >= 40000) {
+        associated.box.OffsetBy(realDistVec * 0.01);
     }
 
     auto rc = (RobotCan*)associated.GetComponent(CType::RobotCan);
@@ -39,7 +47,7 @@ void Companion::updatePosition(float dt) {
         return;
     }
 
-    if (distVec.norm() > stopDistance) {
+    if (realDistVec.norm() > stopDistance) {
         rc->direction = Direction::approxFromVec(distVec);
         baseAnimPlay("walk_" + rc->direction.toString());
         rc->associated.box.OffsetBy(distVec.normalize() * speed * dt);
