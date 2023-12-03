@@ -4,13 +4,11 @@ bear:
     bear -- make
 
 run *args:
-    just format
     premake5 gmake2
     make
     ./copper_debug {{args}}
 
 release *args:
-    just format
     premake5 gmake2
     make config=release
     ./copper_release {{args}}
