@@ -36,11 +36,6 @@ void Companion::updatePosition(float dt) {
     auto realPlayerPos = Player::player->associated.box.Center();
     auto realDistVec = realPlayerPos - selfPos.toCart();
 
-    // If too far away, just move companion close really fast
-    if (realDistVec.norm2() >= 40000) {
-        associated.box.OffsetBy(realDistVec * 0.01);
-    }
-
     auto rc = (RobotCan*)associated.GetComponent(CType::RobotCan);
     if (!rc) {
         warn("no associated RobotCan!");
@@ -56,6 +51,11 @@ void Companion::updatePosition(float dt) {
         walkingToIdleTimeout.Update(dt);
         if (walkingToIdleTimeout.Get() >= 0.1)
             baseAnimPlay("idle_" + rc->direction.toString());
+    }
+
+    // If too far away, just move companion close really fast
+    if (realDistVec.norm2() >= 40000) {
+        associated.box.OffsetBy(realDistVec * 0.01);
     }
 }
 

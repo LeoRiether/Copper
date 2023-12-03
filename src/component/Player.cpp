@@ -136,7 +136,7 @@ void Player::Update(float dt) {
 
     // Leave trail
     trailTimer.Update(dt);
-    if (trailTimer.Get() >= 0.3) {
+    if (trailTimer.Get() >= 0.25) {
         trailTimer.Restart();
         if (Trail.size() >= 20) Trail.erase(Trail.begin());
 
