@@ -97,9 +97,9 @@ void CollisionEngine::Solve() {
             }
         }
 
-        log2("Processed %d terrains out of %d (%g%%)", perfCountTerrains,
-             (int)terrainColliders.size(),
-             double(perfCountTerrains) / terrainColliders.size());
+        // log2("Processed %d terrains out of %d (%g%%)", perfCountTerrains,
+        //      (int)terrainColliders.size(),
+        //      double(perfCountTerrains) / terrainColliders.size());
     };
 
     // Player--Terrain collisions

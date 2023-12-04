@@ -4,10 +4,12 @@
 #include <string>
 
 #include "CType.h"
+#include "Consts.h"
 #include "Game.h"
 #include "GameObject.h"
 #include "InputManager.h"
 #include "Prefabs.h"
+#include "SDL_render.h"
 #include "component/Animation.h"
 #include "component/Bullet.h"
 #include "component/Sound.h"
@@ -279,6 +281,20 @@ void Player::Render(Vec2<Cart> camera) {
         text->box.SetFoot({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 10});
         textComponent->Render(Vec2<Cart>{0, 0});
     };
+
+    auto drawChunk = [&]() {
+        auto iso = (IsoCollider*)associated.GetComponent(CType::IsoCollider);
+        if (!iso) fail("no IsoCollider");
+        auto pos = iso->box.Center().transmute<Iso>().toCart();
+        int i = int(floor(pos.x)) / 256 * 256;
+        int j = int(floor(pos.y)) / 256 * 256;
+        SDL_FRect rect{i - camera.x, j - camera.y, 256, 256};
+        auto renderer = Game::Instance().Renderer();
+        SDL_SetRenderDrawColor(renderer, 92, 134, 178, 100);
+        SDL_RenderFillRectF(renderer, &rect);
+    };
+    static int& showChunk = Consts::GetInt("debug.show_chunk");
+    if (showChunk) drawChunk();
 
     // Draw trail
     static int& showTrail = Consts::GetInt("debug.show_trail");
