@@ -1,10 +1,7 @@
 #include "component/Player.h"
 
-#include <SDL2/SDL_render.h>
-
 #include <cmath>
 #include <string>
-#include <system_error>
 
 #include "CType.h"
 #include "Game.h"
