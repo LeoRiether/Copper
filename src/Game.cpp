@@ -136,10 +136,11 @@ void Game::CalculateDeltaTime() {
 }
 
 void Game::UpdateStateStack() {
+    bool popped = false;
     for (auto state : stateStackOperations) {
         if (state == nullptr) {
             stateStack.pop_back();
-            Resources::ClearAll();
+            popped = true;
             if (!stateStack.empty()) stateStack.back()->Resume();
         } else {
             if (!stateStack.empty()) stateStack.back()->Pause();
@@ -147,6 +148,10 @@ void Game::UpdateStateStack() {
             stateStack.back()->Start();
         }
     }
+
+    if (popped)
+        Resources::ClearAll();
+
     if (!stateStackOperations.empty()) {
         // Resources sometimes takes a long time to load, we
         // should disconsider that time to calculate dt for
