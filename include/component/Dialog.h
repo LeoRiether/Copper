@@ -20,6 +20,13 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
+constexpr int NAME_BOX_X_OFFSET = 60;
+constexpr int NAME_BOX_Y_OFFSET = -20;
+constexpr int NAME_BOX_WIDTH = 275;
+constexpr int NAME_BOX_HEIGHT = 95;
+constexpr int MSG_BOX_X_OFFSET = 20;
+constexpr int MSG_BOX_Y_OFFSET = 120;
+
 class Dialog : public Component {
 private:
   DialogScript script;
