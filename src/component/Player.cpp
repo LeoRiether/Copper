@@ -135,9 +135,9 @@ void Player::Update(float dt) {
 
     // Leave trail
     trailTimer.Update(dt);
-    if (trailTimer.Get() >= 0.25) {
+    if (trailTimer.Get() >= 0.1) {
         trailTimer.Restart();
-        if (Trail.size() >= 20) Trail.erase(Trail.begin());
+        if (Trail.size() >= 60) Trail.erase(Trail.begin());
 
         auto iso = (IsoCollider*)associated.GetComponent(CType::IsoCollider);
         if (!iso) fail("player without IsoCollider...");
@@ -353,8 +353,11 @@ std::optional<Vec2<Iso>> Player::LookForMe(Rect iv) {
         //        c(iv.BotRight());
     };
 
-    if (ok(associated.box.Center().toIso()))
-        return associated.box.Center().toIso();
+    auto iso = (IsoCollider*)associated.GetComponent(CType::IsoCollider);
+    if (!iso) fail("no associated IsoCollider");
+    if (ok(iso->box.Center().transmute<Iso>())) {
+        return iso->box.Center().transmute<Iso>();
+    }
 
     for (int i = (int)Trail.size() - 1; i >= 0; i--) {
         if (ok(Trail[i])) return Trail[i];

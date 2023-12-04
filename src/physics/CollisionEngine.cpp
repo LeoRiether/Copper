@@ -208,24 +208,25 @@ bool CollisionEngine::TerrainContainsSegment(const Vec2<Iso> A,
     chunk2 cmin{std::min(cA.i, cB.i), std::min(cA.j, cB.j)};
     chunk2 cmax{std::max(cA.i, cB.i), std::max(cA.j, cB.j)};
 
+    // they're not actually cartesian, sorry
     const auto At = A.transmute<Cart>();
     const auto Bt = B.transmute<Cart>();
 
+    int perf = 0;
     for (int i = cmin.i - 1; i <= cmax.i + 1; i++) {
         for (int j = cmin.j - 1; j <= cmax.j + 1; j++) {
+            // perf += cTerrainColliders[ChunkKey({i, j})].size();
             for (auto terrain : cTerrainColliders[ChunkKey({i, j})]) {
-                // expand box so enemies don't get stuck on corners as often
-                auto box = terrain->box;
-                box.x -= 10;
-                box.y -= 10;
-                box.w += 20;
-                box.h += 20;
-                if (cohen_sutherland::LineClip(At, Bt, box)) {
+                if (cohen_sutherland::LineClip(At, Bt, terrain->box))
                     return true;
-                }
             }
         }
     }
+
+    // log2("checked %d terrains out of %d (%g%%)", perf,
+    //      (int)terrainColliders.size(),
+    //      (double)perf / (double)terrainColliders.size());
+
     return false;
 }
 

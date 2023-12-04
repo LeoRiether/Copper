@@ -7,6 +7,7 @@
 #include "component/Player.h"
 #include "component/enemy/RobotCan.h"
 #include "math/Direction.h"
+#include "physics/Steering.h"
 #include "physics/Tags.h"
 #include "util.h"
 
@@ -25,22 +26,28 @@ void Companion::Update(float dt) {
 }
 
 void Companion::updatePosition(float dt) {
-    auto iso = (IsoCollider*)associated.GetComponent(CType::IsoCollider);
-    if (!iso) fail("companion without IsoCollider...");
-    auto selfPos = iso->box.Center().transmute<Iso>();
-    auto maybePlayerPos = Player::player->LookForMe(iso->box);
-    auto playerPos = maybePlayerPos.value_or(selfPos);
-    auto distVec = (playerPos - selfPos).toCart();
-
-    // Distance to the real player, not some trail
-    auto realPlayerPos = Player::player->associated.box.Center();
-    auto realDistVec = realPlayerPos - selfPos.toCart();
-
     auto rc = (RobotCan*)associated.GetComponent(CType::RobotCan);
     if (!rc) {
         warn("no associated RobotCan!");
         return;
     }
+
+    auto iso = (IsoCollider*)associated.GetComponent(CType::IsoCollider);
+    if (!iso) fail("companion without IsoCollider...");
+    auto selfPos = iso->box.Center().transmute<Iso>();
+    auto maybePlayerPos = Player::player->LookForMe(iso->box);
+
+    if (!maybePlayerPos) {
+        allAnimsPlay("hide_" + rc->direction.toString(), false);
+        return;
+    }
+
+    auto distVec = (*maybePlayerPos - selfPos).toCart();
+    distVec = distVec + Steering{}.AddTerrain(selfPos)->Result().toCart();
+
+    // Distance to the real player, not some trail
+    auto realPlayerPos = Player::player->associated.box.Center();
+    auto realDistVec = realPlayerPos - selfPos.toCart();
 
     if (realDistVec.norm() > stopDistance) {
         rc->direction = Direction::approxFromVec(distVec);

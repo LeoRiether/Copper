@@ -3,6 +3,7 @@
 #include "component/Animation.h"
 #include "component/IsoCollider.h"
 #include "component/Player.h"
+#include "physics/Steering.h"
 #include "util.h"
 
 #define MODULE "EnemyFollower"
@@ -35,6 +36,8 @@ void EnemyFollower::Update(float dt) {
     }
 
     auto distVec = (*maybePlayerPos - selfPos).toCart();
+    distVec = distVec + Steering{}.AddTerrain(selfPos)->Result().toCart();
+
     self->direction = Direction::approxFromVec(distVec);
     allAnimsPlay("walk_" + self->direction.toString());
 
