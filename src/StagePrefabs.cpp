@@ -134,7 +134,7 @@ void MakeStage1(StageState& s, int stage) {
                              ->WithScale(tilescale / 256.0f));
         auto tilemap = (new Tilemap{*go, csv})->WithOffset(offset);
         if (colliders)
-            tilemap->WithColliders({894.404, 662.715, 236.788, 236.788});
+            tilemap->WithColliders({884.419, 625.152, 265.792, 266.743});
         go->AddComponent(tilemap);
         go->renderLayer = tilemapRenderLayer++;
         // go->box.SetTopLeft((base * -scale).toCart());

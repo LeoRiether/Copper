@@ -6,6 +6,7 @@
 #include <stack>
 #include <unordered_set>
 
+#include "Consts.h"
 #include "Game.h"
 #include "component/IsoCollider.h"
 #include "component/Tileset.h"
@@ -81,6 +82,14 @@ void Tilemap::RenderTile(Vec2<Cart> camera, int id) {
     auto pos = worldPosition(i, j).toCart() - camera + associated.box.TopLeft();
     tileset->ClipTo(map[id]);
     tileset->sprite->RenderAt(pos.x, pos.y);
+
+    static int& showColliders = Consts::GetInt("debug.show_colliders");
+    if (showColliders) {
+        auto c = IsoCollider{associated};
+        c.WithBase(baseForTile(i, j));
+        c.Update(0);
+        c.Render(camera);
+    }
 }
 
 Vec2<Iso> Tilemap::worldPosition(int i, int j) {

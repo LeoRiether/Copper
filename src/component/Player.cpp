@@ -1,21 +1,22 @@
 #include "component/Player.h"
 
-#include <SDL2/SDL_render.h>
-
 #include <cmath>
 #include <string>
 
 #include "CType.h"
+#include "Consts.h"
 #include "Game.h"
 #include "GameObject.h"
 #include "InputManager.h"
 #include "Prefabs.h"
+#include "SDL_render.h"
 #include "component/Animation.h"
 #include "component/Bullet.h"
 #include "component/Sound.h"
 #include "component/Sprite.h"
 #include "component/Text.h"
 #include "math/Direction.h"
+#include "physics/CollisionEngine.h"
 #include "util.h"
 
 #define MODULE "Player"
@@ -124,11 +125,23 @@ void Player::Update(float dt) {
     UpdateState(dt);
     UpdatePosition(dt);
 
+    // Flash reset
     flashTimeout -= dt;
     if (flashTimeout <= 0) {
         flashTimeout = INFINITY;  // won't trigger this part again very soon
         auto sprite = (Sprite*)associated.GetComponent(CType::Sprite);
         sprite->WithFlash(false);
+    }
+
+    // Leave trail
+    trailTimer.Update(dt);
+    if (trailTimer.Get() >= 0.1) {
+        trailTimer.Restart();
+        if (Trail.size() >= 60) Trail.erase(Trail.begin());
+
+        auto iso = (IsoCollider*)associated.GetComponent(CType::IsoCollider);
+        if (!iso) fail("player without IsoCollider...");
+        Trail.push_back(iso->box.Center().transmute<Iso>());
     }
 }
 
@@ -268,6 +281,33 @@ void Player::Render(Vec2<Cart> camera) {
         text->box.SetFoot({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 10});
         textComponent->Render(Vec2<Cart>{0, 0});
     };
+
+    auto drawChunk = [&]() {
+        auto iso = (IsoCollider*)associated.GetComponent(CType::IsoCollider);
+        if (!iso) fail("no IsoCollider");
+        auto pos = iso->box.Center().transmute<Iso>().toCart();
+        int i = int(floor(pos.x)) / 256 * 256;
+        int j = int(floor(pos.y)) / 256 * 256;
+        SDL_FRect rect{i - camera.x, j - camera.y, 256, 256};
+        auto renderer = Game::Instance().Renderer();
+        SDL_SetRenderDrawColor(renderer, 92, 134, 178, 100);
+        SDL_RenderFillRectF(renderer, &rect);
+    };
+    static int& showChunk = Consts::GetInt("debug.show_chunk");
+    if (showChunk) drawChunk();
+
+    // Draw trail
+    static int& showTrail = Consts::GetInt("debug.show_trail");
+    if (showTrail && !Trail.empty()) {
+        SDL_FRect rects[Trail.size()];
+        for (int i = 0; i < (int)Trail.size(); i++) {
+            auto pos = Trail[i].toCart() - camera;
+            rects[i] = {pos.x - 5, pos.y - 5, 10, 10};
+        }
+        auto renderer = Game::Instance().Renderer();
+        SDL_SetRenderDrawColor(renderer, 209, 32, 229, 128);
+        SDL_RenderFillRectsF(renderer, rects, Trail.size());
+    }
 }
 
 void Player::NotifyCollision(GameObject& other) {
@@ -300,4 +340,28 @@ void Player::NotifyCollision(GameObject& other) {
 void Player::RequestDelete() {
     associated.RequestDelete();
     Player::player = nullptr;
+}
+
+std::optional<Vec2<Iso>> Player::LookForMe(Rect iv) {
+    auto ok = [&](Vec2<Iso> me) {
+        auto c = [&](Vec2<Cart> p) {
+            auto pi = p.transmute<Iso>();
+            return !CollisionEngine::TerrainContainsSegment(pi, me);
+        };
+        return c(iv.Center());
+        // return c(iv.TopLeft()) && c(iv.TopRight()) && c(iv.BotLeft()) &&
+        //        c(iv.BotRight());
+    };
+
+    auto iso = (IsoCollider*)associated.GetComponent(CType::IsoCollider);
+    if (!iso) fail("no associated IsoCollider");
+    if (ok(iso->box.Center().transmute<Iso>())) {
+        return iso->box.Center().transmute<Iso>();
+    }
+
+    for (int i = (int)Trail.size() - 1; i >= 0; i--) {
+        if (ok(Trail[i])) return Trail[i];
+    }
+
+    return {};
 }

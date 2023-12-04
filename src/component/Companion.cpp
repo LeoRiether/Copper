@@ -3,9 +3,11 @@
 #include "InputManager.h"
 #include "Prefabs.h"
 #include "component/Animation.h"
+#include "component/IsoCollider.h"
 #include "component/Player.h"
 #include "component/enemy/RobotCan.h"
 #include "math/Direction.h"
+#include "physics/Steering.h"
 #include "physics/Tags.h"
 #include "util.h"
 
@@ -24,22 +26,30 @@ void Companion::Update(float dt) {
 }
 
 void Companion::updatePosition(float dt) {
-    auto playerPos = Player::player->Associated().box.Foot();
-    auto selfPos = associated.box.Foot();
-    auto distVec = playerPos - selfPos;
-
-    // If too far away, just move companion close really fast
-    if (distVec.norm2() >= 40000) {
-        associated.box.OffsetBy(distVec * 0.01);
-    }
-
     auto rc = (RobotCan*)associated.GetComponent(CType::RobotCan);
     if (!rc) {
         warn("no associated RobotCan!");
         return;
     }
 
-    if (distVec.norm() > stopDistance) {
+    auto iso = (IsoCollider*)associated.GetComponent(CType::IsoCollider);
+    if (!iso) fail("companion without IsoCollider...");
+    auto selfPos = iso->box.Center().transmute<Iso>();
+    auto maybePlayerPos = Player::player->LookForMe(iso->box);
+
+    if (!maybePlayerPos) {
+        allAnimsPlay("hide_" + rc->direction.toString(), false);
+        return;
+    }
+
+    auto distVec = (*maybePlayerPos - selfPos).toCart();
+    distVec = distVec + Steering{}.AddTerrain(selfPos)->Result().toCart();
+
+    // Distance to the real player, not some trail
+    auto realPlayerPos = Player::player->associated.box.Center();
+    auto realDistVec = realPlayerPos - selfPos.toCart();
+
+    if (realDistVec.norm() > stopDistance) {
         rc->direction = Direction::approxFromVec(distVec);
         baseAnimPlay("walk_" + rc->direction.toString());
         rc->associated.box.OffsetBy(distVec.normalize() * speed * dt);
@@ -48,6 +58,11 @@ void Companion::updatePosition(float dt) {
         walkingToIdleTimeout.Update(dt);
         if (walkingToIdleTimeout.Get() >= 0.1)
             baseAnimPlay("idle_" + rc->direction.toString());
+    }
+
+    // If too far away, just move companion close really fast
+    if (realDistVec.norm2() >= 40000) {
+        associated.box.OffsetBy(realDistVec * 0.01);
     }
 }
 

@@ -1,7 +1,12 @@
 #include "component/enemy/EnemyFollower.h"
 
 #include "component/Animation.h"
+#include "component/IsoCollider.h"
 #include "component/Player.h"
+#include "physics/Steering.h"
+#include "util.h"
+
+#define MODULE "EnemyFollower"
 
 EnemyFollower::EnemyFollower(GameObject& go) : Component(go) {}
 
@@ -20,15 +25,26 @@ void EnemyFollower::Update(float dt) {
         }
     };
 
-    auto playerPos = Player::player->Associated().box.Foot();
-    auto enemyPos = associated.box.Foot();
-    auto distVec = playerPos - enemyPos;
-    if (distVec.norm2() <= self->stopDistance * self->stopDistance) {
+    auto iso = (IsoCollider*)associated.GetComponent(CType::IsoCollider);
+    if (!iso) fail("companion without IsoCollider...");
+    auto selfPos = iso->box.Center().transmute<Iso>();
+    auto maybePlayerPos = Player::player->LookForMe(iso->box);
+
+    if (!maybePlayerPos) {
         allAnimsPlay("hide_" + self->direction.toString(), false);
         return;
     }
 
+    auto distVec = (*maybePlayerPos - selfPos).toCart();
+    distVec = distVec + Steering{}.AddTerrain(selfPos)->Result().toCart();
+
     self->direction = Direction::approxFromVec(distVec);
     allAnimsPlay("walk_" + self->direction.toString());
-    self->associated.box.OffsetBy(distVec.normalize() * speed * dt);
+
+    auto actualPlayerDistVec =
+        Player::player->associated.box.Center() - selfPos.toCart();
+    if (actualPlayerDistVec.norm2() >=
+        self->stopDistance * self->stopDistance) {
+        self->associated.box.OffsetBy(distVec.normalize() * speed * dt);
+    }
 }

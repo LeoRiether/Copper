@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 
 #include "CType.h"
 #include "Component.h"
@@ -28,6 +29,8 @@ class Player : public Component {
         StageTransition,
     };
 
+    vector<Vec2<Iso>> Trail{};
+
    private:
     float& walkingSpeed{Consts::GetFloat("player.walking_speed")};
     float& stepsTiming{Consts::GetFloat("player.steps_timing")};
@@ -35,6 +38,7 @@ class Player : public Component {
     Direction direction{NoneX, Down};
     DashState dashState;
     Timer stepsTimer{};
+    Timer trailTimer{};
 
     float flashTimeout{0};
     Vec2<Cart> knockbackVelocity{0, 0};
@@ -57,6 +61,9 @@ class Player : public Component {
     inline CType Key() const { return CType::Player; }
     void NotifyCollision(GameObject& other);
     void RequestDelete();
+
+    /* Finds the player if in view, or a point in the trail that's visible */
+    std::optional<Vec2<Iso>> LookForMe(Rect isoViewpoint);
 
     /* Transitions the state from the current to `newState` */
     void ChangeState(State newState);
