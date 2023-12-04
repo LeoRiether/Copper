@@ -18,6 +18,7 @@ class Companion : public Component {
     inline CType Key() const { return CType::Companion; }
 
     void Update(float dt);
+    void Render(Vec2<Cart> camera);
 
    private:
     float& speed{Consts::GetFloat("companion.speed")};
@@ -27,6 +28,8 @@ class Companion : public Component {
     State state{Looking};
     Timer firingTimeout{};
     Timer walkingToIdleTimeout{};
+
+    Vec2<Cart> moveDelta;
 
     void updatePosition(float dt);
     void updateCore(float dt);

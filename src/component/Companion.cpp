@@ -1,7 +1,11 @@
 #include "component/Companion.h"
 
+#include "CType.h"
+#include "Consts.h"
+#include "Game.h"
 #include "InputManager.h"
 #include "Prefabs.h"
+#include "SDL_render.h"
 #include "component/Animation.h"
 #include "component/IsoCollider.h"
 #include "component/Player.h"
@@ -17,6 +21,9 @@ Companion::Companion(GameObject& go) : Component(go) {
     associated.tags.set(tag::Entity);
 }
 
+//////////////////////////////////////////
+//        Update-related methods        //
+//////////////////////////////////////////
 void Companion::Update(float dt) {
     if (!Player::player) return;  // *sad companion noises*
 
@@ -42,17 +49,18 @@ void Companion::updatePosition(float dt) {
         return;
     }
 
-    auto distVec = (*maybePlayerPos - selfPos).toCart();
-    distVec = distVec + Steering{}.AddTerrain(selfPos)->Result().toCart();
+    moveDelta = (*maybePlayerPos - selfPos).toCart().normalize() +
+                Steering{}.AddTerrain(selfPos)->Result().toCart();
+    moveDelta = moveDelta.normalize();
 
     // Distance to the real player, not some trail
     auto realPlayerPos = Player::player->associated.box.Center();
     auto realDistVec = realPlayerPos - selfPos.toCart();
 
-    if (realDistVec.norm() > stopDistance) {
-        rc->direction = Direction::approxFromVec(distVec);
+    if (realDistVec.norm2() > stopDistance * stopDistance) {
+        rc->direction = Direction::approxFromVec(moveDelta);
         baseAnimPlay("walk_" + rc->direction.toString());
-        rc->associated.box.OffsetBy(distVec.normalize() * speed * dt);
+        rc->associated.box.OffsetBy(moveDelta * speed * dt);
         walkingToIdleTimeout.Restart();
     } else {
         walkingToIdleTimeout.Update(dt);
@@ -61,7 +69,7 @@ void Companion::updatePosition(float dt) {
     }
 
     // If too far away, just move companion close really fast
-    if (realDistVec.norm2() >= 40000) {
+    if (realDistVec.norm2() >= 80000) {
         associated.box.OffsetBy(realDistVec * 0.01);
     }
 }
@@ -142,4 +150,21 @@ void Companion::baseAnimPlay(const string& id, bool loops) {
     auto& anims = associated.GetAllComponents(CType::Animation);
     if (anims.size() < 2) fail("no base Animation found!");
     ((Animation*)anims[1].get())->SoftPlay(id, loops);
+}
+
+//////////////////////////
+//        Render        //
+//////////////////////////
+void Companion::Render(Vec2<Cart> camera) {
+    static int& showDirections = Consts::GetInt("debug.show_directions");
+    if (showDirections) {
+        auto iso = (IsoCollider*)associated.GetComponent(CType::IsoCollider);
+        if (!iso) fail("no IsoCollider");
+        auto from = iso->box.Center().transmute<Iso>().toCart() - camera;
+        auto to = from + moveDelta * 80.0f;
+
+        auto renderer = Game::Instance().Renderer();
+        SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255);
+        SDL_RenderDrawLineF(renderer, from.x, from.y, to.x, to.y);
+    }
 }

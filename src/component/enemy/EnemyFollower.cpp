@@ -1,5 +1,6 @@
 #include "component/enemy/EnemyFollower.h"
 
+#include "Game.h"
 #include "component/Animation.h"
 #include "component/IsoCollider.h"
 #include "component/Player.h"
@@ -35,16 +36,33 @@ void EnemyFollower::Update(float dt) {
         return;
     }
 
-    auto distVec = (*maybePlayerPos - selfPos).toCart();
-    distVec = distVec + Steering{}.AddTerrain(selfPos)->Result().toCart();
+    moveDelta = (*maybePlayerPos - selfPos).toCart().normalize() +
+                Steering{}.AddTerrain(selfPos)->Result().toCart();
+    moveDelta = moveDelta.normalize();
 
-    self->direction = Direction::approxFromVec(distVec);
+    self->direction = Direction::approxFromVec(moveDelta);
     allAnimsPlay("walk_" + self->direction.toString());
 
-    auto actualPlayerDistVec =
+    auto realDistVec =
         Player::player->associated.box.Center() - selfPos.toCart();
-    if (actualPlayerDistVec.norm2() >=
-        self->stopDistance * self->stopDistance) {
-        self->associated.box.OffsetBy(distVec.normalize() * speed * dt);
+    if (realDistVec.norm2() >= self->stopDistance * self->stopDistance) {
+        self->associated.box.OffsetBy(moveDelta * speed * dt);
+    }
+}
+
+//////////////////////////
+//        Render        //
+//////////////////////////
+void EnemyFollower::Render(Vec2<Cart> camera) {
+    static int& showDirections = Consts::GetInt("debug.show_directions");
+    if (showDirections) {
+        auto iso = (IsoCollider*)associated.GetComponent(CType::IsoCollider);
+        if (!iso) fail("no IsoCollider");
+        auto from = iso->box.Center().transmute<Iso>().toCart() - camera;
+        auto to = from + moveDelta * 80.0f;
+
+        auto renderer = Game::Instance().Renderer();
+        SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255);
+        SDL_RenderDrawLineF(renderer, from.x, from.y, to.x, to.y);
     }
 }

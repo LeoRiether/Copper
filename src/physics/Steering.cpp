@@ -14,10 +14,11 @@ Steering* Steering::Add(int i, float w) {
 
 Steering* Steering::AddTerrain(Vec2<Iso> pos) {
     for (int i = 0; i < 8; i++) {
-        for (int prox = 120; prox >= 60; prox -= 20) {
+        constexpr int steps = 1 +  (160 - 60) / 20;
+        for (int prox = 160; prox >= 60; prox -= 20) {
             auto endpoint = pos + direction(i) * prox;
             if (CollisionEngine::TerrainContainsSegment(pos, endpoint)) {
-                values[(i + 4) % 8] += 60;
+                values[i] -= 1.0f / (float)steps;
             } else {
                 break;
             }

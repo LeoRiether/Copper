@@ -212,7 +212,7 @@ bool CollisionEngine::TerrainContainsSegment(const Vec2<Iso> A,
     const auto At = A.transmute<Cart>();
     const auto Bt = B.transmute<Cart>();
 
-    int perf = 0;
+    // int perf = 0;
     for (int i = cmin.i - 1; i <= cmax.i + 1; i++) {
         for (int j = cmin.j - 1; j <= cmax.j + 1; j++) {
             // perf += cTerrainColliders[ChunkKey({i, j})].size();
