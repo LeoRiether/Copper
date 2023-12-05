@@ -40,8 +40,8 @@ void Tilemap::Render(Vec2<Cart> camera) {
     int mid_j = P.x / tileWidth - offset.j;
     int mid_i = P.y * 2.0f / tileHeight - offset.i;
 
-    for (int i = mid_i - 14; i < mid_i + 11 && i < height; i++) {
-        for (int j = mid_j - 15; j < mid_j + 10 && j < width; j++) {
+    for (int i = std::max(0, mid_i - 14); i < mid_i + 11 && i < height; i++) {
+        for (int j = std::max(0, mid_j - 15); j < mid_j + 10 && j < width; j++) {
             int id = map[At(i, j)];
             if (id < 0) continue;
 
@@ -64,8 +64,8 @@ vector<Tilemap::TileToRender> Tilemap::RenderedTiles(Vec2<Cart> camera) {
     int mid_i = P.y * 2.0f / tileHeight - offset.i;
 
     vector<TileToRender> result;
-    for (int i = mid_i - 14; i < mid_i + 11 && i < height; i++) {
-        for (int j = mid_j - 15; j < mid_j + 10 && j < width; j++) {
+    for (int i = std::max(0, mid_i - 14); i < mid_i + 11 && i < height; i++) {
+        for (int j = std::max(0, mid_j - 15); j < mid_j + 10 && j < width; j++) {
             int id = map[At(i, j)];
             if (id < 0) continue;
 
@@ -208,6 +208,7 @@ void Tilemap::load(const string& csv) {
         }
         if (width > 0) height++;
     }
+    log2("map is %d x %d", height, width);
 
     // ~~Copy map transmuted.....~~
     // omg I didn't need to transmute it
