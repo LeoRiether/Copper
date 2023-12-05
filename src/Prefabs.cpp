@@ -2,12 +2,14 @@
 
 #include <vector>
 
+#include "Colors.h"
 #include "GameObject.h"
 #include "component/Animation.h"
 #include "component/Bullet.h"
 #include "component/BulletShaker.h"
 #include "component/Collider.h"
 #include "component/Companion.h"
+#include "component/ControlsTutorial.h"
 #include "component/IsoCollider.h"
 #include "component/KeepSoundAlive.h"
 #include "component/KillTimeout.h"
@@ -15,6 +17,7 @@
 #include "component/Sound.h"
 #include "component/Sprite.h"
 #include "component/StageTransitionDimmer.h"
+#include "component/Text.h"
 #include "component/enemy/EnemyDistancer.h"
 #include "component/enemy/EnemyFollower.h"
 #include "component/enemy/RobotCan.h"
@@ -50,6 +53,15 @@ GameObject* MakeCompanion() {
                          ->WithTag(tag::Entity)
                          ->WithBase({147.784, 76.4568, 51.9192, 52.6069}));
     go->tags.set(tag::Entity);
+    return go;
+}
+
+GameObject* MakeControlsTutorial() {
+    auto go = new GameObject{};
+    go->AddComponent(new Text{*go, ASSETS "/font/THEROOTS.TTF", 25,
+                              Text::Wrapped, "?", colorFromHex("4D2011")})
+        ->AddComponent(new ControlsTutorial{*go});
+    go->renderLayer = 15;
     return go;
 }
 

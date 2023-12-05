@@ -5,8 +5,10 @@
 
 #include "Consts.h"
 #include "Game.h"
+#include "GameData.h"
 #include "GameObject.h"
 #include "InputManager.h"
+#include "Prefabs.h"
 #include "StagePrefabs.h"
 #include "component/FPSCounter.h"
 #include "component/InfiniteBg.h"
@@ -38,6 +40,14 @@ void StageState::Start() {
     //        Load Stage        //
     //////////////////////////////
     MakeStage1(*this, 1);
+
+    /////////////////////////////////////
+    //        Controls Tutorial        //
+    /////////////////////////////////////
+    if (GameData::firstStage) {
+        GameData::firstStage = false;
+        RequestAddObject(MakeControlsTutorial());
+    }
 
     StartArray();
     started = true;

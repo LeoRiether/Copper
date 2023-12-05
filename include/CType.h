@@ -29,4 +29,5 @@ enum class CType {
     StageTransitionDimmer,
     EndOfStageTrigger,
     Companion,
+    ControlsTutorial,
 };

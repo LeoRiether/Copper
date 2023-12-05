@@ -1,12 +1,11 @@
 #include "component/Text.h"
 
-#include <algorithm>
-
 #include "Game.h"
 #include "Resources.h"
 #include "SDL_rect.h"
 #include "SDL_render.h"
 #include "SDL_surface.h"
+#include "SDL_ttf.h"
 #include "util.h"
 
 #define MODULE "Text"
@@ -85,6 +84,12 @@ void Text::RemakeTexture() {
         }
         case Text::Blended: {
             surface = TTF_RenderUTF8_Blended(font->inner, text.c_str(), color);
+            break;
+        }
+        case Text::Wrapped: {
+            TTF_SetFontWrappedAlign(font->inner, TTF_WRAPPED_ALIGN_CENTER);
+            surface = TTF_RenderUTF8_Blended_Wrapped(font->inner, text.c_str(),
+                                                     color, 0);
             break;
         }
     }

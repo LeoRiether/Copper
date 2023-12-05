@@ -30,6 +30,13 @@ struct Rect {
         y = foot.y - h;
     }
 
+    inline Vec2<Cart> Head() const { return {x + w / 2, y}; }
+
+    inline void SetHead(Vec2<Cart> foot) {
+        x = foot.x - w / 2;
+        y = foot.y;
+    }
+
     inline Vec2<Cart> TopLeft() const { return {x, y}; }
 
     inline void SetTopLeft(Vec2<Cart> topleft) {

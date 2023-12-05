@@ -7,6 +7,7 @@
 
 GameObject* MakePlayer();
 GameObject* MakeCompanion();
+GameObject* MakeControlsTutorial();
 GameObject* MakeEnemyFollower();
 GameObject* MakeEnemyDistancer();
 GameObject* MakeBarril();
