@@ -1,5 +1,6 @@
 #include "state/TitleState.h"
 
+#include "component/TextBlinker.h"
 #include "Colors.h"
 #include "Game.h"
 #include "GameObject.h"
@@ -71,15 +72,15 @@ void TitleState::Start() {
         RequestAddObject(go);
     }
 
-    // {
-    //     auto go = new GameObject{};
-    //     auto sprite = new Sprite{*go, ASSETS "/img/title.png"};
-    //     go->AddComponent(sprite);
-    //     go->box = {0, 0, (float)sprite->SheetWidth(),
-    //                (float)sprite->SheetHeight()};
-    //     go->box.SetCenter({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f});
-    //     RequestAddObject(go);
-    // }
+    {
+        auto go = new GameObject{};
+        go->AddComponent(new Text{*go, ASSETS "/font/THEROOTS.TTF", 30,
+                                  Text::Blended, "press SPACE to start",
+                                  colorFromHex("dda08d")});
+        go->AddComponent(new TextBlinker{*go, 4.0f});
+        go->box.SetCenter({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f + 140});
+        RequestAddObject(go);
+    }
 
     // mechanismGlitch->Play();
 }

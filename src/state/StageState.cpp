@@ -81,6 +81,13 @@ void StageState::Update(float dt) {
         warn2("iso mouse pos: { %g, %g }", mi.x, mi.y);
     }
 
+    if (input.KeyPress(SDL_SCANCODE_0)) {
+        for (auto& go : objects) {
+            if (go->tags.test(tag::Enemy))
+                go->RequestDelete();
+        }
+    }
+
     // Handle updates
     CollisionEngine::Update(objects);
     for (auto& go : objects) {
