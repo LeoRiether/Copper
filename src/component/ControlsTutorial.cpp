@@ -1,5 +1,6 @@
 #include "component/ControlsTutorial.h"
 
+#include "Game.h"
 #include "InputManager.h"
 #include "component/Player.h"
 #include "component/Text.h"
@@ -31,11 +32,10 @@ vector<ControlsTutorial::State> ControlsTutorial::states = {
     },
     {
         "KILL all enemies\nto win\n Good Luck",
-        [](InputManager& input) {
-            return input.IsKeyDown(MOVE_UP_KEY) ||
-                   input.IsKeyDown(MOVE_DOWN_KEY) ||
-                   input.IsKeyDown(MOVE_LEFT_KEY) ||
-                   input.IsKeyDown(MOVE_RIGHT_KEY);
+        [](InputManager&) {
+            static float hackyTimer{1.2};
+            hackyTimer -= FRAME_MS / 1000.0f;
+            return hackyTimer <= 0;
         },
     }};
 
