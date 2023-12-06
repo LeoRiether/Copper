@@ -25,4 +25,6 @@ class Bullet : public Component {
     void NotifyCollision(GameObject& other);
     inline int Damage() { return damage; }
     inline bool TargetsPlayer() { return targetsPlayer; }
+
+    Bullet* WithTargetsPlayer(bool tp);
 };

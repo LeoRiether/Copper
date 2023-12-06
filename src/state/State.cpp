@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "CType.h"
+#include "Game.h"
 #include "GameObject.h"
 #include "component/IsoCollider.h"
 #include "util.h"
@@ -64,23 +65,65 @@ void State::UpdateArray(float dt) {
 }
 
 void State::RenderArray() {
-    ZSort();
-    for (auto& go : objects) {
-        go->Render(camera->Pos());
+    auto so = ZSort();
+    for (auto& s : so) {
+        switch (s.tag) {
+            case SortableObject::Object: {
+                s.go->Render(camera->Pos());
+                break;
+            }
+            case SortableObject::Tile: {
+                auto tilemap = (Tilemap*)s.go->GetComponent(CType::Tilemap);
+                if (!tilemap) fail("rendering tile without tilemap?");
+                auto camera = Game::Instance().GetState().GetCamera().Pos();
+                tilemap->RenderTile(camera, s.tile.index);
+                break;
+            }
+        }
     }
 }
 
-void State::ZSort() {
-    auto key = [&](std::shared_ptr<GameObject> x) {
-        auto iso = (IsoCollider*)x->GetComponent(CType::IsoCollider);
-        if (iso) {
-            auto center = iso->box.Center().transmute<Iso>().toCart();
-            return std::tuple{x->renderLayer, center.y};
+vector<State::SortableObject> State::ZSort() {
+    static vector<SortableObject> so;
+    so.clear();
+    so.reserve(objects.size());
+
+    auto camera = Game::Instance().GetState().GetCamera().Pos();
+    for (auto& go : objects) {
+        auto tilemap = (Tilemap*)go->GetComponent(CType::Tilemap);
+        if (tilemap && tilemap->base.w != 0 && tilemap->base.h != 0) {
+            auto tiles = tilemap->RenderedTiles(camera);
+            so.reserve(so.size() + tiles.size());
+            for (auto tile : tiles) {
+                so.push_back({SortableObject::Tile, go.get(), tile});
+            }
+        } else {
+            so.push_back({SortableObject::Object, go.get(),
+                          Tilemap::TileToRender{0, Rect{0}}});
+        }
+    }
+
+    auto key = [&](const SortableObject& x) {
+        // Tile key
+        if (x.tag == SortableObject::Tile) {
+            auto center = x.tile.collider.Center().transmute<Iso>().toCart();
+            return std::tuple{x.go->renderLayer, center.y};
         }
 
-        return std::tuple{x->renderLayer, x->box.Foot().y};
+        // Iso object key
+        auto iso = (IsoCollider*)x.go->GetComponent(CType::IsoCollider);
+        if (iso) {
+            auto center = iso->box.Center().transmute<Iso>().toCart();
+            return std::tuple{x.go->renderLayer, center.y};
+        }
+
+        // Anything else
+        return std::tuple{x.go->renderLayer, x.go->box.Foot().y};
     };
 
-    std::stable_sort(objects.begin(), objects.end(),
-                     [&](auto& a, auto& b) { return key(a) < key(b); });
+    std::stable_sort(so.begin(), so.end(), [&](const auto& a, const auto& b) {
+        return key(a) < key(b);
+    });
+
+    return so;
 }

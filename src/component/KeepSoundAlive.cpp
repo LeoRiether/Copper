@@ -10,7 +10,6 @@ KeepSoundAlive::~KeepSoundAlive() {}
 void KeepSoundAlive::Update(float) {
     auto sound = (Sound*)go.GetComponent(CType::Sound);
     if (!sound || !sound->IsPlaying()) {
-        log("requesting deletion of sound");
         go.RequestDelete();
     }
 }

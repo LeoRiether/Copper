@@ -1,3 +1,4 @@
 #include "GameData.h"
 
-bool GameData::playerVictory;
+bool GameData::playerVictory{false};
+bool GameData::firstStage{true};

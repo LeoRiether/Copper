@@ -16,9 +16,15 @@ using std::weak_ptr;
 class StageState : public State {
    private:
     Music* music;
-    weak_ptr<GameObject> mainMap;
 
    public:
+    weak_ptr<GameObject> mainMap;
+
+    /** Counts number of GameObjects where go->tag.test(tag::Enemy) is true.
+     * It's automatically updated when RequestAdds and RequestDeletes are
+     * processed  */
+    int EnemyCount{0};
+
     ~StageState();
 
     void Start();

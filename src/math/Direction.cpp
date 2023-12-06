@@ -21,7 +21,7 @@ Direction Direction::fromInput() {
 // PERF: maybe we could improve the algorithm here, but probably not a
 // bottleneck.
 Direction Direction::approxFromVec(Vec2<Cart> v) {
-    Direction self{NoneX, NoneY};
+    Direction self{NoneX, Down};
     float maxDot = 0;
     for (int8_t x = -1; x <= 1; x++) {
         for (int8_t y = -1; y <= 1; y++) {

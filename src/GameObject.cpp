@@ -43,21 +43,25 @@ void GameObject::RequestAdd(GameObject* go) {
     Game::Instance().GetState().RequestAddObject(go);
 }
 
-void GameObject::AddComponent(Component* cmp) {
+GameObject* GameObject::AddComponent(Component* cmp) {
     components[cmp->Key()].emplace_back(cmp);
+    return this;
 }
 
 // NOTE: components are removed without maintaining order
-void GameObject::RemoveComponent(Component* cmp) {
+// PERF: this could be O(same-key components) now, but I don't think the method
+// is even used ever
+GameObject* GameObject::RemoveComponent(Component* cmp) {
     auto key = cmp->Key();
     auto& cs = components[key];
     for (size_t i = 0; i < cs.size(); i++) {
         if (cs[i].get() == cmp) {
             std::swap(cs[i], cs.back());
             cs.pop_back();
-            return;
+            return this;
         }
     }
+    return this;
 }
 
 // Should return an std::optional<Component*>, really

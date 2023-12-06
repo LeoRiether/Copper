@@ -10,6 +10,10 @@ struct Rect {
         return p.x >= x && p.x <= x + w && p.y >= y && p.y <= y + h;
     }
 
+    inline bool CollidesWith(const Rect r) {
+        return !(x + w < r.x || x > r.x + r.w || y + h < r.y || y > r.y + r.h);
+    }
+
     inline Vec2<Cart> Center() const {
         return Vec2<Cart>{x + w / 2, y + h / 2};
     }
@@ -24,6 +28,13 @@ struct Rect {
     inline void SetFoot(Vec2<Cart> foot) {
         x = foot.x - w / 2;
         y = foot.y - h;
+    }
+
+    inline Vec2<Cart> Head() const { return {x + w / 2, y}; }
+
+    inline void SetHead(Vec2<Cart> foot) {
+        x = foot.x - w / 2;
+        y = foot.y;
     }
 
     inline Vec2<Cart> TopLeft() const { return {x, y}; }

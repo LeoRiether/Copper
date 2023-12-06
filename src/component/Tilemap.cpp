@@ -1,11 +1,13 @@
 #include "component/Tilemap.h"
 
-#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <stack>
+#include <unordered_set>
 
+#include "Consts.h"
+#include "Game.h"
 #include "component/IsoCollider.h"
 #include "component/Tileset.h"
 #include "util.h"
@@ -16,75 +18,99 @@ Tilemap::Tilemap(GameObject& go, const string& csv) : Component(go) {
     load(csv);
 }
 
-void Tilemap::Render(Vec2<Cart> camera) {
-    auto tileset = (Tileset*)associated.GetComponent(CType::Tileset);
+void Tilemap::Start() {
+    tileset = (Tileset*)associated.GetComponent(CType::Tileset);
     if (!tileset) {
         warn("Tilemap does not have an associated tileset!");
         return;
     }
 
-    const float tileWidth = tileset->TileWidth * tileset->sprite->Scale().x;
-    const float tileHeight = tileset->TileHeight * tileset->sprite->Scale().y;
+    tileWidth = tileset->TileWidth * tileset->sprite->Scale().x;
+    tileHeight = tileset->TileHeight * tileset->sprite->Scale().y;
+}
 
-    //  PERF: don't render tiles out of sight
-    for (int i = 0; i < height; i++) {
-        for (int j = 0; j < width; j++) {
+/////////////////////////////
+//        Rendering        //
+/////////////////////////////
+void Tilemap::Render(Vec2<Cart> camera) {
+    // ~Culling~
+    const Vec2<Cart> screenCenter{SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
+    const Vec2<Iso> P =
+        (screenCenter + camera - associated.box.TopLeft()).toIso();
+    int mid_j = P.x / tileWidth - offset.j;
+    int mid_i = P.y * 2.0f / tileHeight - offset.i;
+
+    for (int i = std::max(0, mid_i - 14); i < mid_i + 11 && i < height; i++) {
+        for (int j = std::max(0, mid_j - 15); j < mid_j + 10 && j < width; j++) {
             int id = map[At(i, j)];
             if (id < 0) continue;
 
-            Vec2<Cart> pos = Vec2<Iso>{(j + offset.j) * tileWidth,
-                                       (i + offset.i) * tileHeight / 2.0f}
-                                 .toCart();
-            pos = pos - camera + associated.box.TopLeft();
+            auto pos = worldPosition(i, j).toCart() - camera +
+                       associated.box.TopLeft();
             tileset->ClipTo(id);
             tileset->sprite->RenderAt(pos.x, pos.y);
         }
     }
 }
 
-void Tilemap::load(const string& csv) {
-    std::ifstream file;
-    file.open(csv);
-    if (!file.is_open()) {
-        fail2("Failed to open %s", csv.c_str());
-    }
+vector<Tilemap::TileToRender> Tilemap::RenderedTiles(Vec2<Cart> camera) {
+    // Copy-pasted from `Tilemap::Render`, sorry
 
-    // vector<int> tempMap;
-    string line;
-    while (getline(file, line)) {
-        std::stringstream tokens{line};
-        int id;
-        while (tokens >> id) {
-            if (height == 0) width++;
-            map.push_back(id);
-            tokens.ignore(1, ',');
+    // ~Culling~
+    const Vec2<Cart> screenCenter{SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
+    const Vec2<Iso> P =
+        (screenCenter + camera - associated.box.TopLeft()).toIso();
+    int mid_j = P.x / tileWidth - offset.j;
+    int mid_i = P.y * 2.0f / tileHeight - offset.i;
+
+    vector<TileToRender> result;
+    for (int i = std::max(0, mid_i - 14); i < mid_i + 11 && i < height; i++) {
+        for (int j = std::max(0, mid_j - 15); j < mid_j + 10 && j < width; j++) {
+            int id = map[At(i, j)];
+            if (id < 0) continue;
+
+            auto b = baseForTile(i, j);
+            b.OffsetBy(associated.box.TopLeft().toIso().transmute<Cart>());
+            result.push_back({At(i, j), b});
         }
-        if (width > 0) height++;
     }
-
-    // ~~Copy map transmuted.....~~
-    // omg I didn't need to transmute it
-    // map.resize(tempMap.size());
-    // std::swap(width, height);
-    // for (int i = 0; i < height; i++) {
-    //     for (int j = 0; j < width; j++) {
-    //         // I have no idea what I'm doing
-    //         map[i * width + j] = tempMap[j * height + i];
-    //     }
-    // }
-
-    // for (int i = 0; i < height; i++) {
-    //     for (int j = 0; j < width; j++) {
-    //         if (map[At(i, j)] > 0)
-    //             std::cout << std::setw(3) << map[At(i, j)] << ' ';
-    //         std::cout << "    ";
-    //     }
-    //     std::cout << std::endl;
-    // }
-
-    file.close();
+    return result;
 }
 
+void Tilemap::RenderTile(Vec2<Cart> camera, int id) {
+    auto [i, j] = At(id);
+    auto pos = worldPosition(i, j).toCart() - camera + associated.box.TopLeft();
+    tileset->ClipTo(map[id]);
+    tileset->sprite->RenderAt(pos.x, pos.y);
+
+    static int& showColliders = Consts::GetInt("debug.show_colliders");
+    if (showColliders) {
+        auto c = IsoCollider{associated};
+        c.WithBase(baseForTile(i, j));
+        c.Update(0);
+        c.Render(camera);
+    }
+}
+
+Vec2<Iso> Tilemap::worldPosition(int i, int j) {
+    return Vec2<Iso>{(j + offset.j) * tileWidth,
+                     (i + offset.i) * tileHeight / 2.0f};
+}
+
+Rect Tilemap::baseForTile(int i, int j) {
+    auto& sprite = tileset->sprite;
+    auto b = base;
+    b.x *= sprite->Scale().x;
+    b.y *= sprite->Scale().y;
+    b.w *= sprite->Scale().x;
+    b.h *= sprite->Scale().y;
+    b.OffsetBy(worldPosition(i, j).toIso().transmute<Cart>());
+    return b;
+}
+
+////////////////////////////////
+//        Builder/With        //
+////////////////////////////////
 Tilemap* Tilemap::WithOffset(Vec2<Cart> c) {
     offset.i = c.x;
     offset.j = c.y;
@@ -93,31 +119,17 @@ Tilemap* Tilemap::WithOffset(Vec2<Cart> c) {
 
 // This really really looks like the Render function
 Tilemap* Tilemap::WithColliders(Rect base) {
-    auto tileset = (Tileset*)associated.GetComponent(CType::Tileset);
-    if (!tileset) {
-        warn("Tilemap does not have an associated tileset!");
-        return this;
-    }
+    Start();  // just to make sure we have everything.....
+    this->base = base;
 
-    auto& sprite = tileset->sprite;
-
-    const float tileWidth = tileset->TileWidth * tileset->sprite->Scale().x;
-    const float tileHeight = tileset->TileHeight * tileset->sprite->Scale().y;
+    std::unordered_set<int> ignoredTileIds = {173};
 
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             int id = map[At(i, j)];
-            if (id < 0) continue;
+            if (id < 0 || ignoredTileIds.count(id)) continue;
 
-            Vec2<Iso> pos = {(j + offset.j) * tileWidth,
-                             (i + offset.i) * tileHeight / 2.0f};
-
-            auto b = base;
-            b.x *= sprite->Scale().x;
-            b.y *= sprite->Scale().y;
-            b.w *= sprite->Scale().x;
-            b.h *= sprite->Scale().y;
-            b.OffsetBy(pos.toIso().transmute<Cart>());
+            auto b = baseForTile(i, j);
             associated.AddComponent((new IsoCollider{associated})
                                         ->WithTag(tag::Terrain)
                                         ->WithBase(b));
@@ -127,6 +139,9 @@ Tilemap* Tilemap::WithColliders(Rect base) {
     return this;
 }
 
+////////////////////////////////////////
+//        Connected components        //
+////////////////////////////////////////
 void Tilemap::ComputeComponents() {
     vector<vector<bool>> visited(height, vector<bool>(width));
     vector<std::pair<int, int>> deltas{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
@@ -169,4 +184,51 @@ void Tilemap::ComputeComponents() {
             if (!visited[i][j] && map[At(i, j)] >= 0) dfs(i, j);
         }
     }
+}
+
+//////////////////////////////
+//        Map loader        //
+//////////////////////////////
+void Tilemap::load(const string& csv) {
+    std::ifstream file;
+    file.open(csv);
+    if (!file.is_open()) {
+        fail2("Failed to open %s", csv.c_str());
+    }
+
+    // vector<int> tempMap;
+    string line;
+    while (getline(file, line)) {
+        std::stringstream tokens{line};
+        int id;
+        while (tokens >> id) {
+            if (height == 0) width++;
+            map.push_back(id);
+            tokens.ignore(1, ',');
+        }
+        if (width > 0) height++;
+    }
+    log2("map is %d x %d", height, width);
+
+    // ~~Copy map transmuted.....~~
+    // omg I didn't need to transmute it
+    // map.resize(tempMap.size());
+    // std::swap(width, height);
+    // for (int i = 0; i < height; i++) {
+    //     for (int j = 0; j < width; j++) {
+    //         // I have no idea what I'm doing
+    //         map[i * width + j] = tempMap[j * height + i];
+    //     }
+    // }
+
+    // for (int i = 0; i < height; i++) {
+    //     for (int j = 0; j < width; j++) {
+    //         if (map[At(i, j)] > 0)
+    //             std::cout << std::setw(3) << map[At(i, j)] << ' ';
+    //         std::cout << "    ";
+    //     }
+    //     std::cout << std::endl;
+    // }
+
+    file.close();
 }

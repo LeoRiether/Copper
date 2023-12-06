@@ -24,10 +24,6 @@
     { fprintf(stderr, GREEN MODULE ":: " RESET fmt "\n"); }
 #define info2(fmt, ...) \
     { fprintf(stderr, GREEN MODULE ":: " RESET fmt "\n", __VA_ARGS__); }
-#define trace(fmt) \
-    { fprintf(stderr, WHITE MODULE ":: " RESET fmt "\n"); }
-#define trace2(fmt, ...) \
-    { fprintf(stderr, WHITE MODULE ":: " RESET fmt "\n", __VA_ARGS__); }
 #define debug(fmt) \
     { fprintf(stderr, CYAN MODULE ":: " RESET fmt "\n"); }
 #define debug2(fmt, ...) \
@@ -66,5 +62,11 @@ inline std::mt19937 rng(
 
 inline float randf(float low, float high) {
     auto dist = std::uniform_real_distribution<float>(low, high);
+    return dist(rng);
+}
+
+// [low, high]
+inline int randi(int low, int high) {
+    auto dist = std::uniform_int_distribution<int>(low, high);
     return dist(rng);
 }

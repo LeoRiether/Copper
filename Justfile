@@ -4,13 +4,11 @@ bear:
     bear -- make
 
 run *args:
-    just format
     premake5 gmake2
     make
     ./copper_debug {{args}}
 
 release *args:
-    just format
     premake5 gmake2
     make config=release
     ./copper_release {{args}}
@@ -30,6 +28,7 @@ publish-docs:
 publish-linux:
     rm -rf bin/
     rm -rf copper-linux
+    rm -f copper-linux.zip
     premake5 gmake2
     make config=release
 
@@ -42,6 +41,7 @@ publish-linux:
 publish-win:
     rm -r bin/
     rm -rf copper-windows
+    rm -f copper-windows.zip
     premake5 --file=./premake5-windows.lua gmake2 
     python3 ./scripts/lib64.py
     make config=release

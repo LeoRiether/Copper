@@ -1,6 +1,9 @@
 #include "component/BulletShaker.h"
 
+#include <cmath>
+
 #include "Prefabs.h"
+#include "math/Vec2.h"
 #include "physics/Tags.h"
 #include "util.h"
 
@@ -24,7 +27,8 @@ void BulletShaker::Update(float) {
 }
 
 void BulletShaker::NotifyCollision(GameObject& other) {
-    if (other.tags.test(tag::Bullet)) {
+    auto angle = fmod(other.angle + 10 * PI, 2 * PI);
+    if (other.tags.test(tag::Bullet) && angle >= PI) {
         // Add trauma
         trauma = std::min(trauma + 0.4, 1.0);
 

@@ -37,8 +37,8 @@ class GameObject {
     void RequestDelete();
     void RequestAdd(GameObject* go);
 
-    void AddComponent(Component* cmp);
-    void RemoveComponent(Component* cmp);
+    GameObject* AddComponent(Component* cmp);
+    GameObject* RemoveComponent(Component* cmp);
     Component* GetComponent(CType type) const;
     vector<unique_ptr<Component>>& GetAllComponents(CType type);
 

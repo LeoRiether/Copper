@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 
 #include "CType.h"
 #include "Component.h"
@@ -20,47 +21,59 @@ struct DashState {
 };
 
 class Player : public Component {
-public:
-  enum State {
-    Idle,
-    Walking,
-    Dashing,
-  };
+   public:
+    enum State {
+        Idle,
+        Walking,
+        Dashing,
+        StageTransition,
+    };
 
-  int hp;
-  int hpLoss;
+    vector<Vec2<Iso>> Trail{};
+
+    int hp;
+    int hpLoss;
+
+   private:
+    float& walkingSpeed{Consts::GetFloat("player.walking_speed")};
+    float& stepsTiming{Consts::GetFloat("player.steps_timing")};
+
+    Direction direction{NoneX, Down};
+    DashState dashState;
+    Timer stepsTimer{};
+    Timer trailTimer{};
 
 private:
-  float &walkingSpeed{Consts::GetFloat("player.walking_speed")};
-  Direction direction;
-  DashState dashState;
+    float &walkingSpeed{Consts::GetFloat("player.walking_speed")};
+    Direction direction;
+    DashState dashState;
 
-  float flashTimeout{0};
-  Vec2<Cart> knockbackVelocity{0, 0};
+    void UpdateState(float dt);
+    void UpdatePosition(float dt);
+    void ConstrainToTile();
+    Timer hpLossTimer;
 
-  Timer hpLossTimer;
+    /* Transitions the state from the current to `newState` */
+    void ChangeState(State newState);
+    /* Only calls ChangeState if state != newState */
+    void MaybeChangeState(State newState);
 
-  /* Transitions the state from the current to `newState` */
-  void ChangeState(State newState);
-  /* Only calls ChangeState if state != newState */
-  void MaybeChangeState(State newState);
+    void UpdateState(float dt);
+    void UpdatePosition(float dt);
+    void ConstrainToTile();
 
-  void UpdateState(float dt);
-  void UpdatePosition(float dt);
-  void ConstrainToTile();
+    void Start();
+    void Update(float dt);
+    void Render(Vec2<Cart> camera);
+    inline CType Key() const { return CType::Player; }
+    void NotifyCollision(GameObject& other);
+    void RequestDelete();
 
-public:
-  static Player *player;
-  inline GameObject &Associated() { return associated; }
-  Player(GameObject &associated);
-  ~Player();
+    /* Finds the player if in view, or a point in the trail that's visible */
+    std::optional<Vec2<Iso>> LookForMe(Rect isoViewpoint);
 
-  State state{Idle};
-
-  void Start();
-  void Update(float dt);
-  void Render(Vec2<Cart> camera);
-  inline CType Key() const { return CType::Player; }
-  void NotifyCollision(GameObject &other);
-  void RequestDelete();
+    /* Transitions the state from the current to `newState` */
+    void ChangeState(State newState);
+    /* Only calls ChangeState if state != newState */
+    void MaybeChangeState(State newState);
 };

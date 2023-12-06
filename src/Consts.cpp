@@ -41,7 +41,11 @@ void Consts::Load() {
         }
         x.s = value;
 
-        Consts::values[key] = x;
+        if (key != "debug.show_colliders" ||
+            Consts::values.find("debug.show_colliders") ==
+                Consts::values.end()) {
+            Consts::values[key] = x;
+        }
     }
 }
 

@@ -5,6 +5,7 @@
 #include "Consts.h"
 #include "Resources.h"
 #include "SDL_include.h"
+#include "SDL_render.h"
 #include "SDL_timer.h"
 #include "state/TitleState.h"
 
@@ -39,7 +40,8 @@ Game::Game(const char* title, int width, int height) {
                               SDL_WINDOWPOS_CENTERED, width, height, 0);
     if (!window) sdlfail("couldn't create window");
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
+    // renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (!renderer) sdlfail("couldn't create renderer");
 
     frameStart = SDL_GetTicks();
@@ -70,8 +72,14 @@ void Game::Run() {
 
         trauma *= 0.9;
 
+        auto loopstart = SDL_GetTicks();
+
         CalculateDeltaTime();
         state->Update(dt);
+        auto loopend = SDL_GetTicks();
+
+        if (loopend - loopstart > 5)
+            warn2("game update took %dms!", loopend - loopstart);
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
         SDL_RenderClear(renderer);
@@ -128,16 +136,27 @@ void Game::CalculateDeltaTime() {
 }
 
 void Game::UpdateStateStack() {
+    bool popped = false;
     for (auto state : stateStackOperations) {
         if (state == nullptr) {
             stateStack.pop_back();
-            Resources::ClearAll();
+            popped = true;
             if (!stateStack.empty()) stateStack.back()->Resume();
         } else {
             if (!stateStack.empty()) stateStack.back()->Pause();
             stateStack.emplace_back(state);
             stateStack.back()->Start();
         }
+    }
+
+    if (popped)
+        Resources::ClearAll();
+
+    if (!stateStackOperations.empty()) {
+        // Resources sometimes takes a long time to load, we
+        // should disconsider that time to calculate dt for
+        // the next frame
+        CalculateDeltaTime();
     }
     stateStackOperations.clear();
 }

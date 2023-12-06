@@ -1,6 +1,8 @@
 #include "component/enemy/RobotCan.h"
 
+#include "CType.h"
 #include "Game.h"
+#include "Prefabs.h"
 #include "component/Animation.h"
 #include "component/Bullet.h"
 #include "component/Sprite.h"
@@ -47,10 +49,10 @@ RobotCan::RobotCan(GameObject& associated) : Component(associated) {
             float frameTime;
         };
         constexpr item_t items[] = {
-            {"walk_S", 10, 0.1},   {"walk_SW", 10, 0.1},
-            {"walk_W", 10, 0.1},   {"walk_NW", 10, 0.1},
-            {"walk_N", 10, 0.1},   {"walk_NE", 10, 0.1},
-            {"walk_E", 10, 0.1},   {"walk_SE", 10, 0.1},
+            {"walk_S", 10, 0.05},  {"walk_SW", 10, 0.05},
+            {"walk_W", 10, 0.05},  {"walk_NW", 10, 0.05},
+            {"walk_N", 10, 0.05},  {"walk_NE", 10, 0.05},
+            {"walk_E", 10, 0.05},  {"walk_SE", 10, 0.05},
             {"fire1_S", 5, 0.1},   {"fire1_SW", 5, 0.1},
             {"fire1_W", 5, 0.1},   {"fire1_NW", 5, 0.1},
             {"fire1_N", 5, 0.1},   {"fire1_NE", 5, 0.1},
@@ -90,14 +92,49 @@ RobotCan::RobotCan(GameObject& associated) : Component(associated) {
     direction = Direction{NoneX, Down};
 }
 
-void RobotCan::Update(float) {}
+void RobotCan::Update(float dt) {
+    associated.box.OffsetBy(knockbackVelocity * dt);
+    knockbackVelocity = knockbackVelocity * 0.70;
+
+    flashTimeout -= dt;
+    if (flashTimeout <= 0) {
+        flashTimeout = INFINITY;  // won't trigger this part again very soon
+        for (auto& sprite : associated.GetAllComponents(CType::Sprite)) {
+            ((Sprite*)sprite.get())->WithFlash(false);
+        }
+    }
+}
 
 void RobotCan::Render(Vec2<Cart>) {}
 
 void RobotCan::NotifyCollision(GameObject& other) {
     auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
-    if (bullet && !bullet->TargetsPlayer()) {
-        warn("RobotCan hit!");
+    bool isCompanion = associated.GetComponent(CType::Companion) != nullptr;
+    if (bullet && bullet->TargetsPlayer() == isCompanion) {
+        if (!isCompanion) {
+            hp -= 25;
+            if (hp <= 0) {
+                Die();
+                other.RequestDelete();
+                return;
+            }
+        }
+
+        // Flash
+        for (auto& sprite : associated.GetAllComponents(CType::Sprite)) {
+            ((Sprite*)sprite.get())->WithFlash(true);
+        }
+        flashTimeout = 0.08;
+
+        // Explosion
+        auto hitpoint = other.box.Center();
+        hitpoint = hitpoint + Vec2<Cart>{25, 0}.GetRotated(other.angle);
+        associated.RequestAdd(MakeExplosion1()->WithCenterAt(hitpoint));
+
+        // Knockback
+        float kb = 80000 * Game::Instance().DeltaTime();
+        knockbackVelocity = Vec2<Cart>{kb, 0}.GetRotated(other.angle);
+
         other.RequestDelete();
     }
 }
@@ -105,4 +142,15 @@ void RobotCan::NotifyCollision(GameObject& other) {
 RobotCan* RobotCan::WithStopDistance(float value) {
     stopDistance = value;
     return this;
+}
+
+RobotCan* RobotCan::WithHp(int hp) {
+    this->hp = hp;
+    return this;
+}
+
+void RobotCan::Die() {
+    auto center = associated.box.Center();
+    associated.RequestAdd(MakeExplosion4()->WithCenterAt(center));
+    associated.RequestDelete();
 }
