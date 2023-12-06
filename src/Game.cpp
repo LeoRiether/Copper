@@ -90,7 +90,7 @@ void Game::Run() {
 
         Consts::PeriodicLoad();
 
-        int64_t deltaMs = (int64_t)SDL_GetTicks64() - frameStart;
+        int64_t deltaMs = (int64_t)SDL_GetTicks() - frameStart;
         SDL_Delay(std::max(0ll, (long long)(FRAME_MS - deltaMs)));
     }
     stateStack.clear();
@@ -124,7 +124,7 @@ Game& Game::Instance() {
 }
 
 void Game::CalculateDeltaTime() {
-    int64_t ticks = SDL_GetTicks64();
+    int64_t ticks = SDL_GetTicks();
     dt = float(ticks - frameStart) / 1000.0f;
 
     if (slowdown.duration > 0) {
