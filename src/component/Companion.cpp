@@ -79,7 +79,9 @@ void Companion::updateCore(float) {
 
     switch (state) {
         case Looking: {
-            auto mouseDelta = input.Mouse() - associated.box.Center();
+            auto mouseDelta = input.HasController()
+                                  ? input.AxisVec(1)
+                                  : input.Mouse() - associated.box.Center();
             auto lookingDir = Direction::approxFromVec(mouseDelta);
             coreAnimPlay("walk_" + lookingDir.toString());
             break;
@@ -94,8 +96,11 @@ void Companion::updateState(float dt) {
     auto& input = InputManager::Instance();
 
     auto checkShootInput = [&]() {
-        if (input.MousePress(1)) {
-            auto mouseDelta = input.Mouse() - associated.box.Center();
+        if (input.MousePress(1) ||
+            input.ControllerPress(SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)) {
+            auto mouseDelta = input.HasController()
+                                  ? input.AxisVec(1)
+                                  : input.Mouse() - associated.box.Center();
             associated.RequestAdd(
                 MakePlayerBullet(associated.box.Center(), mouseDelta.angle()));
             auto dir = Direction::approxFromVec(mouseDelta);

@@ -1,12 +1,12 @@
 #include "state/TitleState.h"
 
-#include "component/TextBlinker.h"
 #include "Colors.h"
 #include "Game.h"
 #include "GameObject.h"
 #include "InputManager.h"
 #include "Music.h"
 #include "component/Text.h"
+#include "component/TextBlinker.h"
 #include "component/TextFadeIn.h"
 #include "state/StageState.h"
 #include "state/ViewerState.h"
@@ -35,7 +35,8 @@ void TitleState::Update(float dt) {
         quitRequested = true;
     }
 
-    if (input.KeyPress(SDL_SCANCODE_SPACE)) {
+    if (input.KeyPress(SDL_SCANCODE_SPACE) ||
+        input.ControllerPress(SDL_CONTROLLER_BUTTON_X)) {
         log("pushing StageState");
         Game::Instance().RequestPush(new StageState{});
     }

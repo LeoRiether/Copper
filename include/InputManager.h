@@ -27,14 +27,24 @@ enum class MouseWheelState { Down = -1, None = 0, Up = 1 };
 
 class InputManager {
    private:
+    bool quitRequested;
+
+    // Keys
+    InputState keyState[KEYS];
+    int keyUpdate[KEYS];
+
+    // Mouse
     InputState mouseState[6];
     int mouseUpdate[6];
     MouseWheelState mouseWheel;
-    InputState keyState[KEYS];
-    int keyUpdate[KEYS];
-    bool quitRequested;
     int rawMouseX, rawMouseY;
     int mouseX, mouseY;
+
+    // Controller
+    SDL_GameController* controller{nullptr};
+    InputState controllerState[SDL_CONTROLLER_BUTTON_MAX];
+    bool controllerUpdate[SDL_CONTROLLER_BUTTON_MAX];
+    float mapAxis(int x);
 
     InputManager();
     ~InputManager();
@@ -50,6 +60,13 @@ class InputManager {
     bool MousePress(int button);
     bool MouseRelease(int button);
     bool IsMouseDown(int button);
+
+    inline bool HasController() const { return controller != nullptr; }
+    bool ControllerPress(int key);
+    bool ControllerRelease(int key);
+    bool IsControllerDown(int key);
+    float Axis(SDL_GameControllerAxis ax);
+    Vec2<Cart> AxisVec(int ax);
 
     MouseWheelState MouseWheel();
 

@@ -15,20 +15,21 @@ vector<ControlsTutorial::State> ControlsTutorial::states = {
     },
     {
         "press W A S D\nto move",
-        [](InputManager& input) {
-            return input.IsKeyDown(MOVE_UP_KEY) ||
-                   input.IsKeyDown(MOVE_DOWN_KEY) ||
-                   input.IsKeyDown(MOVE_LEFT_KEY) ||
-                   input.IsKeyDown(MOVE_RIGHT_KEY);
-        },
+        [](InputManager&) { return !Direction::fromInput().isNone(); },
     },
     {
         "press SPACE\nto dash",
-        [](InputManager& input) { return input.KeyPress(DASH_KEY); },
+        [](InputManager& input) {
+            return input.KeyPress(DASH_KEY) ||
+                   input.ControllerPress(SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
+        },
     },
     {
         "LEFT CLICK with\nyour mouse\nto fire",
-        [](InputManager& input) { return input.IsMouseDown(1); },
+        [](InputManager& input) {
+            return input.IsMouseDown(1) ||
+                   input.ControllerPress(SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
+        },
     },
     {
         "KILL all enemies\nto win\n Good Luck",
