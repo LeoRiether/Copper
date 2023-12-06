@@ -8,7 +8,7 @@ class LifeBarManager : public Component {
 public:
   LifeBarManager(GameObject &go, int maxHP, Bar *lifeBar = nullptr);
   void Start(){};
-  void Update(float dt){};
+  void Update(float dt);
   void Render(Vec2<Cart> camera){};
   inline CType Key() const { return CType::LifeBarManager; }
   void SetLifeBar(Bar *bar);
@@ -18,5 +18,7 @@ public:
 private:
   Bar *lifeBar;
   int maxHP;
+  int prevHP;
+  int prevLoss;
   // Bar *energyBar;
 };

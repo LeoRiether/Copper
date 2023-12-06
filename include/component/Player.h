@@ -7,7 +7,6 @@
 #include "Consts.h"
 #include "GameObject.h"
 #include "Timer.h"
-#include "component/LifeBarManager.h" // desculpa
 #include "math/Direction.h"
 #include "math/Vec2.h"
 using std::weak_ptr;
@@ -28,6 +27,9 @@ public:
     Dashing,
   };
 
+  int hp;
+  int hpLoss;
+
 private:
   float &walkingSpeed{Consts::GetFloat("player.walking_speed")};
   Direction direction;
@@ -36,10 +38,7 @@ private:
   float flashTimeout{0};
   Vec2<Cart> knockbackVelocity{0, 0};
 
-  int hp;
-  int hp_loss;
-  Timer hp_loss_timer;
-  LifeBarManager *lbManager;
+  Timer hpLossTimer;
 
   /* Transitions the state from the current to `newState` */
   void ChangeState(State newState);

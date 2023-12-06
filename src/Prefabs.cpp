@@ -11,6 +11,7 @@
 #include "component/Collider.h"
 #include "component/IsoCollider.h"
 #include "component/KillTimeout.h"
+#include "component/LifeBarManager.h"
 #include "component/Player.h"
 #include "component/Sprite.h"
 #include "component/enemy/EnemyDistancer.h"
@@ -181,9 +182,11 @@ GameObject *MakeLifeBar() {
   auto lifeBar =
       new Bar{*go, "assets/img/Lifebar.png", maxBar, dimension, space};
   lifeBar->SetBarState(maxBar);
+  auto hpManager = new LifeBarManager(*go, 100, lifeBar);
   auto cf = new CameraFollower{*go, Vec2<Cart>{10, 10}};
 
   go->AddComponent(lifeBar);
+  go->AddComponent(hpManager);
   go->AddComponent(cf);
 
   return go;

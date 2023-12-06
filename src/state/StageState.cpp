@@ -46,22 +46,10 @@ void StageState::Start() {
   //     RequestAddObject(go);
   // }
 
-  ///////////////////////////
-  //          HUD          //
-  ///////////////////////////
-
-  std::cout << "chegueiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii\n";
-  auto hpBar = MakeLifeBar();
-  auto bar = (Bar *)hpBar->GetComponent(CType::Bar);
-  RequestAddObject(hpBar);
-
   //////////////////////////
   //        Player        //
   //////////////////////////
   auto player = MakePlayer()->WithFootAt({0, 0});
-  auto hpManager =
-      (LifeBarManager *)player->GetComponent(CType::LifeBarManager);
-  hpManager->SetLifeBar(bar);
   camera->SetPos(player->box.Center());
   camera->Follow(player);
   RequestAddObject(player);
@@ -128,6 +116,13 @@ void StageState::Start() {
   // addTilemap(ASSETS "/map/Ferrugem.png", 13, 19,
   //            ASSETS "/map/Salas copper V2_Copy of Group 2_Tile
   //            Layer 12.csv");
+
+  ///////////////////////////
+  //          HUD          //
+  ///////////////////////////
+
+  auto hpBar = MakeLifeBar();
+  RequestAddObject(hpBar);
 
   StartArray();
   started = true;

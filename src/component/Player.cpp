@@ -3,6 +3,7 @@
 #include <SDL2/SDL_render.h>
 
 #include <cmath>
+#include <iostream>
 #include <string>
 
 #include "Game.h"
@@ -26,9 +27,7 @@ Player::Player(GameObject &associated) : Component(associated) {
   Player::player = this;
 
   hp = 100;
-  hp_loss = 0;
-
-  lbManager = new LifeBarManager{associated, hp};
+  hpLoss = 0;
 
   auto sprite = new Sprite{associated, ASSETS "/img/copper_running.png"};
   sprite->SetHasShadow(true);
@@ -172,14 +171,14 @@ void Player::UpdateState(float dt) {
   }
 
   // Damage logic
-  if (hp_loss > 0) {
-    hp_loss_timer.Update(dt);
-    if (hp_loss_timer.Get() > 1) {
-      hp_loss_timer.Restart();
+  if (hpLoss > 0) {
+    hpLossTimer.Update(dt);
+    if (hpLossTimer.Get() > 1) {
+      hpLossTimer.Restart();
       hp -= 10; // valor arbitrario
-      hp_loss -= 10;
+      hpLoss -= 10;
     }
-    hp_loss = hp_loss < 0 ? 0 : hp_loss;
+    hpLoss = hpLoss < 0 ? 0 : hpLoss;
   }
 }
 
@@ -255,7 +254,7 @@ void Player::NotifyCollision(GameObject &other) {
   auto bullet = (Bullet *)other.GetComponent(CType::Bullet);
   if (bullet && bullet->TargetsPlayer()) {
     // Takes damage
-    hp_loss += bullet->Damage();
+    hpLoss += bullet->Damage();
 
     // Flash
     auto sprite = (Sprite *)associated.GetComponent(CType::Sprite);
