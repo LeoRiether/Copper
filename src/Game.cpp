@@ -21,7 +21,7 @@ Game::Game(const char* title, int width, int height) {
 
     info("initializing...");
 
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER))
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER))
         sdlfail("couldn't initialize SDL");
 
     int img_flags = IMG_INIT_JPG | IMG_INIT_PNG;

@@ -1,10 +1,20 @@
 #include "math/Direction.h"
 
 #include "InputManager.h"
+#include "math/Vec2.h"
+#include "util.h"
+
+#define MODULE "Direction"
 
 Direction Direction::fromInput() {
     Direction self;
     auto& input = InputManager::Instance();
+
+    if (input.HasController()) {
+        auto av = input.AxisVec(-1);
+        return av.x == 0 && av.y == 0 ? Direction{NoneX, NoneY}
+                                      : Direction::approxFromVec(av);
+    }
 
     self.x = input.IsKeyDown(MOVE_LEFT_KEY)    ? Left
              : input.IsKeyDown(MOVE_RIGHT_KEY) ? Right

@@ -156,7 +156,8 @@ void Player::UpdateState(float dt) {
     auto checkDashEvent = [&]() {
         dashState.timeout.Update(dt);
         if (dashState.timeout.Get() >= DASH_TIMEOUT &&
-            input.KeyPress(DASH_KEY)) {
+            (input.KeyPress(DASH_KEY) ||
+             input.ControllerPress(SDL_CONTROLLER_BUTTON_LEFTSHOULDER))) {
             ChangeState(Dashing);
         }
     };
@@ -266,18 +267,23 @@ void Player::UpdatePosition(float dt) {
   associated.box.OffsetBy(knockbackVelocity * dt);
   knockbackVelocity = knockbackVelocity * 0.70;
 
+    auto& input = InputManager::Instance();
+    auto moveVec = [&]() {
+        return input.HasController() ? input.AxisVec(-1) : direction.toVec();
+    };
+
     switch (state) {
         case Idle: {
             break;
         }
         case Walking:
         case StageTransition: {
-            Vec2<Cart> speed = direction.toVec() * walkingSpeed * dt;
+            Vec2<Cart> speed = moveVec() * walkingSpeed * dt;
             associated.box.OffsetBy(speed);
             break;
         }
         case Dashing: {
-            Vec2<Cart> speed = direction.toVec() * walkingSpeed * 2.5 * dt;
+            Vec2<Cart> speed = moveVec() * walkingSpeed * 2.5 * dt;
             associated.box.OffsetBy(speed);
             break;
         }

@@ -14,6 +14,7 @@
 #define YELLOW "\033[93m"
 #define BLUE "\033[94m"
 #define CYAN "\033[96m"
+#define PURPLE "\033[38;2;164;82;211m"
 #define WHITE "\033[97m"
 
 #define log(fmt) \
@@ -24,6 +25,10 @@
     { fprintf(stderr, GREEN MODULE ":: " RESET fmt "\n"); }
 #define info2(fmt, ...) \
     { fprintf(stderr, GREEN MODULE ":: " RESET fmt "\n", __VA_ARGS__); }
+#define special(fmt) \
+    { fprintf(stderr, PURPLE MODULE ":: " RESET fmt "\n"); }
+#define special2(fmt, ...) \
+    { fprintf(stderr, PURPLE MODULE ":: " RESET fmt "\n", __VA_ARGS__); }
 #define debug(fmt) \
     { fprintf(stderr, CYAN MODULE ":: " RESET fmt "\n"); }
 #define debug2(fmt, ...) \
