@@ -84,7 +84,10 @@ void Text::RemakeTexture() {
             break;
         }
         case Text::Wrapped: {
+#ifdef TTF_WRAPPED_ALIGN_CENTER
+            // ¯\_(ツ)_/¯
             TTF_SetFontWrappedAlign(font->inner, TTF_WRAPPED_ALIGN_CENTER);
+#endif
             surface = TTF_RenderUTF8_Blended_Wrapped(font->inner, text.c_str(),
                                                      color, 0);
             break;
