@@ -44,6 +44,21 @@ void Companion::updatePosition(float dt) {
     auto selfPos = iso->box.Center().transmute<Iso>();
     auto maybePlayerPos = Player::player->LookForMe(iso->box);
 
+    // Distance to the real player, not some trail
+    auto realPlayerPos = Player::player->associated.box.Center();
+    auto realDistVec = realPlayerPos - selfPos.toCart();
+
+    // If too far away, just move companion close really fast
+    if (realDistVec.norm2() >= 80000) {
+        associated.box.OffsetBy(realDistVec * 0.01);
+        tooFarTimer.Update(dt);
+        if (tooFarTimer.Get() >= 3.0) {
+            associated.box.OffsetBy(realDistVec * 0.3);
+        }
+    } else {
+        tooFarTimer.Restart();
+    }
+
     if (!maybePlayerPos) {
         allAnimsPlay("hide_" + rc->direction.toString(), false);
         return;
@@ -53,24 +68,15 @@ void Companion::updatePosition(float dt) {
                 Steering{}.AddTerrain(selfPos)->Result().toCart();
     moveDelta = moveDelta.normalize();
 
-    // Distance to the real player, not some trail
-    auto realPlayerPos = Player::player->associated.box.Center();
-    auto realDistVec = realPlayerPos - selfPos.toCart();
-
     if (realDistVec.norm2() > stopDistance * stopDistance) {
         rc->direction = Direction::approxFromVec(moveDelta);
         baseAnimPlay("walk_" + rc->direction.toString());
-        rc->associated.box.OffsetBy(moveDelta * speed * dt);
+        associated.box.OffsetBy(moveDelta * speed * dt);
         walkingToIdleTimeout.Restart();
     } else {
         walkingToIdleTimeout.Update(dt);
         if (walkingToIdleTimeout.Get() >= 0.1)
             baseAnimPlay("idle_" + rc->direction.toString());
-    }
-
-    // If too far away, just move companion close really fast
-    if (realDistVec.norm2() >= 80000) {
-        associated.box.OffsetBy(realDistVec * 0.01);
     }
 }
 
