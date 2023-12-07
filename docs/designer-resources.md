@@ -4,3 +4,4 @@
 - [Design Isometric Environments for Games](https://design.tutsplus.com/courses/design-isometric-environments-for-games)
 - [Universal UI/Menu Soundpack](https://ellr.itch.io/universal-ui-soundpack)
 - [How to draw an isometric circle](https://www.youtube.com/watch?v=rApVXwADY84)
+- [Rendering Isometric Assets & Pixelating Renders [In Blender]](https://www.youtube.com/watch?v=faz9tPkM0Ak)

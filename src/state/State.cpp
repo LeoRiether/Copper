@@ -1,10 +1,11 @@
 #include "state/State.h"
 
 #include <algorithm>
-#include <fstream>
-#include <tuple>
+#include <memory>
 
 #include "CType.h"
+#include "Game.h"
+#include "GameObject.h"
 #include "component/IsoCollider.h"
 #include "util.h"
 
@@ -13,8 +14,8 @@
 State::State() { camera->SetSpeed(Vec2<Cart>{250, 250}); }
 
 State::~State() {
-  objects.clear();
-  addRequests.clear();
+    objects.clear();
+    addRequests.clear();
 }
 
 void State::LoadAssets() {}
@@ -22,75 +23,107 @@ void State::Start() { started = true; }
 void State::Pause() {}
 void State::Resume() {}
 
-weak_ptr<GameObject> State::RequestAddObject(GameObject *go) {
-  shared_ptr<GameObject> ptr{go};
-  addRequests.emplace_back(ptr);
-  return ptr;
+weak_ptr<GameObject> State::RequestAddObject(GameObject* go) {
+    shared_ptr<GameObject> ptr{go};
+    addRequests.emplace_back(ptr);
+    return ptr;
 }
 
 // WARN: partial function, only call if you're sure the GameObject is in
 // `objects`
-weak_ptr<GameObject> State::GetObject(GameObject *go) {
-  for (auto &candidate : objects) {
-    if (go == candidate.get())
-      return candidate;
-  }
-  fail("GetObject called with GameObject that's not registered");
+weak_ptr<GameObject> State::GetObject(GameObject* go) {
+    for (auto& candidate : objects) {
+        if (go == candidate.get()) return candidate;
+    }
+    fail("GetObject called with GameObject that's not registered");
 }
 
 void State::ProcessAddRequests() {
-  while (!addRequests.empty()) {
-    auto newObjects = std::move(addRequests);
-    addRequests = {};
-    for (auto &go : newObjects) {
-      objects.emplace_back(go);
+    while (!addRequests.empty()) {
+        auto newObjects = std::move(addRequests);
+        addRequests = {};
+        for (auto& go : newObjects) {
+            objects.emplace_back(go);
+        }
+        for (auto& go : newObjects) {
+            go->Start();
+        }
     }
-    for (auto &go : newObjects) {
-      go->Start();
-    }
-  }
 }
 
 void State::StartArray() {
-  for (auto &go : objects) {
-    go->Start();
-  }
-  ProcessAddRequests();
+    for (auto& go : objects) {
+        go->Start();
+    }
+    ProcessAddRequests();
 }
 
 void State::UpdateArray(float dt) {
-  for (auto &go : objects) {
-    go->Update(dt);
-  }
+    for (auto& go : objects) {
+        go->Update(dt);
+    }
 }
 
 void State::RenderArray() {
-  ZSort();
-  for (auto &go : objects) {
-    go->Render(camera->Pos());
-  }
+    auto so = ZSort();
+    for (auto& s : so) {
+        switch (s.tag) {
+            case SortableObject::Object: {
+                s.go->Render(camera->Pos());
+                break;
+            }
+            case SortableObject::Tile: {
+                auto tilemap = (Tilemap*)s.go->GetComponent(CType::Tilemap);
+                if (!tilemap) fail("rendering tile without tilemap?");
+                auto camera = Game::Instance().GetState().GetCamera().Pos();
+                tilemap->RenderTile(camera, s.tile.index);
+                break;
+            }
+        }
+    }
 }
 
-// Currently (experimentally!!) doing a Shell Sort by <layer, box.y+box.h>
-void State::ZSort() {
-  auto key = [](const GameObject &go) {
-    auto isoCollider = (IsoCollider *)go.GetComponent(CType::IsoCollider);
-    if (isoCollider) {
-      Vec2<Cart> centerCart =
-          isoCollider->box.Center(); // it's actually a Vec2<Iso>!! Sorry :(
-      Vec2<Iso> centerIso = {centerCart.x, centerCart.y};
-      return std::tuple{go.renderLayer, centerIso.toCart().y};
+vector<State::SortableObject> State::ZSort() {
+    static vector<SortableObject> so;
+    so.clear();
+    so.reserve(objects.size());
+
+    auto camera = Game::Instance().GetState().GetCamera().Pos();
+    for (auto& go : objects) {
+        auto tilemap = (Tilemap*)go->GetComponent(CType::Tilemap);
+        if (tilemap && tilemap->base.w != 0 && tilemap->base.h != 0) {
+            auto tiles = tilemap->RenderedTiles(camera);
+            so.reserve(so.size() + tiles.size());
+            for (auto tile : tiles) {
+                so.push_back({SortableObject::Tile, go.get(), tile});
+            }
+        } else {
+            so.push_back({SortableObject::Object, go.get(),
+                          Tilemap::TileToRender{0, Rect{0}}});
+        }
     }
 
-    return std::tuple{go.renderLayer, go.box.y + go.box.h};
-  };
+    auto key = [&](const SortableObject& x) {
+        // Tile key
+        if (x.tag == SortableObject::Tile) {
+            auto center = x.tile.collider.Center().transmute<Iso>().toCart();
+            return std::tuple{x.go->renderLayer, center.y};
+        }
 
-  const size_t n = objects.size();
-  for (size_t gap : {102, 45, 20, 9, 4, 1}) {
-    for (size_t i = gap; i < n; i++) {
-      for (size_t j = i; j >= gap && key(*objects[j]) < key(*objects[j - gap]);
-           j -= gap)
-        std::swap(objects[j], objects[j - gap]);
-    }
-  }
+        // Iso object key
+        auto iso = (IsoCollider*)x.go->GetComponent(CType::IsoCollider);
+        if (iso) {
+            auto center = iso->box.Center().transmute<Iso>().toCart();
+            return std::tuple{x.go->renderLayer, center.y};
+        }
+
+        // Anything else
+        return std::tuple{x.go->renderLayer, x.go->box.Foot().y};
+    };
+
+    std::stable_sort(so.begin(), so.end(), [&](const auto& a, const auto& b) {
+        return key(a) < key(b);
+    });
+
+    return so;
 }

@@ -5,14 +5,14 @@
 
 // Keeps a GameObject alive until the Sound component stops playing
 class KeepSoundAlive : public Component {
-private:
-  GameObject &go;
+   private:
+    GameObject& go;
 
-public:
-  KeepSoundAlive(GameObject &go);
-  ~KeepSoundAlive();
+   public:
+    KeepSoundAlive(GameObject& go);
+    ~KeepSoundAlive();
 
-  void Update(float dt);
-  void Render(Vec2<Cart> camera);
-  bool Is(CType _type);
+    void Update(float dt);
+    void Render(Vec2<Cart> camera);
+    inline CType Key() const { return CType::KeepSoundAlive; }
 };

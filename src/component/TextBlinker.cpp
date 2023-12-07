@@ -34,5 +34,3 @@ void TextBlinker::Update(float dt) {
 }
 
 void TextBlinker::Render(Vec2<Cart>) {}
-
-bool TextBlinker::Is(CType type) { return type == CType::TextBlinker; }

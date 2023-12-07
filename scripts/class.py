@@ -19,11 +19,14 @@ def main():
     classname = classpath.split("/")[-1]
 
     if os.path.exists(f"include/{classpath}.h"):
-        print(f"\033[91merror!\033[0m file include/{classpath}.h already exists")
+        print(f"\033[91merror!\033[0m file include/{classpath}.h already exists") # ]]
         return
     if os.path.exists(f"src/{classpath}.cpp"):
-        print(f"\033[91merror!\033[0m file src/{classpath}.cpp already exists")
+        print(f"\033[91merror!\033[0m file src/{classpath}.cpp already exists") # ]]
         return
+
+    if len(classpath.split('/')) > 1:
+        os.makedirs(os.path.join(*classpath.split('/')[:-1]), exist_ok=True)
 
     includes = ""
     inherit = ""
@@ -32,7 +35,7 @@ def main():
         includes += '#include "Component.h"'
         inherit = ": public Component "
 
-    with open(f"include/{classpath}.h", "w") as fh:
+    with open(f"./include/{classpath}.h", "w") as fh:
         fh.write(
             f"""#pragma once
 
@@ -48,7 +51,7 @@ class {classname} {inherit}{{
 """
         )
 
-    with open(f"src/{classpath}.cpp", "w") as fcpp:
+    with open(f"./src/{classpath}.cpp", "w") as fcpp:
         fcpp.write(
             f"""#include "{classpath}.h"
 

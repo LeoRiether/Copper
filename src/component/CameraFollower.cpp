@@ -12,5 +12,3 @@ void CameraFollower::Update(float) {
 }
 
 void CameraFollower::Render(Vec2<Cart>) {}
-
-bool CameraFollower::Is(CType type) { return type == CType::CameraFollower; }

@@ -4,38 +4,38 @@
 #include <vector>
 
 #include "Camera.h"
-#include "GameObject.h"
 #include "Music.h"
 #include "SDL_include.h"
 #include "State.h"
-#include "component/IsoCollider.h"
-#include "component/Sprite.h"
-#include "math/Vec2.h"
 
 using std::shared_ptr;
 using std::unique_ptr;
 using std::vector;
+using std::weak_ptr;
 
 class StageState : public State {
-private:
-  Music *music;
+   private:
+    Music* music;
 
-  GameObject *CreatePlayer();
-  GameObject *CreateEnemyFollower();
-  GameObject *CreateEnemyDistancer();
+   public:
+    weak_ptr<GameObject> mainMap;
 
-public:
-  ~StageState();
+    /** Counts number of GameObjects where go->tag.test(tag::Enemy) is true.
+     * It's automatically updated when RequestAdds and RequestDeletes are
+     * processed  */
+    int EnemyCount{0};
 
-  void Start();
-  void Pause();
-  void Resume();
+    ~StageState();
 
-  void LoadAssets();
-  void Update(float dt);
-  void Render();
+    void Start();
+    void Pause();
+    void Resume();
 
-  void Input();
+    void LoadAssets();
+    void Update(float dt);
+    void Render();
 
-  inline Camera &GetCamera() { return *camera; }
+    void Input();
+
+    inline Camera& GetCamera() { return *camera; }
 };

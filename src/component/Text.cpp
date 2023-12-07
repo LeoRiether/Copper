@@ -7,7 +7,6 @@
 #include "SDL_rect.h"
 #include "SDL_render.h"
 #include "SDL_surface.h"
-#include "SDL_ttf.h"
 #include "util.h"
 
 #define MODULE "Text"
@@ -37,8 +36,6 @@ void Text::Render(Vec2<Cart> camera) {
   SDL_RenderCopyEx(game.Renderer(), texture->inner, &clipRect, &destRect, 0.0,
                    nullptr, SDL_FLIP_NONE);
 }
-
-bool Text::Is(CType type) { return type == CType::Text; }
 
 void Text::SetText(string t) {
   if (t.empty()) {

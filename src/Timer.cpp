@@ -1,13 +1,11 @@
 #include "Timer.h"
 
-#include "Game.h"
+Timer::Timer() : acc(0.0) {}
 
-Timer::Timer() : startTime(Game::Instance().FrameStart()) {}
+void Timer::Update(double dt) { acc += dt; }
 
-void Timer::Restart() { startTime = Game::Instance().FrameStart(); }
+void Timer::Delay(double dt) { acc -= dt; }
 
-void Timer::Delay(float t) { startTime -= round(t * 1000.0f); }
+void Timer::Restart() { acc = 0; }
 
-float Timer::Get() {
-  return (Game::Instance().FrameStart() - startTime) / 1000.0f;
-}
+double Timer::Get() { return acc; }

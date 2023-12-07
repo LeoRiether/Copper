@@ -4,13 +4,13 @@
 #include "Component.h"
 
 class CameraFollower : public Component {
-private:
-  GameObject &go;
+   private:
+    GameObject& go;
 
-public:
-  CameraFollower(GameObject &go);
+   public:
+    CameraFollower(GameObject& go);
 
-  void Update(float dt);
-  void Render(Vec2<Cart> camera);
-  bool Is(CType type);
+    void Update(float dt);
+    void Render(Vec2<Cart> camera);
+    inline CType Key() const { return CType::CameraFollower; }
 };
