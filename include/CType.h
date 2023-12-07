@@ -31,4 +31,5 @@ enum class CType {
     Companion,
 	Dialog,
 	Dimmer,
+    ControlsTutorial,
 };

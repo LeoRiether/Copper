@@ -26,8 +26,7 @@ class Companion : public Component {
     float& firingTimeoutSecs{Consts::GetFloat("companion.firing_timeout")};
 
     State state{Looking};
-    Timer firingTimeout{};
-    Timer walkingToIdleTimeout{};
+    Timer firingTimeout{}, walkingToIdleTimeout{}, tooFarTimer{};
 
     Vec2<Cart> moveDelta;
 

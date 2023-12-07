@@ -6,6 +6,7 @@
 #include "InputManager.h"
 #include "Music.h"
 #include "component/Text.h"
+#include "component/TextBlinker.h"
 #include "component/TextFadeIn.h"
 #include "state/StageState.h"
 #include "state/ViewerState.h"
@@ -34,7 +35,8 @@ void TitleState::Update(float dt) {
         quitRequested = true;
     }
 
-    if (input.KeyPress(SDL_SCANCODE_SPACE)) {
+    if (input.KeyPress(SDL_SCANCODE_SPACE) ||
+        input.ControllerPress(SDL_CONTROLLER_BUTTON_X)) {
         log("pushing StageState");
         Game::Instance().RequestPush(new StageState{});
     }
@@ -71,15 +73,15 @@ void TitleState::Start() {
         RequestAddObject(go);
     }
 
-    // {
-    //     auto go = new GameObject{};
-    //     auto sprite = new Sprite{*go, ASSETS "/img/title.png"};
-    //     go->AddComponent(sprite);
-    //     go->box = {0, 0, (float)sprite->SheetWidth(),
-    //                (float)sprite->SheetHeight()};
-    //     go->box.SetCenter({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f});
-    //     RequestAddObject(go);
-    // }
+    {
+        auto go = new GameObject{};
+        go->AddComponent(new Text{*go, ASSETS "/font/THEROOTS.TTF", 30,
+                                  Text::Blended, "press SPACE to start",
+                                  colorFromHex("dda08d")});
+        go->AddComponent(new TextBlinker{*go, 4.0f});
+        go->box.SetCenter({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f + 140});
+        RequestAddObject(go);
+    }
 
     // mechanismGlitch->Play();
 }

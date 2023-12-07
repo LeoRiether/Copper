@@ -44,6 +44,21 @@ void Companion::updatePosition(float dt) {
     auto selfPos = iso->box.Center().transmute<Iso>();
     auto maybePlayerPos = Player::player->LookForMe(iso->box);
 
+    // Distance to the real player, not some trail
+    auto realPlayerPos = Player::player->associated.box.Center();
+    auto realDistVec = realPlayerPos - selfPos.toCart();
+
+    // If too far away, just move companion close really fast
+    if (realDistVec.norm2() >= 80000) {
+        associated.box.OffsetBy(realDistVec * 0.01);
+        tooFarTimer.Update(dt);
+        if (tooFarTimer.Get() >= 3.0) {
+            associated.box.OffsetBy(realDistVec * 0.3);
+        }
+    } else {
+        tooFarTimer.Restart();
+    }
+
     if (!maybePlayerPos) {
         allAnimsPlay("hide_" + rc->direction.toString(), false);
         return;
@@ -53,24 +68,15 @@ void Companion::updatePosition(float dt) {
                 Steering{}.AddTerrain(selfPos)->Result().toCart();
     moveDelta = moveDelta.normalize();
 
-    // Distance to the real player, not some trail
-    auto realPlayerPos = Player::player->associated.box.Center();
-    auto realDistVec = realPlayerPos - selfPos.toCart();
-
     if (realDistVec.norm2() > stopDistance * stopDistance) {
         rc->direction = Direction::approxFromVec(moveDelta);
         baseAnimPlay("walk_" + rc->direction.toString());
-        rc->associated.box.OffsetBy(moveDelta * speed * dt);
+        associated.box.OffsetBy(moveDelta * speed * dt);
         walkingToIdleTimeout.Restart();
     } else {
         walkingToIdleTimeout.Update(dt);
         if (walkingToIdleTimeout.Get() >= 0.1)
             baseAnimPlay("idle_" + rc->direction.toString());
-    }
-
-    // If too far away, just move companion close really fast
-    if (realDistVec.norm2() >= 80000) {
-        associated.box.OffsetBy(realDistVec * 0.01);
     }
 }
 
@@ -79,7 +85,9 @@ void Companion::updateCore(float) {
 
     switch (state) {
         case Looking: {
-            auto mouseDelta = input.Mouse() - associated.box.Center();
+            auto mouseDelta = input.HasController()
+                                  ? input.AxisVec(1)
+                                  : input.Mouse() - associated.box.Center();
             auto lookingDir = Direction::approxFromVec(mouseDelta);
             coreAnimPlay("walk_" + lookingDir.toString());
             break;
@@ -94,8 +102,11 @@ void Companion::updateState(float dt) {
     auto& input = InputManager::Instance();
 
     auto checkShootInput = [&]() {
-        if (input.MousePress(1)) {
-            auto mouseDelta = input.Mouse() - associated.box.Center();
+        if (input.MousePress(1) ||
+            input.ControllerPress(SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)) {
+            auto mouseDelta = input.HasController()
+                                  ? input.AxisVec(1)
+                                  : input.Mouse() - associated.box.Center();
             associated.RequestAdd(
                 MakePlayerBullet(associated.box.Center(), mouseDelta.angle()));
             auto dir = Direction::approxFromVec(mouseDelta);
@@ -156,15 +167,24 @@ void Companion::baseAnimPlay(const string& id, bool loops) {
 //        Render        //
 //////////////////////////
 void Companion::Render(Vec2<Cart> camera) {
+    auto renderer = Game::Instance().Renderer();
+
     static int& showDirections = Consts::GetInt("debug.show_directions");
     if (showDirections) {
         auto iso = (IsoCollider*)associated.GetComponent(CType::IsoCollider);
         if (!iso) fail("no IsoCollider");
         auto from = iso->box.Center().transmute<Iso>().toCart() - camera;
         auto to = from + moveDelta * 80.0f;
-
-        auto renderer = Game::Instance().Renderer();
         SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255);
         SDL_RenderDrawLineF(renderer, from.x, from.y, to.x, to.y);
+    }
+
+    InputManager& input = InputManager::Instance();
+    if (input.HasController()) {
+        auto pos = associated.box.Center() - camera + input.AxisVec(1) * 120.0f;
+        SDL_FRect rects[2] = {{pos.x - 1, pos.y - 7, 2, 14},
+                              {pos.x - 7, pos.y - 1, 14, 2}};
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 128);
+        SDL_RenderFillRectsF(renderer, rects, 2);
     }
 }

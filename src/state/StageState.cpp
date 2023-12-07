@@ -5,8 +5,10 @@
 
 #include "Consts.h"
 #include "Game.h"
+#include "GameData.h"
 #include "GameObject.h"
 #include "InputManager.h"
+#include "Prefabs.h"
 #include "StagePrefabs.h"
 #include "component/FPSCounter.h"
 #include "component/InfiniteBg.h"
@@ -39,6 +41,14 @@ void StageState::Start() {
     //        Load Stage        //
     //////////////////////////////
     MakeStage1(*this, 1);
+
+    /////////////////////////////////////
+    //        Controls Tutorial        //
+    /////////////////////////////////////
+    if (GameData::firstStage) {
+        GameData::firstStage = false;
+        RequestAddObject(MakeControlsTutorial());
+    }
 
     StartArray();
     started = true;
@@ -87,6 +97,13 @@ void StageState::Update(float dt) {
         warn2("mouse pos: { %d, %d }", input.MouseX(), input.MouseY());
         auto mi = input.Mouse().toIso();
         warn2("iso mouse pos: { %g, %g }", mi.x, mi.y);
+    }
+
+    if (input.KeyPress(SDL_SCANCODE_0)) {
+        for (auto& go : objects) {
+            if (go->tags.test(tag::Enemy))
+                go->RequestDelete();
+        }
     }
 
     // Handle updates

@@ -8,7 +8,7 @@
 #define MODULE "Text"
 
 Text::Text(GameObject& associated, string fontFile, int fontSize,
-           TextStyle style, string text, SDL_Color color, int wp)
+           TextStyle style, string text, SDL_Color color)
     : Component(associated),
       font(nullptr),
       texture(nullptr),
@@ -89,9 +89,10 @@ void Text::RemakeTexture() {
             break;
         }
         case Text::Wrapped: {
-		#ifdef TTF_WRAPPED_ALIGN_CENTER
+#ifdef TTF_WRAPPED_ALIGN_CENTER
+            // ¯\_(ツ)_/¯
             TTF_SetFontWrappedAlign(font->inner, TTF_WRAPPED_ALIGN_CENTER);
-		#endif
+#endif
             surface = TTF_RenderUTF8_Blended_Wrapped(font->inner, text.c_str(),
                                                      color, wrapWidth);
             break;
