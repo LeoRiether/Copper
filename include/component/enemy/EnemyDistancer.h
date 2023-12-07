@@ -16,14 +16,6 @@ class EnemyDistancer : public Component {
         KeepingDistance,
     } state{Roaming};
 
-<<<<<<< HEAD
-class EnemyDistancer : public EnemyBehavior {
-private:
-  float walkingTime{0};
-
-public:
-  void Update(Enemy &enemy, float dt);
-=======
    private:
     RobotCan* self{nullptr};
 
@@ -51,5 +43,4 @@ public:
     void Update(float dt);
 
     inline CType Key() const { return CType::EnemyBehavior; }
->>>>>>> main
 };

@@ -22,7 +22,12 @@
 Dialog::Dialog(GameObject &go, std::string dialogFile)
     : Component(go), index(0) {
   script = DialogScript::fromFile(dialogFile);
-  go.AddComponent(new Dimmer{go});
+  auto dimmerGo = new GameObject{};
+  auto d = new Dimmer{*dimmerGo};
+  dimmerGo->AddComponent(d);
+  dimmerGo->box = go.box;
+
+  dimmer = std::shared_ptr<GameObject>(dimmerGo);
 
   auto textboxGo = new GameObject{};
   auto sprite = new Sprite{*textboxGo, ASSETS "/img/textbox.png"};
@@ -60,7 +65,7 @@ Dialog::Dialog(GameObject &go, std::string dialogFile)
   }
 
   auto speakerGo = new GameObject{};
-  auto speakerSprite = new Sprite{*speakerGo};
+  auto speakerSprite = new Sprite{*speakerGo, ASSETS "/img/copper_d.png"};
   speakerGo->AddComponent(speakerSprite);
   speakerSprite->SetScale(0.2);
   speakerGo->box.x = 100;
@@ -95,6 +100,7 @@ void Dialog::Update(float) {
 }
 
 void Dialog::Render(Vec2<Cart>) {
+  dimmer->Render(Vec2<Cart>{0, 0});
   speaker->Render(Vec2<Cart>{0, 0});
   textbox->Render(Vec2<Cart>{0, 0});
   msg->Render(Vec2<Cart>{0, 0});
@@ -111,4 +117,3 @@ void Dialog::Render(Vec2<Cart>) {
   */
 }
 
-bool Dialog::Is(CType type) { return type == CType::Dialog; }

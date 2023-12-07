@@ -12,6 +12,7 @@ copper.make
 compile_commands.json
 .gdbinit
 vgcore.*
+*.swp
 
 /scripts/venv/
 

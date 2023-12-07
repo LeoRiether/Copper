@@ -34,6 +34,7 @@ private:
   shared_ptr<GameObject> msg;
   shared_ptr<GameObject> name;
   shared_ptr<GameObject> textbox;
+  shared_ptr<GameObject> dimmer;
   DialogLine::Side side;
   inline static Vec2<Cart> Left{200, 350};
   inline static Vec2<Cart> Right{SCREEN_WIDTH - 400, 350};
@@ -44,6 +45,6 @@ public:
 
   void Update(float dt);
   void Render(Vec2<Cart> camera);
-  bool Is(CType type);
+    inline CType Key() const { return CType::Dialog; }
   void Start();
 };

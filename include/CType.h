@@ -30,5 +30,5 @@ enum class CType {
     EndOfStageTrigger,
     Companion,
 	Dialog,
-	DImmer,
+	Dimmer,
 };

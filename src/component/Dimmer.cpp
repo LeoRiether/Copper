@@ -15,4 +15,3 @@ void Dimmer::Render(Vec2<Cart>) {
   SDL_RenderFillRect(renderer, &rect);
 }
 
-bool Dimmer::Is(CType type) { return type == CType::Dimmer; }

@@ -16,7 +16,7 @@ using std::unique_ptr;
 
 class Text : public Component {
    public:  // /shrug
-    enum TextStyle { Solid, Shaded, Blended };
+    enum TextStyle { Solid, Shaded, Blended, Wrapped };
 
    private:
     shared_ptr<MyFont> font;
@@ -31,7 +31,7 @@ class Text : public Component {
 
    public:
     Text(GameObject& associated, string fontFile, int fontSize, TextStyle style,
-         string text, SDL_Color color);
+         string text, SDL_Color color, int wrapWidth = 0);
     ~Text();
 
     void Update(float dt);

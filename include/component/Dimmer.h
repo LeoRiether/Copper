@@ -9,5 +9,5 @@ public:
 
   void Update(float){};
   void Render(Vec2<Cart> camera);
-  bool Is(CType type);
+    inline CType Key() const { return CType::Dimmer; }
 };
