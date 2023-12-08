@@ -39,6 +39,9 @@ class Tilemap : public Component {
     /** Adds IsoColliders to every single non-negative tile */
     Tilemap* WithColliders(Rect base);
 
+    /** Adds IsoColliders to empty tiles on the border of the map */
+    Tilemap* WithFloorColliders(Rect base);
+
     /** Computes the connected components of the tilemap */
     void ComputeComponents();
 

@@ -41,7 +41,7 @@ void StageState::Start() {
     //////////////////////////////
     //        Load Stage        //
     //////////////////////////////
-    MakeStage1(*this, 1);
+    MakeStage1(*this);
 
     /////////////////////////////////////
     //        Controls Tutorial        //
