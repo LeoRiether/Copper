@@ -63,13 +63,6 @@ void StageState::Resume() {}
 void StageState::LoadAssets() {
     // Background music
     music = new Music(ASSETS "/audio/stageState.ogg");
-  {
-    auto go = new GameObject{};
-    auto dialog = new Dialog{*go, ASSETS "/dialog/sample.txt"};
-    go->AddComponent(dialog);
-    go->renderLayer = 10;
-    RequestAddObject(go);
-  }
 }
 
 void StageState::Update(float dt) {
@@ -105,6 +98,9 @@ void StageState::Update(float dt) {
                 go->RequestDelete();
         }
     }
+
+	if (input.KeyPress(INTERACT_KEY))
+		RequestAddObject(MakeDialog(ASSETS "/dialog/sample.txt"));
 
     // Handle updates
     CollisionEngine::Update(objects);

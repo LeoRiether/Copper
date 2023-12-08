@@ -10,6 +10,7 @@
 #include "component/Collider.h"
 #include "component/Companion.h"
 #include "component/ControlsTutorial.h"
+#include "component/Dialog.h"
 #include "component/IsoCollider.h"
 #include "component/KeepSoundAlive.h"
 #include "component/KillTimeout.h"
@@ -261,3 +262,11 @@ vector<GameObject*> MakeMap1Colliders() {
     }
     return objects;
 }
+
+GameObject* MakeDialog(std::string dialogFile){
+		auto go = new GameObject{};
+		auto dialog = new Dialog{*go, dialogFile};
+		go->AddComponent(dialog);
+		go->renderLayer = 10;
+		return go;
+	}

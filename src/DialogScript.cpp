@@ -35,10 +35,6 @@ DialogScript DialogScript::fromFile(const string &file) {
     while (line.character.back() == ':')
       line.character.pop_back();
 
-    for (auto &chr : line.character) {
-      chr = std::tolower(chr);
-    }
-
     res.emplace_back(line);
   }
 

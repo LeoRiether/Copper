@@ -122,6 +122,8 @@ void Player::MaybeChangeState(State newState) {
 }
 
 void Player::Update(float dt) {
+	if (!Game::Instance().GetState().playerMovement)
+		return;
     UpdateState(dt);
     UpdatePosition(dt);
 

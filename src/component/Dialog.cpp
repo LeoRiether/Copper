@@ -30,7 +30,7 @@ Dialog::Dialog(GameObject &go, std::string dialogFile)
   dimmer = std::shared_ptr<GameObject>(dimmerGo);
 
   auto textboxGo = new GameObject{};
-  auto sprite = new Sprite{*textboxGo, ASSETS "/img/textbox.png"};
+  auto sprite = new Sprite{*textboxGo, ASSETS "/img/Textbox.png"};
   textboxGo->AddComponent(sprite);
   textboxGo->box.x = (SCREEN_WIDTH - sprite->SheetWidth()) / 2;
   textboxGo->box.y = SCREEN_HEIGHT - 200 - sprite->SheetHeight() / 2;
@@ -41,11 +41,11 @@ Dialog::Dialog(GameObject &go, std::string dialogFile)
   Vec2<Cart> textboxScale = sprite->Scale();
   {
     auto msgGo = new GameObject{};
-    auto text = new Text{*msgGo, ASSETS "/font/Call me maybe.ttf",
-                         30,     Text::Blended,
-                         ".",    colorFromHex("e23400")};
+    auto text = new Text{*msgGo, ASSETS "/font/ROCK.TTF",
+                         30,     Text::Wrapped,
+                         ".",    colorFromHex("ffffff")};
     msgGo->AddComponent(text);
-    text->SetWrapWidth(sprite->SheetWidth());
+    text->SetWrapWidth(MSG_BOX_WIDTH);
     msgGo->box.x = MSG_BOX_X_OFFSET * textboxScale.x + textboxX;
     msgGo->box.y = MSG_BOX_Y_OFFSET * textboxScale.y + textboxY;
     msg = std::shared_ptr<GameObject>(msgGo);
@@ -53,9 +53,9 @@ Dialog::Dialog(GameObject &go, std::string dialogFile)
 
   {
     auto nameGo = new GameObject{};
-    auto text = new Text{*nameGo, ASSETS "/font/Call me maybe.ttf",
+    auto text = new Text{*nameGo, ASSETS "/font/AngelRhapsodyRegular-ZVGJz.ttf",
                          70,      Text::Blended,
-                         ".",     colorFromHex("e23400")};
+                         ".",     colorFromHex("fdd17a")};
     nameGo->AddComponent(text);
     text->SetWrapWidth(NAME_BOX_WIDTH);
     nameGo->box = Rect{NAME_BOX_X_OFFSET * textboxScale.x + textboxX,
@@ -65,12 +65,17 @@ Dialog::Dialog(GameObject &go, std::string dialogFile)
   }
 
   auto speakerGo = new GameObject{};
-  auto speakerSprite = new Sprite{*speakerGo, ASSETS "/img/copper_d.png"};
+  auto speakerSprite = new Sprite{*speakerGo, ASSETS "/img/Copper_d.png"};
   speakerGo->AddComponent(speakerSprite);
   speakerSprite->SetScale(0.2);
   speakerGo->box.x = 100;
   speakerGo->box.y = 100;
   speaker = shared_ptr<GameObject>{speakerGo};
+}
+
+Dialog::~Dialog(){
+  Game::Instance().Slowdown(1.0, 0);
+  Game::Instance().GetState().playerMovement = true;
 }
 
 void Dialog::Start() {
@@ -79,6 +84,8 @@ void Dialog::Start() {
   ((Text *)name->GetComponent(CType::Text))->SetText(line.character);
   ((Sprite *)speaker->GetComponent(CType::Sprite))
       ->Open(ASSETS + std::string("/img/") + line.character + "_d.png");
+  Game::Instance().Slowdown(0.0, INFINITY);
+  Game::Instance().GetState().playerMovement = false;
 }
 
 void Dialog::Update(float) {

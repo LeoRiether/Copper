@@ -8,7 +8,7 @@
 #define MODULE "Text"
 
 Text::Text(GameObject& associated, string fontFile, int fontSize,
-           TextStyle style, string text, SDL_Color color)
+           TextStyle style, string text, SDL_Color color, int wp)
     : Component(associated),
       font(nullptr),
       texture(nullptr),
