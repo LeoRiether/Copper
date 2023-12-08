@@ -256,10 +256,9 @@ void Player::UpdateState(float dt) {
     hpLossTimer.Update(dt);
     if (hpLossTimer.Get() > 1) {
       hpLossTimer.Restart();
-      hp -= 10; // valor arbitrario
-      hpLoss -= 10;
+      hp -= hpLoss <= hp?hpLoss:hp;
+      hpLoss = 0;
     }
-    hpLoss = hpLoss < 0 ? 0 : hpLoss;
   }
 }
 
@@ -371,15 +370,16 @@ void Player::NotifyCollision(GameObject &other) {
   if (bullet && bullet->TargetsPlayer()) {
     // Takes damage
     hpLoss += bullet->Damage();
+    hpLossTimer.Restart();
 
     // Flash
     auto sprite = (Sprite *)associated.GetComponent(CType::Sprite);
     sprite->WithFlash(true);
     flashTimeout = 0.03;
 
-        // Knockback
-        float kb = 1'500'000 * Game::Instance().DeltaTime();
-        knockbackVelocity = Vec2<Cart>{kb, 0}.GetRotated(other.angle);
+    // Knockback
+    float kb = 1'500'000 * Game::Instance().DeltaTime();
+    knockbackVelocity = Vec2<Cart>{kb, 0}.GetRotated(other.angle);
 
     // Knockback
     knockbackVelocity = Vec2<Cart>{2500, 0}.GetRotated(other.angle);
