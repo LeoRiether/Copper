@@ -167,15 +167,24 @@ void Companion::baseAnimPlay(const string& id, bool loops) {
 //        Render        //
 //////////////////////////
 void Companion::Render(Vec2<Cart> camera) {
+    auto renderer = Game::Instance().Renderer();
+
     static int& showDirections = Consts::GetInt("debug.show_directions");
     if (showDirections) {
         auto iso = (IsoCollider*)associated.GetComponent(CType::IsoCollider);
         if (!iso) fail("no IsoCollider");
         auto from = iso->box.Center().transmute<Iso>().toCart() - camera;
         auto to = from + moveDelta * 80.0f;
-
-        auto renderer = Game::Instance().Renderer();
         SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255);
         SDL_RenderDrawLineF(renderer, from.x, from.y, to.x, to.y);
+    }
+
+    InputManager& input = InputManager::Instance();
+    if (input.HasController()) {
+        auto pos = associated.box.Center() - camera + input.AxisVec(1) * 120.0f;
+        SDL_FRect rects[2] = {{pos.x - 1, pos.y - 7, 2, 14},
+                              {pos.x - 7, pos.y - 1, 14, 2}};
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 128);
+        SDL_RenderFillRectsF(renderer, rects, 2);
     }
 }
