@@ -3,12 +3,10 @@
 #include "component/Sprite.h"
 #include "math/Rect.h"
 
-#include <iostream>
-
 Bar::Bar(GameObject &go, string file, int maxBar, Vec2<Cart> barDimension,
          int space)
     : Component(go) {
-  bar = new Sprite(go, file);
+  bar = new Sprite(go, file, true);
   go.AddComponent(bar);
   this->maxBar = maxBar;
   this->space = space;
