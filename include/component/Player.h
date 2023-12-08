@@ -31,6 +31,9 @@ class Player : public Component {
 
     vector<Vec2<Iso>> Trail{};
 
+    int hp;
+    int hpLoss;
+
    private:
     float& walkingSpeed{Consts::GetFloat("player.walking_speed")};
     float& stepsTiming{Consts::GetFloat("player.steps_timing")};
@@ -39,6 +42,8 @@ class Player : public Component {
     DashState dashState;
     Timer stepsTimer{};
     Timer trailTimer{};
+
+    Timer hpLossTimer{};
 
     float flashTimeout{0};
     Vec2<Cart> knockbackVelocity{0, 0};

@@ -1,8 +1,10 @@
 #include "state/StageState.h"
 
 #include <algorithm>
+#include <iostream>
 #include <memory>
 
+#include "CType.h"
 #include "Consts.h"
 #include "Game.h"
 #include "GameData.h"
@@ -23,12 +25,12 @@
 #define MODULE "StageState"
 
 StageState::~StageState() {
-    delete music;
-    objects.clear();
+  delete music;
+  objects.clear();
 }
 
 void StageState::Start() {
-    LoadAssets();
+  LoadAssets();
 
     ///////////////////////////////
     //        FPS Counter        //
@@ -40,7 +42,7 @@ void StageState::Start() {
     //////////////////////////////
     //        Load Stage        //
     //////////////////////////////
-    MakeStage1(*this, 1);
+    MakeStage1(*this);
 
     /////////////////////////////////////
     //        Controls Tutorial        //
@@ -50,10 +52,17 @@ void StageState::Start() {
         RequestAddObject(MakeControlsTutorial());
     }
 
+    ///////////////////////////
+    //          HUD          //
+    ///////////////////////////
+
+    auto hpBar = MakeLifeBar();
+    RequestAddObject(hpBar);
+
     StartArray();
     started = true;
 
-    // music->Play();
+  // music->Play();
 }
 
 void StageState::Pause() {}
@@ -61,17 +70,17 @@ void StageState::Pause() {}
 void StageState::Resume() {}
 
 void StageState::LoadAssets() {
-    // Background music
-    music = new Music(ASSETS "/audio/stageState.ogg");
+  // Background music
+  music = new Music(ASSETS "/audio/stageState.ogg");
 }
 
 void StageState::Update(float dt) {
-    // process add requests here so added objects are updated before their first
-    // render
-    ProcessAddRequests();
+  // process add requests here so added objects are updated before their first
+  // render
+  ProcessAddRequests();
 
-    auto& input = InputManager::Instance();
-    input.Update();
+  auto &input = InputManager::Instance();
+  input.Update();
 
     if (input.QuitRequested()) {
         quitRequested = true;
@@ -122,7 +131,8 @@ void StageState::Update(float dt) {
         } else {
             i++;
         }
-    }
+    
+  }
 }
 
 void StageState::Render() { RenderArray(); }

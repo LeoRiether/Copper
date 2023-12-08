@@ -14,20 +14,21 @@
 #include "component/Tilemap.h"
 #include "component/Tileset.h"
 #include "math/Rect.h"
+#include "physics/Tags.h"
 #include "util.h"
 
 #define MODULE "StagePrefabs"
 
+using ObjectGenerator = std::function<vector<GameObject*>()>;
+
 struct __Component {
-    const char* id;
-    const char* description;
     Vec2<Iso> offset;
+    ObjectGenerator gen;
 };
 
-using ObjectGenerator = std::function<vector<GameObject*>()>;
 using std::string;
 
-void MakeStage1(StageState& s, int stage) {
+void MakeStage1(StageState& s, string stage) {
     constexpr float tilescale = 128.0f;
 
     // Translates from "tiled coordinates" to cartesian screen coordinates
@@ -44,53 +45,72 @@ void MakeStage1(StageState& s, int stage) {
         return go;
     };
 
-    vector<__Component> components = {
-        {"main", "bottom of main map", {165, 166}},
-        {"main", "left of main map", {132, 133}},
-        {"main", "top of main map", {160, 103}},
-        {"building", "top left of building map", {113, 190}},
-        {"building", "top right of building map", {138, 177}},
-        {"center", "the one that has a lot of stuff in the center", {267, 130}},
+    std::unordered_map<string, __Component> components;
+    components["main"] = {
+        {165, 166},
+        [&]() {
+            GameObject* go;
+            return vector<GameObject*>{
+                // Terrain
+                MakeBarril()->WithFootAt(worldPos({149, 135})),
+                MakeEscavadeira()->WithFootAt(worldPos({156, 148})),
+                MakeEscavadeira()->WithFootAt(worldPos({160, 148})),
+                MakeVigaB()->WithFootAt(worldPos({162, 133})),
+                MakeVigaB()->WithFootAt(worldPos({162, 132})),
+                MakeVigaB()->WithFootAt(worldPos({162, 131})),
+                MakeVigaB()->WithFootAt(worldPos({162, 130})),
+
+                // Enemies
+                MakeEnemyFollower()->WithFootAt(worldPos({149, 127})),
+                MakeEnemyDistancer()->WithFootAt(worldPos({150, 146})),
+                MakeEnemyDistancer()->WithFootAt(worldPos({172, 145})),
+                MakeEnemyDistancer()->WithFootAt(worldPos({170, 117})),
+                MakeEnemyDistancer()->WithFootAt(worldPos({169, 117})),
+                MakeEnemyDistancer()->WithFootAt(worldPos({170, 116})),
+                MakeEnemyDistancer()->WithFootAt(worldPos({179, 124})),
+                MakeEnemyDistancer()->WithFootAt(worldPos({178, 124})),
+                MakeEnemyDistancer()->WithFootAt(worldPos({179, 123})),
+
+                // End of stage triggers are kind of weird sorry
+                (go = new GameObject{})
+                    ->AddComponent((new IsoCollider{*go})
+                                       ->WithTag(tag::Trigger)
+                                       ->WithBase({19628, 11948, 1162, 522}))
+                    ->AddComponent(new EndOfStageTrigger{*go}),
+            };
+        },
+    };
+    components["the one on the top left"] = {
+        {14, 154},
+        [&]() {
+            GameObject* go;
+            return vector<GameObject*>{
+                MakeEnemyDistancer()->WithFootAt(worldPos({12, 123})),
+                MakeEnemyDistancer()->WithFootAt(worldPos({13, 123})),
+                MakeEnemyDistancer()->WithFootAt(worldPos({14, 123})),
+                MakeEnemyDistancer()->WithFootAt(worldPos({12, 125})),
+                MakeEnemyDistancer()->WithFootAt(worldPos({13, 126})),
+                MakeEnemyDistancer()->WithFootAt(worldPos({14, 127})),
+
+                (go = new GameObject{})
+                    ->AddComponent((new IsoCollider{*go})
+                                       ->WithTag(tag::Trigger)
+                                       ->WithBase({1191, 12765, 2043 - 1191,
+                                                   13585 - 12765}))
+                    ->AddComponent(new EndOfStageTrigger{*go}),
+
+            };
+        },
     };
 
-    std::unordered_map<string, ObjectGenerator> generators{
-        {"main",
-         [&]() {
-             GameObject* go;
-             return vector<GameObject*>{
-                 // Terrain
-                 MakeBarril()->WithFootAt(worldPos({149, 135})),
-                 MakeEscavadeira()->WithFootAt(worldPos({156, 148})),
-                 MakeEscavadeira()->WithFootAt(worldPos({160, 148})),
-                 MakeVigaB()->WithFootAt(worldPos({162, 133})),
-                 MakeVigaB()->WithFootAt(worldPos({162, 132})),
-                 MakeVigaB()->WithFootAt(worldPos({162, 131})),
-                 MakeVigaB()->WithFootAt(worldPos({162, 130})),
-
-                 // Enemies
-                 MakeEnemyFollower()->WithFootAt(worldPos({149, 127})),
-                 MakeEnemyDistancer()->WithFootAt(worldPos({150, 146})),
-                 MakeEnemyDistancer()->WithFootAt(worldPos({172, 145})),
-                 MakeEnemyDistancer()->WithFootAt(worldPos({170, 117})),
-                 MakeEnemyDistancer()->WithFootAt(worldPos({169, 117})),
-                 MakeEnemyDistancer()->WithFootAt(worldPos({170, 116})),
-                 MakeEnemyDistancer()->WithFootAt(worldPos({179, 124})),
-                 MakeEnemyDistancer()->WithFootAt(worldPos({178, 124})),
-                 MakeEnemyDistancer()->WithFootAt(worldPos({179, 123})),
-
-                 // End of stage triggers are kind of weird sorry
-                 (go = new GameObject{})
-                     ->AddComponent((new IsoCollider{*go})
-                                        ->WithTag(tag::Trigger)
-                                        ->WithBase({19628, 11948, 1162, 522}))
-                     ->AddComponent(new EndOfStageTrigger{*go}),
-             };
-         }},
-    };
-
-    if (stage < 0) {
-        stage = randi(0, components.size() - 1);
+    vector<string> componentIds;
+    componentIds.reserve(components.size());
+    for (auto& [key, _] : components) {
+        componentIds.emplace_back(key);
     }
+
+    if (stage == "") stage = componentIds[randi(0, components.size() - 1)];
+    log2("Chose stage '%s'", stage.c_str());
 
     // Fix some coordinates
     auto& c = components[stage];
@@ -117,24 +137,24 @@ void MakeStage1(StageState& s, int stage) {
     s.RequestAddObject(
         MakeCompanion()->WithFootAt(base - Vec2<Cart>{-100, -100}));
 
-    if (generators.count(c.id)) {
-        for (auto go : generators[c.id]()) {
-            s.RequestAddObject(go);
+    for (auto go : c.gen()) {
+        s.RequestAddObject(go);
 
-            if (go->tags.test(tag::Enemy)) s.EnemyCount++;
-        }
+        if (go->tags.test(tag::Enemy)) s.EnemyCount++;
     }
 
     auto tilemapRenderLayer = -10;
     auto addTilemap = [&](const char* tileset, int tscols, int tsrows,
                           const char* csv, Vec2<Cart> offset, bool colliders,
-                          bool mainMap) {
+                          bool mainMap, bool floorColliders) {
         auto go = new GameObject{};
         go->AddComponent((new Tileset{*go, tileset, tscols, tsrows})
                              ->WithScale(tilescale / 256.0f));
         auto tilemap = (new Tilemap{*go, csv})->WithOffset(offset);
         if (colliders)
             tilemap->WithColliders({884.419, 625.152, 265.792, 266.743});
+        if (floorColliders)
+            tilemap->WithFloorColliders({884.419, 625.152, 265.792, 266.743});
         go->AddComponent(tilemap);
         go->renderLayer = tilemapRenderLayer++;
         // go->box.SetTopLeft((base * -scale).toCart());
@@ -149,24 +169,24 @@ void MakeStage1(StageState& s, int stage) {
     };
     addTilemap(ASSETS "/map/Padrão.png", 13, 19,
                ASSETS "/map/Salas copper V2_Copy of Group 2_FLOOR.csv", {0, 0},
-               false, true);
+               false, true, true);
     tilemapRenderLayer = 0;
     addTilemap(ASSETS "/map/Ferrugem.png", 13, 19,
                ASSETS "/map/Salas copper V2_Copy of Group 2_Tile Layer 11.csv",
-               {65, -2}, true, false);
+               {65, -2}, true, false, false);
     tilemapRenderLayer = 2;
     addTilemap(ASSETS "/map/Ferrugem.png", 13, 19,
                ASSETS "/map/Salas copper V2_Copy of Group 2_Tile Layer 13.csv",
-               {3, -6}, false, false);
+               {3, -6}, false, false, false);
     addTilemap(ASSETS "/map/Aco.png", 13, 19,
                ASSETS "/map/Salas copper V2_Copy of Group 2_Tile Layer 12.csv",
-               {9, 0}, false, false);
+               {9, 0}, false, false, false);
     addTilemap(ASSETS "/map/Ferrugem.png", 13, 19,
                ASSETS "/map/Salas copper V2_Copy of Group 2_Tile Layer 14.csv",
-               {7, 6}, false, false);
+               {7, 6}, false, false, false);
     addTilemap(ASSETS "/map/Ferrugem.png", 13, 19,
                ASSETS "/map/Salas copper V2_Copy of Group 2_Tile Layer 18.csv",
-               {34, 39}, false, false);
+               {34, 39}, false, false, false);
 
     s.RequestAddObject(MakeStageTransitionDimmer_FadeIn());
 }

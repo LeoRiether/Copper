@@ -5,6 +5,9 @@
 #include "Colors.h"
 #include "GameObject.h"
 #include "component/Animation.h"
+#include "component/Bar.h"
+#include "component/LifeBarManager.h"
+#include "component/CameraFollower.h"
 #include "component/Bullet.h"
 #include "component/BulletShaker.h"
 #include "component/Collider.h"
@@ -270,3 +273,22 @@ GameObject* MakeDialog(std::string dialogFile){
 		go->renderLayer = 10;
 		return go;
 	}
+
+GameObject *MakeLifeBar() {
+  auto go = new GameObject{};
+  int maxBar = 10;
+  Vec2<Cart> dimension = {412, 144};
+  int space = 20;
+  auto lifeBar =
+      new Bar{*go, "assets/img/Lifebar.png", maxBar, dimension, space};
+  lifeBar->SetBarState(maxBar);
+  go->box.SetCenter(Vec2<Cart>{10, 10});
+  go->renderLayer = 100;
+  auto hpManager = new LifeBarManager(*go, 100, lifeBar);
+//   auto cf = new CameraFollower{*go, Vec2<Cart>{10, 10}};
+
+  go->AddComponent(hpManager);
+//   go->AddComponent(cf);
+
+  return go;
+}

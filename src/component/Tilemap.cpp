@@ -41,7 +41,8 @@ void Tilemap::Render(Vec2<Cart> camera) {
     int mid_i = P.y * 2.0f / tileHeight - offset.i;
 
     for (int i = std::max(0, mid_i - 14); i < mid_i + 11 && i < height; i++) {
-        for (int j = std::max(0, mid_j - 15); j < mid_j + 10 && j < width; j++) {
+        for (int j = std::max(0, mid_j - 15); j < mid_j + 10 && j < width;
+             j++) {
             int id = map[At(i, j)];
             if (id < 0) continue;
 
@@ -65,7 +66,8 @@ vector<Tilemap::TileToRender> Tilemap::RenderedTiles(Vec2<Cart> camera) {
 
     vector<TileToRender> result;
     for (int i = std::max(0, mid_i - 14); i < mid_i + 11 && i < height; i++) {
-        for (int j = std::max(0, mid_j - 15); j < mid_j + 10 && j < width; j++) {
+        for (int j = std::max(0, mid_j - 15); j < mid_j + 10 && j < width;
+             j++) {
             int id = map[At(i, j)];
             if (id < 0) continue;
 
@@ -231,4 +233,33 @@ void Tilemap::load(const string& csv) {
     // }
 
     file.close();
+}
+
+Tilemap* Tilemap::WithFloorColliders(Rect base) {
+    Start();  // just to make sure we have everything.....
+    this->base = base;
+
+    const std::pair<int, int> delta[4] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+
+    for (int i = -1; i <= height; i++) {
+        for (int j = -1; j <= width; j++) {
+            int id = map[At(i, j)];
+            if (id != 0) continue;
+
+            bool isBorder = false;
+            for (int k = 0; k < 4; k++) {
+                auto [di, dj] = delta[k];
+                int ni = i + di, nj = j + dj;
+                // isBorder |= 
+            }
+
+            break;
+            auto b = baseForTile(i, j);
+            associated.AddComponent((new IsoCollider{associated})
+                                        ->WithTag(tag::Terrain)
+                                        ->WithBase(b));
+        }
+    }
+
+    return this;
 }

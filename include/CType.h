@@ -32,4 +32,6 @@ enum class CType {
 	Dialog,
 	Dimmer,
     ControlsTutorial,
+    Bar,
+    LifeBarManager,
 };

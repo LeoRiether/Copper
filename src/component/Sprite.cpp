@@ -10,9 +10,11 @@
 
 #define MODULE "Sprite"
 
-Sprite::Sprite(GameObject& associated, const string& file)
+Sprite::Sprite(GameObject& associated, const string& file, bool followsCamera)
     : Component(associated) {
     Open(file);
+
+    this->followsCamera = followsCamera;
 }
 
 Sprite::~Sprite() {}
@@ -75,5 +77,9 @@ void Sprite::RenderAt(float x, float y) {
 }
 
 void Sprite::Render(Vec2<Cart> camera) {
-    RenderAt(associated.box.x - camera.x, associated.box.y - camera.y);
+    if(followsCamera) {
+        RenderAt(associated.box.x, associated.box.y);
+    } else {
+        RenderAt(associated.box.x - camera.x, associated.box.y - camera.y);
+    }
 }
