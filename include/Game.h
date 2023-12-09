@@ -22,21 +22,21 @@ class Game {
    private:
     // Singletons are just global variables with extra steps
     static Game* instance;
-    SDL_Window* window;
-    SDL_Renderer* renderer;
+    SDL_Window* window{};
+    SDL_Renderer* renderer{};
 
-    vector<unique_ptr<State>> stateStack;
-    vector<State*> stateStackOperations;  // WARN: nullptr means "pop"
-                                          // operation, sorry
+    vector<unique_ptr<State>> stateStack{};
+    vector<State*> stateStackOperations{};  // WARN: nullptr means "pop"
+                                            // operation, sorry
 
-    int64_t frameStart;
-    float dt;
+    int64_t frameStart{0};
+    float dt{0};
 
     struct {
         float p;
         float duration;
-    } slowdown;
-    float trauma;
+    } slowdown{0, 0};
+    float trauma{0};
 
     Game(const char* title, int width, int height);
 

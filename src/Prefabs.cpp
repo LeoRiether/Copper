@@ -274,12 +274,10 @@ GameObject *MakeLifeBar() {
       new Bar{*go, "assets/img/Lifebar.png", maxBar, dimension, space};
   lifeBar->SetBarState(maxBar);
   go->box.SetCenter(Vec2<Cart>{10, 10});
-  go->renderLayer = 100;
+  go->renderLayer = 200;
   auto hpManager = new LifeBarManager(*go, 100, lifeBar);
-//   auto cf = new CameraFollower{*go, Vec2<Cart>{10, 10}};
 
   go->AddComponent(hpManager);
-//   go->AddComponent(cf);
 
   return go;
 }

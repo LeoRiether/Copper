@@ -1,7 +1,6 @@
 #include "component/Player.h"
 
 #include <cmath>
-#include <iostream>
 #include <string>
 
 #include "CType.h"
@@ -22,61 +21,58 @@
 
 #define MODULE "Player"
 
-Player *Player::player;
+Player* Player::player;
 
-Player::Player(GameObject &associated) : Component(associated) {
-  Player::player = this;
+Player::Player(GameObject& associated) : Component(associated) {
+    Player::player = this;
 
-  hp = 100;
-  hpLoss = 0;
+    auto sprite = new Sprite{associated, ASSETS "/img/copper_running.png"};
+    sprite->SetHasShadow(true);
+    sprite->SetScale(90.0f / (sprite->SheetHeight() / 8.0f));
+    associated.AddComponent(sprite);
 
-  auto sprite = new Sprite{associated, ASSETS "/img/copper_running.png"};
-  sprite->SetHasShadow(true);
-  sprite->SetScale(90.0f / (sprite->SheetHeight() / 8.0f));
-  associated.AddComponent(sprite);
+    {
+        auto anim = new Animation{associated, *sprite};
+        GridKeyframe grid{7, 8, sprite->SheetWidth(), sprite->SheetHeight(),
+                          0.05};
 
-  {
-    auto anim = new Animation{associated, *sprite};
-    GridKeyframe grid{7, 8, sprite->SheetWidth(), sprite->SheetHeight(), 0.05};
+        auto row = [&](int i, int startJ, int frames) {
+            Keyframes kf;
+            for (int j = startJ; j < startJ + frames; j++)
+                kf.push_back(grid.At(j, i));
+            return kf;
+        };
 
-    auto row = [&](int i, int startJ, int frames) {
-      Keyframes kf;
-      for (int j = startJ; j < startJ + frames; j++)
-        kf.push_back(grid.At(j, i));
-      return kf;
-    };
-
-    anim->AddKeyframes("SE", row(0, 0, 7));
-    anim->AddKeyframes("S", row(1, 0, 7));
-    anim->AddKeyframes("SW", row(2, 0, 7));
-    anim->AddKeyframes("W", row(3, 0, 7));
-    anim->AddKeyframes("NW", row(4, 0, 7));
-    anim->AddKeyframes("N", row(5, 0, 7));
-    anim->AddKeyframes("NE", row(6, 0, 7));
-    anim->AddKeyframes("E", row(7, 0, 7));
-    anim->AddKeyframes("idle_SE", row(0, 0, 1));
-    anim->AddKeyframes("idle_S", row(1, 0, 1));
-    anim->AddKeyframes("idle_SW", row(2, 0, 1));
-    anim->AddKeyframes("idle_W", row(3, 0, 1));
-    anim->AddKeyframes("idle_NW", row(4, 0, 1));
-    anim->AddKeyframes("idle_N", row(5, 0, 1));
-    anim->AddKeyframes("idle_NE", row(6, 0, 1));
-    anim->AddKeyframes("idle_E", row(7, 0, 1));
-    anim->Play("idle_S"); // just to kickstart the associated.box...
-    associated.AddComponent(anim);
-  }
+        anim->AddKeyframes("SE", row(0, 0, 7));
+        anim->AddKeyframes("S", row(1, 0, 7));
+        anim->AddKeyframes("SW", row(2, 0, 7));
+        anim->AddKeyframes("W", row(3, 0, 7));
+        anim->AddKeyframes("NW", row(4, 0, 7));
+        anim->AddKeyframes("N", row(5, 0, 7));
+        anim->AddKeyframes("NE", row(6, 0, 7));
+        anim->AddKeyframes("E", row(7, 0, 7));
+        anim->AddKeyframes("idle_SE", row(0, 0, 1));
+        anim->AddKeyframes("idle_S", row(1, 0, 1));
+        anim->AddKeyframes("idle_SW", row(2, 0, 1));
+        anim->AddKeyframes("idle_W", row(3, 0, 1));
+        anim->AddKeyframes("idle_NW", row(4, 0, 1));
+        anim->AddKeyframes("idle_N", row(5, 0, 1));
+        anim->AddKeyframes("idle_NE", row(6, 0, 1));
+        anim->AddKeyframes("idle_E", row(7, 0, 1));
+        anim->Play("idle_S");  // just to kickstart the associated.box...
+        associated.AddComponent(anim);
+    }
 }
 
 Player::~Player() { Player::player = nullptr; }
 
 void Player::Start() {
-  direction = Direction{NoneX, Down};
-  ChangeState(Idle);
+    direction = Direction{NoneX, Down};
+    ChangeState(Idle);
 }
 
 // TODO: maybe only transition on the next update?
 void Player::ChangeState(State newState) {
-
     // Transition out of old state
     switch (state) {
         case Idle: {
@@ -122,13 +118,12 @@ void Player::ChangeState(State newState) {
 }
 
 void Player::MaybeChangeState(State newState) {
-  if (state != newState)
-    ChangeState(newState);
+    if (state != newState) ChangeState(newState);
 }
 
 void Player::Update(float dt) {
-  UpdateState(dt);
-  UpdatePosition(dt);
+    UpdateState(dt);
+    UpdatePosition(dt);
 
     // Flash reset
     flashTimeout -= dt;
@@ -151,7 +146,7 @@ void Player::Update(float dt) {
 }
 
 void Player::UpdateState(float dt) {
-  auto &input = InputManager::Instance();
+    auto& input = InputManager::Instance();
 
     auto checkDashEvent = [&]() {
         dashState.timeout.Update(dt);
@@ -215,56 +210,12 @@ void Player::UpdateState(float dt) {
             makeStepSound();
             break;
         }
-  };
-
-  switch (state) {
-  case Idle: {
-    auto currentDirection = Direction::fromInput();
-    if (!currentDirection.isNone()) {
-      direction = currentDirection;
-      ChangeState(Walking);
     }
-    checkDashEvent();
-    break;
-  }
-  case Walking: {
-    auto currentDirection = Direction::fromInput();
-    if (currentDirection.isNone()) {
-      ChangeState(Idle);
-    } else if (direction != currentDirection) {
-      // Force the right animation to play.
-      // Not sure if this is the best way to do it
-      direction = currentDirection;
-      ChangeState(Walking);
-    } else {
-      direction = currentDirection;
-    }
-    checkDashEvent();
-    break;
-  }
-  case Dashing: {
-    dashState.timeSinceStart.Update(dt);
-    if (dashState.timeSinceStart.Get() >= DASH_DURATION) {
-      ChangeState(Idle);
-    }
-    break;
-  }
-  }
-
-  // Damage logic
-  if (hpLoss > 0) {
-    hpLossTimer.Update(dt);
-    if (hpLossTimer.Get() > 1) {
-      hpLossTimer.Restart();
-      hp -= hpLoss <= hp?hpLoss:hp;
-      hpLoss = 0;
-    }
-  }
 }
 
 void Player::UpdatePosition(float dt) {
-  associated.box.OffsetBy(knockbackVelocity * dt);
-  knockbackVelocity = knockbackVelocity * 0.70;
+    associated.box.OffsetBy(knockbackVelocity * dt);
+    knockbackVelocity = knockbackVelocity * 0.70;
 
     auto& input = InputManager::Instance();
     auto moveVec = [&]() {
@@ -290,20 +241,20 @@ void Player::UpdatePosition(float dt) {
 }
 
 void Player::ConstrainToTile() {
-  return;
-  Vec2<Iso> iso = associated.box.Foot().toIso();
+    return;
+    Vec2<Iso> iso = associated.box.Foot().toIso();
 
-  auto clamp = [&](float mn, float &x, float mx) {
-    if (x < mn)
-      x = mn;
-    else if (x > mx)
-      x = mx;
-  };
+    auto clamp = [&](float mn, float& x, float mx) {
+        if (x < mn)
+            x = mn;
+        else if (x > mx)
+            x = mx;
+    };
 
-  clamp(1400, iso.x, 2000);
-  clamp(100, iso.y, 700);
+    clamp(1400, iso.x, 2000);
+    clamp(100, iso.y, 700);
 
-  associated.box.SetFoot(iso.toCart());
+    associated.box.SetFoot(iso.toCart());
 }
 
 void Player::Render(Vec2<Cart> camera) {
@@ -365,38 +316,36 @@ void Player::Render(Vec2<Cart> camera) {
     }
 }
 
-void Player::NotifyCollision(GameObject &other) {
-  auto bullet = (Bullet *)other.GetComponent(CType::Bullet);
-  if (bullet && bullet->TargetsPlayer()) {
-    // Takes damage
-    hpLoss += bullet->Damage();
-    hpLossTimer.Restart();
+void Player::NotifyCollision(GameObject& other) {
+    auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
+    if (bullet && bullet->TargetsPlayer()) {
+        // Flash
+        auto sprite = (Sprite*)associated.GetComponent(CType::Sprite);
+        sprite->WithFlash(true);
+        flashTimeout = 0.03;
 
-    // Flash
-    auto sprite = (Sprite *)associated.GetComponent(CType::Sprite);
-    sprite->WithFlash(true);
-    flashTimeout = 0.03;
+        // Explosion
+        auto hitpoint = other.box.Center();
+        hitpoint = hitpoint + Vec2<Cart>{25, 0}.GetRotated(other.angle);
+        associated.RequestAdd(MakeExplosion1()->WithCenterAt(hitpoint));
 
-    // Knockback
-    float kb = 1'500'000 * Game::Instance().DeltaTime();
-    knockbackVelocity = Vec2<Cart>{kb, 0}.GetRotated(other.angle);
+        // Knockback
+        float kb = 1'500'000 * Game::Instance().DeltaTime();
+        knockbackVelocity = Vec2<Cart>{kb, 0}.GetRotated(other.angle);
 
-    // Knockback
-    knockbackVelocity = Vec2<Cart>{2500, 0}.GetRotated(other.angle);
+        // Slowdown
+        Game::Instance().Slowdown(0.03, 0.1);
 
-    // Slowdown
-    Game::Instance().Slowdown(0.03, 0.1);
+        // Add trauma
+        Game::Instance().AddTrauma(0.4);
 
-    // Add trauma
-    Game::Instance().AddTrauma(0.4);
-
-    other.RequestDelete();
-  }
+        other.RequestDelete();
+    }
 }
 
 void Player::RequestDelete() {
-  associated.RequestDelete();
-  Player::player = nullptr;
+    associated.RequestDelete();
+    Player::player = nullptr;
 }
 
 std::optional<Vec2<Iso>> Player::LookForMe(Rect iv) {

@@ -6,7 +6,7 @@
 class Camera {
    private:
     Vec2<Cart> pos{0, 0}, speed{0, 0};
-    GameObject* focus = nullptr;
+    GameObject* focus{nullptr};
 
     Vec2<Cart> shakeDelta{0, 0};
 

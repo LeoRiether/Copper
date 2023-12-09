@@ -23,7 +23,7 @@ class EnemyDistancer : public Component {
     Timer roamingTimeout{}, standingStillTimeout{}, shotTimeout{},
           pursueTimeout{};
 
-    Vec2<Cart> roamingDelta;
+    Vec2<Cart> roamingDelta{0};
 
     float& shotAnimationTime{Consts::GetFloat("robotcan.shot_animation_time")};
     float& roamingTimeConst{Consts::GetFloat("robotcan.roaming_time")};

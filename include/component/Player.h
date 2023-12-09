@@ -31,15 +31,15 @@ class Player : public Component {
 
     vector<Vec2<Iso>> Trail{};
 
-    int hp;
-    int hpLoss;
+    int hp{100};
+    int hpLoss{0};
 
    private:
     float& walkingSpeed{Consts::GetFloat("player.walking_speed")};
     float& stepsTiming{Consts::GetFloat("player.steps_timing")};
 
     Direction direction{NoneX, Down};
-    DashState dashState;
+    DashState dashState{};
     Timer stepsTimer{};
     Timer trailTimer{};
 

@@ -78,7 +78,7 @@ void Game::Run() {
         state->Update(dt);
         auto loopend = SDL_GetTicks();
 
-        if (loopend - loopstart > 5)
+        if (loopend - loopstart > 10)
             warn2("game update took %dms!", loopend - loopstart);
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);

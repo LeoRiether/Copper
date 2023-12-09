@@ -28,7 +28,7 @@ class Companion : public Component {
     State state{Looking};
     Timer firingTimeout{}, walkingToIdleTimeout{}, tooFarTimer{};
 
-    Vec2<Cart> moveDelta;
+    Vec2<Cart> moveDelta{0, 0};
 
     void updatePosition(float dt);
     void updateCore(float dt);

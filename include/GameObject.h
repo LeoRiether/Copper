@@ -16,16 +16,16 @@ class Component;
 
 class GameObject {
    private:
-    std::unordered_map<CType, vector<unique_ptr<Component>>> components;
+    std::unordered_map<CType, vector<unique_ptr<Component>>> components{};
     bool isDead{false};
     bool started{false};
 
    public:
-    Rect box, prevFrameBox;
+    Rect box{0, 0, 0, 0}, prevFrameBox{0, 0, 0, 0};
     double angle{0};
     int renderLayer{0};
-    const char* debugName;
-    tagset tags;
+    const char* debugName{"?"};
+    tagset tags{};
 
     GameObject();
     ~GameObject();
