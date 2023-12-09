@@ -24,8 +24,8 @@ class GameObject {
     Rect box{0, 0, 0, 0}, prevFrameBox{0, 0, 0, 0};
     double angle{0};
     int renderLayer{0};
-    const char* debugName{"?"};
     tagset tags{};
+    std::weak_ptr<GameObject> weak;
 
     GameObject();
     ~GameObject();

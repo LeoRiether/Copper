@@ -34,6 +34,8 @@ class Player : public Component {
     int hp{100};
     int hpLoss{0};
 
+    Vec2<Cart> moveVec{};
+
    private:
     float& walkingSpeed{Consts::GetFloat("player.walking_speed")};
     float& stepsTiming{Consts::GetFloat("player.steps_timing")};

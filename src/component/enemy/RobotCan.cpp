@@ -1,6 +1,7 @@
 #include "component/enemy/RobotCan.h"
 
 #include "CType.h"
+#include "Camera.h"
 #include "Game.h"
 #include "Prefabs.h"
 #include "component/Animation.h"
@@ -113,6 +114,7 @@ void RobotCan::NotifyCollision(GameObject& other) {
     if (bullet && bullet->TargetsPlayer() == isCompanion) {
         if (!isCompanion) {
             hp -= 25;
+            Game::Instance().GetState().GetCamera().SecondaryFollow(associated.weak);
             if (hp <= 0) {
                 Die();
                 other.RequestDelete();

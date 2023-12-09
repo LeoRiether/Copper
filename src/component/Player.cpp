@@ -218,22 +218,24 @@ void Player::UpdatePosition(float dt) {
     knockbackVelocity = knockbackVelocity * 0.70;
 
     auto& input = InputManager::Instance();
-    auto moveVec = [&]() {
-        return input.HasController() ? input.AxisVec(-1) : direction.toVec();
+    auto getMoveVec = [&]() {
+        moveVec = input.HasController() ? input.AxisVec(-1) : direction.toVec();
+        return moveVec = moveVec * walkingSpeed;
     };
 
     switch (state) {
         case Idle: {
+            moveVec = {0, 0};
             break;
         }
         case Walking:
         case StageTransition: {
-            Vec2<Cart> speed = moveVec() * walkingSpeed * dt;
+            Vec2<Cart> speed = getMoveVec() * dt;
             associated.box.OffsetBy(speed);
             break;
         }
         case Dashing: {
-            Vec2<Cart> speed = moveVec() * walkingSpeed * 2.5 * dt;
+            Vec2<Cart> speed = getMoveVec() * 2.5 * dt;
             associated.box.OffsetBy(speed);
             break;
         }

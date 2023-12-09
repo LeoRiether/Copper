@@ -1,5 +1,6 @@
 #include "component/TextBlinker.h"
 
+#include "math/Interpolate.h"
 #include "component/Text.h"
 
 TextBlinker::TextBlinker(GameObject& associated, float fullBlinkTimeS)
@@ -11,12 +12,8 @@ void TextBlinker::Update(float dt) {
         currentTime -= fullBlinkTimeS;
     }
 
-    auto lerp = [](float from, float to, float p) {
-        return from + (to - from) * p;
-    };
-
     // ...quadratic interpolation?
-    auto qerp = [&lerp](float from, float to, float p) {
+    auto qerp = [&](float from, float to, float p) {
         return lerp(from, to, (1 - p) * (p - 1) + 1);
     };
 

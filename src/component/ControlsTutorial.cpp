@@ -1,5 +1,6 @@
 #include "component/ControlsTutorial.h"
 
+#include "math/Interpolate.h"
 #include "Game.h"
 #include "InputManager.h"
 #include "component/Player.h"
@@ -52,12 +53,8 @@ void ControlsTutorial::Update(float dt) {
         associated.box.SetFoot(player->associated.box.Head());
     }
 
-    auto lerp = [&](float p, float from, float to) {
-        return from + (to - from) * p;
-    };
-
     if (fadingOut > 0) {
-        setAlpha(*text, lerp((fadingTime - fadingOut) / fadingTime, 255, 0));
+        setAlpha(*text, lerp(255, 0, (fadingTime - fadingOut) / fadingTime));
         fadingOut -= dt;
         if (fadingOut <= 0) {
             index++;
@@ -69,7 +66,7 @@ void ControlsTutorial::Update(float dt) {
             }
         }
     } else if (fadingIn > 0) {
-        setAlpha(*text, lerp((fadingTime - fadingIn) / fadingTime, 0, 255));
+        setAlpha(*text, lerp(0, 255, (fadingTime - fadingIn) / fadingTime));
         fadingIn -= dt;
         if (fadingIn <= 0) {
             setAlpha(*text, 255);

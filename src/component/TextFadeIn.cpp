@@ -3,6 +3,7 @@
 #define MODULE "TextFadeIn"
 
 #include "component/Text.h"
+#include "math/Interpolate.h"
 
 TextFadeIn::TextFadeIn(GameObject& associated, float fullFadeTimeS)
     : Component(associated), fullFadeTimeS(fullFadeTimeS) {}
@@ -10,12 +11,8 @@ TextFadeIn::TextFadeIn(GameObject& associated, float fullFadeTimeS)
 void TextFadeIn::Update(float dt) {
     currentTime += dt;
 
-    auto lerp = [](float from, float to, float p) {
-        return from + (to - from) * p;
-    };
-
     // ...quadratic interpolation?
-    auto qerp = [&lerp](float from, float to, float p) {
+    auto qerp = [&](float from, float to, float p) {
         return lerp(from, to, (1 - p) * (p - 1) + 1);
     };
 
