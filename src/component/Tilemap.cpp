@@ -124,7 +124,7 @@ Tilemap* Tilemap::WithColliders(Rect base) {
     Start();  // just to make sure we have everything.....
     this->base = base;
 
-    std::unordered_set<int> ignoredTileIds = {173};
+    std::unordered_set<int> ignoredTileIds = {173, 185};
 
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
@@ -142,7 +142,6 @@ Tilemap* Tilemap::WithColliders(Rect base) {
 }
 
 Tilemap* Tilemap::WithFloorColliders(Rect base) {
-    return this;
     Start();  // just to make sure we have everything.....
     this->base = base;
 

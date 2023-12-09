@@ -54,7 +54,6 @@ void StageState::Start() {
     ///////////////////////////
     //          HUD          //
     ///////////////////////////
-
     auto hpBar = MakeLifeBar();
     RequestAddObject(hpBar);
 
