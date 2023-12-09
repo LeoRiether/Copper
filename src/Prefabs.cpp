@@ -6,8 +6,6 @@
 #include "GameObject.h"
 #include "component/Animation.h"
 #include "component/Bar.h"
-#include "component/LifeBarManager.h"
-#include "component/CameraFollower.h"
 #include "component/Bullet.h"
 #include "component/BulletShaker.h"
 #include "component/Collider.h"
@@ -16,6 +14,7 @@
 #include "component/IsoCollider.h"
 #include "component/KeepSoundAlive.h"
 #include "component/KillTimeout.h"
+#include "component/LifeBarManager.h"
 #include "component/Player.h"
 #include "component/Sound.h"
 #include "component/Sprite.h"
@@ -265,19 +264,19 @@ vector<GameObject*> MakeMap1Colliders() {
     return objects;
 }
 
-GameObject *MakeLifeBar() {
-  auto go = new GameObject{};
-  int maxBar = 10;
-  Vec2<Cart> dimension = {412, 144};
-  int space = 20;
-  auto lifeBar =
-      new Bar{*go, "assets/img/Lifebar.png", maxBar, dimension, space};
-  lifeBar->SetBarState(maxBar);
-  go->box.SetCenter(Vec2<Cart>{10, 10});
-  go->renderLayer = 200;
-  auto hpManager = new LifeBarManager(*go, 100, lifeBar);
+GameObject* MakeLifeBar() {
+    auto go = new GameObject{};
+    int maxBar = 10;
+    Vec2<Cart> dimension = {412, 144};
+    int space = 20;
+    auto lifeBar =
+        new Bar{*go, "assets/img/Lifebar.png", maxBar, dimension, space};
+    lifeBar->SetBarState(maxBar);
+    go->box.SetCenter(Vec2<Cart>{10, 10});
+    go->renderLayer = 200;
+    auto hpManager = new LifeBarManager(*go, 100, lifeBar);
 
-  go->AddComponent(hpManager);
+    go->AddComponent(hpManager);
 
-  return go;
+    return go;
 }

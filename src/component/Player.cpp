@@ -143,6 +143,16 @@ void Player::Update(float dt) {
         if (!iso) fail("player without IsoCollider...");
         Trail.push_back(iso->box.Center().transmute<Iso>());
     }
+
+    // Damage logic
+    if (hpLoss > 0) {
+        hpLossTimer.Update(dt);
+        if (hpLossTimer.Get() > 1) {
+            hpLossTimer.Restart();
+            hp -= hpLoss <= hp ? hpLoss : hp;
+            hpLoss = 0;
+        }
+    }
 }
 
 void Player::UpdateState(float dt) {
@@ -321,6 +331,10 @@ void Player::Render(Vec2<Cart> camera) {
 void Player::NotifyCollision(GameObject& other) {
     auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
     if (bullet && bullet->TargetsPlayer()) {
+        // Takes damage
+        hpLoss += bullet->Damage();
+        hpLossTimer.Restart();
+
         // Flash
         auto sprite = (Sprite*)associated.GetComponent(CType::Sprite);
         sprite->WithFlash(true);
