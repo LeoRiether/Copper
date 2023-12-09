@@ -14,7 +14,7 @@ class Camera {
     struct {
         bool exists{false};
         std::weak_ptr<GameObject> go{};
-    } secFocus;
+    } secFocus{};
 
     Timer focusChanged{};
 
