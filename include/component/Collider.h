@@ -8,14 +8,12 @@
 #include "math/Vec2.h"
 
 class Collider : public Component {
-   private:
-    Rect base{0, 0, 0, 0};
-
    public:
     Collider(GameObject& associated);
 
-    tagset tags;
-    Rect box;
+    Rect base{0, 0, 0, 0};
+    tagset tags{};
+    Rect box{};
 
     void Update(float dt);
     void Render(Vec2<Cart> camera);

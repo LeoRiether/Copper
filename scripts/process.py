@@ -44,6 +44,13 @@ RULES = [
             for x in range(1, 8)
         ],
     ),
+    Concat(
+        "img/copper/spritesheet.png",
+        [
+            "img/copper/walk.png",
+            "img/copper/attack.png",
+        ],
+    ),
 ]
 
 

@@ -25,7 +25,7 @@ public:
       int space);
   int GetBarState();
   void SetBarState(int barState);
-  void Update(float dt){};
+  void Update(float){};
   inline void Render(Vec2<Cart>) {}
   inline CType Key() const { return CType::Bar; }
 };

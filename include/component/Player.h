@@ -16,8 +16,14 @@ constexpr float DASH_DURATION = 0.3;
 constexpr float DASH_TIMEOUT = 0.2;
 
 struct DashState {
-    Timer timeSinceStart;
-    Timer timeout;
+    Timer timeSinceStart{};
+    Timer timeout{};
+    bool queuedAttack{false};
+};
+
+struct AttackState {
+    int phase{0};
+    bool queuedAttack{false};
 };
 
 class Player : public Component {
@@ -26,6 +32,7 @@ class Player : public Component {
         Idle,
         Walking,
         Dashing,
+        Attacking,
         StageTransition,
     };
 
@@ -42,6 +49,7 @@ class Player : public Component {
 
     Direction direction{NoneX, Down};
     DashState dashState{};
+    AttackState attackState{};
     Timer stepsTimer{};
     Timer trailTimer{};
 

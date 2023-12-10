@@ -36,13 +36,15 @@ class Animation : public Component {
     Timer timer{};
     vector<Keyframes> animations;
     hashmap<string, int> nameToId;
-    int currentAnimation{0}, currentFrame{0};
+    int currentAnimation{0};
     bool loops{true};
 
     /** Play animation from start, given the ID instead of name */
     void Play(int id, bool looping = true);
 
    public:
+    int currentFrame{0};
+
     Animation(GameObject& associated, Sprite& sprite);
 
     /** Constructs an animation by dividing a spritesheet into `frames`

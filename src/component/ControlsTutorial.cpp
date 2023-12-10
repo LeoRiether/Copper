@@ -38,10 +38,10 @@ vector<ControlsTutorial::State> ControlsTutorial::states = {
         },
     },
     {
-        "LEFT CLICK\nto fire",
+        "RIGHT CLICK\nto fire",
         "press R1\nto fire",
         [](InputManager& input) {
-            return input.IsMouseDown(1) ||
+            return input.IsMouseDown(3) ||
                    input.ControllerPress(SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
         },
     },

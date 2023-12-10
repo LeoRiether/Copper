@@ -36,10 +36,10 @@ GameObject* MakePlayer() {
     go->AddComponent(new Player{*go});
     go->AddComponent((new IsoCollider{*go})
                          ->WithTag(tag::Player)
-                         ->WithBase({681.329, 425.945, 107.613, 107.613})
+                         ->WithBase({390.975, 153.522, 45.8416, 45.8416})
                          ->ScaleToSprite());
     go->AddComponent((new Collider{*go})
-                         ->WithBase({75.5414, 104.845, 127.273, 231.782})
+                         ->WithBase({97.716, 56.2834, 41.2575, 101.234})
                          ->ScaleToSprite());
     go->AddComponent((new Sound{*go, ASSETS "/audio/Gravel - Run.wav", 90}));
     return go;
