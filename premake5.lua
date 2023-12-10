@@ -53,7 +53,7 @@ project "copper"      -- Nome do seu projeto
     filter "system:linux"
         pic "On"
 
-    buildoptions { "-Wno-macro-redefined" }
+    buildoptions { "-Wno-macro-redefined", "-Wmissing-field-initializers" }
 
     -- Filtro para configurações no modo debug.
     filter "configurations:debug"

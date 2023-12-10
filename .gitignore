@@ -13,6 +13,8 @@ compile_commands.json
 .gdbinit
 vgcore.*
 
+.directory
+
 /scripts/venv/
 
 /assets/img/RobotCan/*/Camera.*/

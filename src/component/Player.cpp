@@ -186,11 +186,13 @@ void Player::Update(float dt) {
     }
 
     // Damage logic
+    static int& invincible = Consts::GetInt("debug.invincible");
     if (hpLoss > 0) {
         hpLossTimer.Update(dt);
         if (hpLossTimer.Get() > 1) {
             hpLossTimer.Restart();
             hp -= hpLoss <= hp ? hpLoss : hp;
+            if (invincible && hp <= 0) hp = 1;
             hpLoss = 0;
         }
     }
@@ -242,9 +244,8 @@ void Player::UpdateState(float dt) {
         hitbox.SetCenter(associated.box.Center() + direction.toVec() * 50.0f);
         auto go = new GameObject{};
         go->tags.set(tag::PlayerHitbox);
-        go->tags.set(tag::Bullet); // a different kind of bullet...
-        go->AddComponent(
-            (new Collider{*go})->WithBase(hitbox));
+        go->tags.set(tag::Bullet);  // a different kind of bullet...
+        go->AddComponent((new Collider{*go})->WithBase(hitbox));
         go->AddComponent(new KillTimeout{*go, 0.2});
         associated.RequestAdd(go);
     };
