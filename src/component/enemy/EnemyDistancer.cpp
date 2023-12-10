@@ -27,7 +27,14 @@ EnemyDistancer* EnemyDistancer::WithRobotCan(RobotCan* rc) {
 void EnemyDistancer::Update(float dt) {
     if (!Player::player) return;
 
-    auto roam = [&]() { associated.box.OffsetBy(roamingDelta * speed * dt); };
+    self->stunnedLevel = std::max<float>(0.0, self->stunnedLevel - dt);
+
+    auto moveBy = [&](Vec2<Cart> delta) {
+        delta = delta * std::min(1.0f, 1 - self->stunnedLevel);
+        associated.box.OffsetBy(delta);
+    };
+
+    auto roam = [&]() { moveBy(roamingDelta * speed * dt); };
 
     auto walkAway = [&]() {
         auto playerPos = Player::player->Associated().box.Foot();
@@ -47,7 +54,7 @@ void EnemyDistancer::Update(float dt) {
         }
 
         allAnimsPlay("walk_" + self->direction.toString());
-        associated.box.OffsetBy(distVec * speed * dt);
+        moveBy(distVec * speed * dt);
         walkingTime += dt;
     };
 
@@ -72,7 +79,7 @@ void EnemyDistancer::Update(float dt) {
         auto realDistVec =
             Player::player->associated.box.Center() - selfPos.toCart();
         if (realDistVec.norm2() >= stopDistance * stopDistance) {
-            self->associated.box.OffsetBy(moveDelta * speed * dt);
+            moveBy(moveDelta * speed * dt);
         } else {
             switchState(KeepingDistance);
         }
@@ -220,5 +227,6 @@ void EnemyDistancer::allAnimsPlay(const string& id) {
 bool EnemyDistancer::seesPlayer() {
     auto self = associated.box.Center().toIso();
     auto player = Player::player->associated.box.Center().toIso();
-    return (player - self).norm() < 800 && !CollisionEngine::TerrainContainsSegment(self, player);
+    return (player - self).norm() < 800 &&
+           !CollisionEngine::TerrainContainsSegment(self, player);
 }

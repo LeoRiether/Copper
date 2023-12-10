@@ -24,6 +24,7 @@ struct DashState {
 struct AttackState {
     int phase{0};
     bool queuedAttack{false};
+    bool colliderDeployed{false};
 };
 
 class Player : public Component {

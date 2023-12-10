@@ -12,11 +12,14 @@
 #include "SDL_render.h"
 #include "component/Animation.h"
 #include "component/Bullet.h"
+#include "component/Collider.h"
+#include "component/KillTimeout.h"
 #include "component/Sound.h"
 #include "component/Sprite.h"
 #include "component/Text.h"
 #include "math/Direction.h"
 #include "physics/CollisionEngine.h"
+#include "physics/Tags.h"
 #include "util.h"
 
 #define MODULE "Player"
@@ -73,14 +76,14 @@ Player::Player(GameObject& associated) : Component(associated) {
         anim->AddKeyframes("NE", row(5, 0, 20, 0.02));
         anim->AddKeyframes("E", row(6, 0, 20, 0.02));
         anim->AddKeyframes("SE", row(7, 0, 20, 0.02));
-        anim->AddKeyframes("attack_S", row3(8, 0, 20, 0.07));
-        anim->AddKeyframes("attack_SW", row3(9, 0, 20, 0.07));
-        anim->AddKeyframes("attack_W", row3(10, 0, 20, 0.07));
-        anim->AddKeyframes("attack_NW", row3(11, 0, 20, 0.07));
-        anim->AddKeyframes("attack_N", row3(12, 0, 20, 0.07));
-        anim->AddKeyframes("attack_NE", row3(13, 0, 20, 0.07));
-        anim->AddKeyframes("attack_E", row3(14, 0, 20, 0.07));
-        anim->AddKeyframes("attack_SE", row3(15, 0, 20, 0.07));
+        anim->AddKeyframes("attack_S", row3(8, 0, 20, 0.06));
+        anim->AddKeyframes("attack_SW", row3(9, 0, 20, 0.06));
+        anim->AddKeyframes("attack_W", row3(10, 0, 20, 0.06));
+        anim->AddKeyframes("attack_NW", row3(11, 0, 20, 0.06));
+        anim->AddKeyframes("attack_N", row3(12, 0, 20, 0.06));
+        anim->AddKeyframes("attack_NE", row3(13, 0, 20, 0.06));
+        anim->AddKeyframes("attack_E", row3(14, 0, 20, 0.06));
+        anim->AddKeyframes("attack_SE", row3(15, 0, 20, 0.06));
         anim->AddKeyframes("idle_S", row(0, 3, 1, 1));
         anim->AddKeyframes("idle_SW", row(1, 3, 1, 1));
         anim->AddKeyframes("idle_W", row(2, 3, 1, 1));
@@ -233,6 +236,19 @@ void Player::UpdateState(float dt) {
         }
     };
 
+    auto deployCollider = [&]() {
+        attackState.colliderDeployed = true;
+        Rect hitbox{0, 0, 100, 100};
+        hitbox.SetCenter(associated.box.Center() + direction.toVec() * 50.0f);
+        auto go = new GameObject{};
+        go->tags.set(tag::PlayerHitbox);
+        go->tags.set(tag::Bullet); // a different kind of bullet...
+        go->AddComponent(
+            (new Collider{*go})->WithBase(hitbox));
+        go->AddComponent(new KillTimeout{*go, 0.2});
+        associated.RequestAdd(go);
+    };
+
     switch (state) {
         case Idle: {
             auto currentDirection = Direction::fromInput();
@@ -274,18 +290,25 @@ void Player::UpdateState(float dt) {
 
             auto anim = (Animation*)associated.GetComponent(CType::Animation);
             if (!anim) fail("no associated Animation");
+            int frame = anim->currentFrame;
 
             bool nextPhase = false;
-            nextPhase |= attackState.phase == 0 && anim->currentFrame >= 11;
-            nextPhase |= attackState.phase == 1 && anim->currentFrame >= 15;
-            nextPhase |= attackState.phase == 2 && anim->currentFrame >= 22;
+            nextPhase |= attackState.phase == 0 && frame >= 11;
+            nextPhase |= attackState.phase == 1 && frame >= 15;
+            nextPhase |= attackState.phase == 2 && frame >= 22;
             if (nextPhase) {
                 if (attackState.queuedAttack && attackState.phase < 2) {
                     attackState.phase++;
                     attackState.queuedAttack = false;
+                    attackState.colliderDeployed = false;
                 } else {
                     ChangeState(Idle);
                 }
+            }
+
+            if (!attackState.colliderDeployed &&
+                (frame == 5 || frame == 11 || frame == 19)) {
+                deployCollider();
             }
 
             break;

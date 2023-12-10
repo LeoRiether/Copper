@@ -18,6 +18,8 @@ class RobotCan : public Component {
     float stopDistance{300};
     Component* behavior;
 
+    float stunnedLevel{0};
+
     Direction direction{NoneX, Down};
 
     RobotCan(GameObject& associated);

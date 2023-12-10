@@ -111,10 +111,23 @@ void RobotCan::Render(Vec2<Cart>) {}
 void RobotCan::NotifyCollision(GameObject& other) {
     auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
     bool isCompanion = associated.GetComponent(CType::Companion) != nullptr;
-    if (bullet && bullet->TargetsPlayer() == isCompanion) {
+
+    bool bulletHit = bullet && bullet->TargetsPlayer() == isCompanion;
+    bool meleeHit = other.tags.test(tag::PlayerHitbox);
+    if (bulletHit || meleeHit) {
         if (!isCompanion) {
             hp -= 25;
-            Game::Instance().GetState().GetCamera().SecondaryFollow(associated.weak);
+
+            // Trauma
+            if (meleeHit) {
+                Game::Instance().AddTrauma(0.3);
+                Game::Instance().Slowdown(0.03, 0.2);
+                stunnedLevel += 1.0f;
+            }
+
+            Game::Instance().GetState().GetCamera().SecondaryFollow(
+                associated.weak);
+
             if (hp <= 0) {
                 Die();
                 other.RequestDelete();
