@@ -71,7 +71,7 @@ void Sprite::RenderAt(float x, float y) {
 
     if (flash) {
         SDL_SetTextureBlendMode(texture->inner, SDL_BLENDMODE_ADD);
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 3; i++)
             SDL_RenderCopyExF(game.Renderer(), texture->inner, &clipRect,
                               &destRect, associated.angle * 180 / PI, nullptr,
                               SDL_FLIP_NONE);
