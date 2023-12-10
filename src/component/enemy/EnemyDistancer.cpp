@@ -27,10 +27,8 @@ EnemyDistancer* EnemyDistancer::WithRobotCan(RobotCan* rc) {
 void EnemyDistancer::Update(float dt) {
     if (!Player::player) return;
 
-    self->stunnedLevel = std::max<float>(0.0, self->stunnedLevel - dt);
-
     auto moveBy = [&](Vec2<Cart> delta) {
-        delta = delta * std::min(1.0f, 1 - self->stunnedLevel);
+        delta = delta * std::max(0.05f, 1 - self->stunnedLevel);
         associated.box.OffsetBy(delta);
     };
 
@@ -139,6 +137,10 @@ void EnemyDistancer::Update(float dt) {
 
 void EnemyDistancer::switchState(State newState) {
     auto shoot = [&]() {
+        // Can't shoot if too stunned
+        if (self->stunnedLevel > 0.1)
+            return;
+
         const auto playerPos = Player::player->Associated().box.Center();
         const auto delta = playerPos - associated.box.Center();
         auto go = MakeBullet(associated.box.Center(), delta.angle());

@@ -104,6 +104,8 @@ void RobotCan::Update(float dt) {
             ((Sprite*)sprite.get())->WithFlash(false);
         }
     }
+
+    stunnedLevel = std::max<float>(0.0, stunnedLevel - dt);
 }
 
 void RobotCan::Render(Vec2<Cart>) {}
