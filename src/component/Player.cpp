@@ -304,6 +304,13 @@ void Player::UpdateState(float dt) {
                     attackState.phase++;
                     attackState.queuedAttack = false;
                     attackState.colliderDeployed = false;
+
+                    // Player can change direction between phases as well!
+                    auto& input = InputManager::Instance();
+                    direction = Direction::approxFromVec(
+                        input.Mouse() - associated.box.Center());
+                    anim->SoftPlay("attack_" + direction.toString());
+                    anim->currentFrame = frame;
                 } else {
                     ChangeState(Idle);
                 }
