@@ -33,4 +33,5 @@ enum class CType {
     Bar,
     LifeBarManager,
     OverheadHpBar,
+    Slash,
 };

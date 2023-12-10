@@ -21,5 +21,6 @@ GameObject* MakeExplosion4();
 GameObject* MakeStageTransitionDimmer_FadeIn();
 GameObject* MakeStageTransitionDimmer_FadeOut();
 GameObject* MakeOneOffAudio(std::string file, int volume = MIX_MAX_VOLUME);
+GameObject* MakeSlash(Vec2<Cart> center, float angle);
 vector<GameObject*> MakeMap1Colliders();
-GameObject *MakeLifeBar();
+GameObject* MakeLifeBar();

@@ -39,10 +39,10 @@ vector<ControlsTutorial::State> ControlsTutorial::states = {
     },
     {
         "attack with your\nLEFT CLICK",
-        "attack with\nR2",
+        "attack with\nSQUARE",
         [](InputManager& input) {
             return input.MousePress(1) ||
-                   input.ControllerPress(SDL_CONTROLLER_BUTTON_RIGHTSTICK);
+                   input.ControllerPress(SDL_CONTROLLER_BUTTON_X);
         },
     },
     {

@@ -17,6 +17,7 @@
 #include "component/LifeBarManager.h"
 #include "component/OverheadHpBar.h"
 #include "component/Player.h"
+#include "component/Slash.h"
 #include "component/Sound.h"
 #include "component/Sprite.h"
 #include "component/StageTransitionDimmer.h"
@@ -224,6 +225,21 @@ GameObject* MakeOneOffAudio(std::string file, int volume) {
     auto sound = new Sound{*go, file, volume};
     sound->Play();
     return go->AddComponent(sound)->AddComponent(new KeepSoundAlive{*go});
+}
+
+GameObject* MakeSlash(Vec2<Cart> center, float angle) {
+    auto go = new GameObject{};
+    auto sprite = new Sprite{*go, ASSETS "/img/slash.png"};
+    auto animation = Animation::horizontal(*go, *sprite, 5, 0.05);
+    go->AddComponent(sprite)
+        ->AddComponent(animation)
+        ->AddComponent(new KillTimeout{*go, 5 * 0.05})
+        ->AddComponent(new Slash{*go, angle});
+    animation->Play("default");
+    go->box.SetCenter(center);
+    go->angle = angle;
+    go->renderLayer = 3;
+    return go;
 }
 
 vector<GameObject*> MakeMap1Colliders() {

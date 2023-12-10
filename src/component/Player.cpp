@@ -146,8 +146,10 @@ void Player::ChangeState(State newState) {
             attackState = {};
 
             auto& input = InputManager::Instance();
-            direction = Direction::approxFromVec(input.Mouse() -
-                                                 associated.box.Center());
+            direction = Direction::approxFromVec(
+                input.HasController()
+                    ? input.AxisVec(-1)
+                    : input.Mouse() - associated.box.Center());
             anim->SoftPlay("attack_" + direction.toString(), false);
             break;
         }
@@ -229,7 +231,8 @@ void Player::UpdateState(float dt) {
     };
 
     auto checkAttack = [&]() {
-        if (input.MousePress(1)) {
+        if (input.MousePress(1) ||
+            input.ControllerPress(SDL_CONTROLLER_BUTTON_X)) {
             if (state == Attacking) {
                 attackState.queuedAttack = true;
             } else if (state == Dashing) {
@@ -242,14 +245,21 @@ void Player::UpdateState(float dt) {
 
     auto deployCollider = [&]() {
         attackState.colliderDeployed = true;
+
         Rect hitbox{0, 0, 100, 100};
         hitbox.SetCenter(associated.box.Center() + direction.toVec() * 50.0f);
+
+        // Collider
         auto go = new GameObject{};
         go->tags.set(tag::PlayerHitbox);
         go->tags.set(tag::Bullet);  // a different kind of bullet...
         go->AddComponent((new Collider{*go})->WithBase(hitbox));
         go->AddComponent(new KillTimeout{*go, 0.2});
         associated.RequestAdd(go);
+
+        // Slash sprite
+        auto pos = (associated.box.Center() + direction.toVec() * 60.0f);
+        associated.RequestAdd(MakeSlash(pos, direction.toVec().angle()));
     };
 
     switch (state) {
@@ -308,7 +318,9 @@ void Player::UpdateState(float dt) {
                     // Player can change direction between phases as well!
                     auto& input = InputManager::Instance();
                     direction = Direction::approxFromVec(
-                        input.Mouse() - associated.box.Center());
+                        input.HasController()
+                            ? input.AxisVec(-1)
+                            : input.Mouse() - associated.box.Center());
                     anim->SoftPlay("attack_" + direction.toString());
                     anim->currentFrame = frame;
                 } else {
