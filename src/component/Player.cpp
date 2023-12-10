@@ -6,6 +6,7 @@
 #include "CType.h"
 #include "Consts.h"
 #include "Game.h"
+#include "GameData.h"
 #include "GameObject.h"
 #include "InputManager.h"
 #include "Prefabs.h"
@@ -196,6 +197,7 @@ void Player::Update(float dt) {
             hpLoss = 0;
         }
     }
+    GameData::playerHp = hp;
 }
 
 void Player::UpdateState(float dt) {

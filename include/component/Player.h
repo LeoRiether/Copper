@@ -6,6 +6,7 @@
 #include "CType.h"
 #include "Component.h"
 #include "Consts.h"
+#include "GameData.h"
 #include "GameObject.h"
 #include "Timer.h"
 #include "math/Direction.h"
@@ -39,7 +40,7 @@ class Player : public Component {
 
     vector<Vec2<Iso>> Trail{};
 
-    int hp{100};
+    int hp{GameData::playerHp};
     int hpLoss{0};
 
     Vec2<Cart> moveVec{};
