@@ -94,6 +94,13 @@ RobotCan::RobotCan(GameObject& associated) : Component(associated) {
     direction = Direction{NoneX, Down};
 }
 
+void RobotCan::Start() {
+    bool isCompanion = associated.GetComponent(CType::Companion) != nullptr;
+    if (!isCompanion)
+        Game::Instance().GetState().GetCamera().SecondaryFollow(
+            associated.weak);
+}
+
 void RobotCan::Update(float dt) {
     associated.box.OffsetBy(knockbackVelocity * dt);
     knockbackVelocity = knockbackVelocity * 0.70;
@@ -131,9 +138,6 @@ void RobotCan::NotifyCollision(GameObject& other) {
                 Game::Instance().Slowdown(0.03, 0.2);
                 stunnedLevel += 1.0f;
             }
-
-            Game::Instance().GetState().GetCamera().SecondaryFollow(
-                associated.weak);
 
             if (bar && bar->Hp() <= 0) {
                 Die();

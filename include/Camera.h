@@ -6,15 +6,14 @@
 #include "Timer.h"
 #include "math/Vec2.h"
 
+using std::vector;
+
 class Camera {
    private:
     Vec2<Cart> pos{0, 0}, speed{0, 0};
     GameObject* focus{nullptr};
 
-    struct {
-        bool exists{false};
-        std::weak_ptr<GameObject> go{};
-    } secFocus{};
+    vector<std::weak_ptr<GameObject>> secondary{};
 
     Timer focusChanged{};
 
@@ -24,12 +23,14 @@ class Camera {
     void updateFromInput(float dt);
     void updateShake();
 
+    int prevCoMN{0}; // These names are getting worse... "previous Center of Mass Number (of entities considered)"
+    std::pair<Vec2<Cart>, int> secondaryCenterOfMass();
+
    public:
     inline GameObject* Focus() { return focus; }
     void Follow(GameObject* newFocus);
     void SecondaryFollow(std::weak_ptr<GameObject> go);
     void Unfollow();
-    void SecondaryUnfollow();
     void Update(float dt);
 
     Vec2<Cart> Pos();

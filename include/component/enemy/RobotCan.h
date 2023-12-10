@@ -24,6 +24,7 @@ class RobotCan : public Component {
 
     RobotCan(GameObject& associated);
 
+    void Start();
     void Update(float dt);
     void Render(Vec2<Cart> camera);
     inline CType Key() const { return CType::RobotCan; }

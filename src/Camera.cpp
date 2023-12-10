@@ -1,5 +1,7 @@
 #include "Camera.h"
 
+#include <utility>
+
 #include "Game.h"
 #include "InputManager.h"
 #include "math/Interpolate.h"
@@ -18,21 +20,7 @@ void Camera::Unfollow() {
 }
 
 void Camera::SecondaryFollow(std::weak_ptr<GameObject> go) {
-    // Only change focus if the object really changed
-    // (weird hard logic because of weak pointers...)
-    if (go.expired()) {
-        SecondaryUnfollow();
-        return;
-    };
-    if (!secFocus.go.expired() && go.lock() == secFocus.go.lock()) return;
-
-    secFocus.exists = true;
-    secFocus.go = go;
-    focusChanged.Restart();
-}
-
-void Camera::SecondaryUnfollow() {
-    secFocus = {false, {}};
+    secondary.emplace_back(go);
     focusChanged.Restart();
 }
 
@@ -50,12 +38,15 @@ void Camera::updateFocus(float dt) {
                                   (float)SCREEN_HEIGHT / 2.0f};
 
     auto target = focus->box.Center();
-    if (secFocus.exists && !secFocus.go.expired()) {
-        auto go = secFocus.go.lock();
-        target = target.lerp(go->box.Center(), 0.3);
-    } else if (secFocus.exists) {
-        // just expired
-        SecondaryUnfollow();
+
+    auto [sCoM, secN] = secondaryCenterOfMass();
+    if (secN > 0) {
+        target = target.lerp(sCoM, 0.3);
+    }
+
+    if (prevCoMN != secN) {
+        prevCoMN = secN;
+        focusChanged.Restart();
     }
 
     focusChanged.Update(dt);
@@ -91,6 +82,34 @@ void Camera::updateShake() {
     } else {
         shakeDelta = {0, 0};
     }
+}
+
+std::pair<Vec2<Cart>, int> Camera::secondaryCenterOfMass() {
+    if (!focus) return {{0, 0}, 0};
+
+    for (int i = 0; i < (int)secondary.size();) {
+        if (secondary[i].expired()) {
+            std::swap(secondary[i], secondary.back());
+            secondary.pop_back();
+        } else {
+            i++;
+        }
+    }
+
+    constexpr float radius = 612.0f;
+    Vec2<Cart> sum{0, 0};
+    int counted = 0;
+    auto primaryCenter = focus->box.Center();
+    for (auto& go : secondary) {
+        auto center = go.lock()->box.Center();
+        if ((center - primaryCenter).norm2() <= radius * radius) {
+            sum = sum + center;
+            counted++;
+        }
+    }
+
+    if (counted == 0) return {{0, 0}, 0};
+    return {sum * (1.0f / counted), counted};
 }
 
 Vec2<Cart> Camera::Pos() { return pos + shakeDelta; }
