@@ -6,6 +6,7 @@
 #include "Prefabs.h"
 #include "component/Animation.h"
 #include "component/Bullet.h"
+#include "component/OverheadHpBar.h"
 #include "component/Sprite.h"
 #include "math/Direction.h"
 #include "physics/Tags.h"
@@ -118,7 +119,11 @@ void RobotCan::NotifyCollision(GameObject& other) {
     bool meleeHit = other.tags.test(tag::PlayerHitbox);
     if (bulletHit || meleeHit) {
         if (!isCompanion) {
-            hp -= 25;
+            auto bar =
+                (OverheadHpBar*)associated.GetComponent(CType::OverheadHpBar);
+            if (bar) {
+                bar->SetHp(bar->Hp() - 25);
+            }
 
             // Trauma
             if (meleeHit) {
@@ -130,7 +135,7 @@ void RobotCan::NotifyCollision(GameObject& other) {
             Game::Instance().GetState().GetCamera().SecondaryFollow(
                 associated.weak);
 
-            if (hp <= 0) {
+            if (bar && bar->Hp() <= 0) {
                 Die();
                 other.RequestDelete();
                 return;
@@ -162,7 +167,9 @@ RobotCan* RobotCan::WithStopDistance(float value) {
 }
 
 RobotCan* RobotCan::WithHp(int hp) {
-    this->hp = hp;
+    auto bar = (OverheadHpBar*)associated.GetComponent(CType::OverheadHpBar);
+    if (!bar) fail("WithHp called, but no associated OverheadHpBar");
+    bar->SetHp(hp);
     return this;
 }
 

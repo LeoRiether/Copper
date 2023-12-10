@@ -15,6 +15,7 @@
 #include "component/KeepSoundAlive.h"
 #include "component/KillTimeout.h"
 #include "component/LifeBarManager.h"
+#include "component/OverheadHpBar.h"
 #include "component/Player.h"
 #include "component/Sound.h"
 #include "component/Sprite.h"
@@ -71,6 +72,7 @@ GameObject* MakeEnemyFollower() {
     auto go = new GameObject{};
     auto body = (new RobotCan{*go})->WithStopDistance(100);
     go->AddComponent(body);
+    go->AddComponent(new OverheadHpBar{*go, 100, 100});
     go->AddComponent((new EnemyFollower{*go})->WithRobotCan(body));
     go->AddComponent(
         (new Collider{*go})->WithBase({18.8157, 3.4533, 32.6644, 76.6754}));
@@ -86,6 +88,7 @@ GameObject* MakeEnemyDistancer() {
     auto go = new GameObject{};
     auto body = (new RobotCan{*go})->WithStopDistance(300);
     go->AddComponent(body);
+    go->AddComponent(new OverheadHpBar{*go, 100, 100});
     go->AddComponent((new EnemyDistancer{*go})->WithRobotCan(body));
     go->AddComponent(
         (new Collider{*go})->WithBase({18.8157, 3.4533, 32.6644, 76.6754}));

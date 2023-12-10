@@ -38,5 +38,4 @@ class RobotCan : public Component {
    private:
     Vec2<Cart> knockbackVelocity{0, 0};
     float flashTimeout{0};
-    int hp{100};
 };
