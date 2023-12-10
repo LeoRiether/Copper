@@ -68,8 +68,7 @@ Dialog::Dialog(GameObject &go, std::string dialogFile)
   auto speakerSprite = new Sprite{*speakerGo, ASSETS "/img/Copper_d.png"};
   speakerGo->AddComponent(speakerSprite);
   speakerSprite->SetScale(0.2);
-  speakerGo->box.x = 100;
-  speakerGo->box.y = 100;
+  speakerGo->box.SetTopLeft(Left);
   speaker = shared_ptr<GameObject>{speakerGo};
 }
 
@@ -79,11 +78,7 @@ Dialog::~Dialog(){
 }
 
 void Dialog::Start() {
-  auto line = script[index++];
-  ((Text *)msg->GetComponent(CType::Text))->SetText(line.content);
-  ((Text *)name->GetComponent(CType::Text))->SetText(line.character);
-  ((Sprite *)speaker->GetComponent(CType::Sprite))
-      ->Open(ASSETS + std::string("/img/") + line.character + "_d.png");
+  GetNextLine();
   Game::Instance().Slowdown(0.0, INFINITY);
   Game::Instance().GetState().playerMovement = false;
 }
@@ -96,13 +91,7 @@ void Dialog::Update(float) {
       associated.RequestDelete();
       return;
     }
-
-    auto line = script[index++];
-    side = line.side;
-    ((Text *)msg->GetComponent(CType::Text))->SetText(line.content);
-    ((Text *)name->GetComponent(CType::Text))->SetText(line.character);
-    ((Sprite *)speaker->GetComponent(CType::Sprite))
-        ->Open(ASSETS + std::string("/img/") + line.character + "_d.png");
+	GetNextLine();
   }
 }
 
@@ -112,15 +101,25 @@ void Dialog::Render(Vec2<Cart>) {
   textbox->Render(Vec2<Cart>{0, 0});
   msg->Render(Vec2<Cart>{0, 0});
   name->Render(Vec2<Cart>{0, 0});
-  /*
-    speaker->Render(camera);
-    textbox->Render(camera);
-    msg->Render(camera);
-    name->Render(camera);
-    speaker->Render(Vec2<Cart>{-300, -200});
-    textbox->Render(Vec2<Cart>{-300, -400});
-    msg->Render(Vec2<Cart>{-300, -500});
-    name->Render(Vec2<Cart>{-320, -370});
-  */
 }
 
+void Dialog::GetNextLine(){
+  auto line = script[index++];
+  ((Text *)msg->GetComponent(CType::Text))->SetText(line.content);
+  ((Text *)name->GetComponent(CType::Text))->SetText(line.character);
+  ((Sprite *)speaker->GetComponent(CType::Sprite))
+      ->Open(ASSETS + std::string("/img/") + line.character + "_d.png");
+  side = line.side;
+  switch (side) {
+	  case DialogLine::Left:
+		  speaker->box.SetTopLeft(Left);
+		  ((Sprite *)speaker->GetComponent(CType::Sprite))
+			  ->fipHorizontal = false;
+		  break;
+	  case DialogLine::Right:
+		  speaker->box.SetTopLeft(Right);
+		  ((Sprite *)speaker->GetComponent(CType::Sprite))
+			  ->fipHorizontal = true;
+		  break;
+  }
+}

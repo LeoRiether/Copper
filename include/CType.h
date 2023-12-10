@@ -34,4 +34,5 @@ enum class CType {
     ControlsTutorial,
     Bar,
     LifeBarManager,
+	DialogTrigger,
 };

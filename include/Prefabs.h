@@ -24,3 +24,4 @@ GameObject* MakeOneOffAudio(std::string file, int volume = MIX_MAX_VOLUME);
 vector<GameObject*> MakeMap1Colliders();
 GameObject* MakeDialog(std::string dialogFile);
 GameObject *MakeLifeBar();
+GameObject* MakeDialogTrigger(Rect base, std::string dialogFile);

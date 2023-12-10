@@ -42,7 +42,7 @@ void StageState::Start() {
     //////////////////////////////
     //        Load Stage        //
     //////////////////////////////
-    MakeStage1(*this);
+    MakeStage1(*this, "main");
 
     /////////////////////////////////////
     //        Controls Tutorial        //
@@ -107,9 +107,6 @@ void StageState::Update(float dt) {
                 go->RequestDelete();
         }
     }
-
-	if (input.KeyPress(INTERACT_KEY))
-		RequestAddObject(MakeDialog(ASSETS "/dialog/sample.txt"));
 
     // Handle updates
     CollisionEngine::Update(objects);

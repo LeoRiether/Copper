@@ -31,16 +31,18 @@ constexpr int MSG_BOX_HEIGHT = 150;
 
 class Dialog : public Component {
 private:
-  DialogScript script;
-  shared_ptr<GameObject> speaker;
-  shared_ptr<GameObject> msg;
-  shared_ptr<GameObject> name;
-  shared_ptr<GameObject> textbox;
-  shared_ptr<GameObject> dimmer;
-  DialogLine::Side side;
-  inline static Vec2<Cart> Left{200, 350};
-  inline static Vec2<Cart> Right{SCREEN_WIDTH - 400, 350};
-  int index;
+  DialogScript script{};
+  shared_ptr<GameObject> speaker{};
+  shared_ptr<GameObject> msg{};
+  shared_ptr<GameObject> name{};
+  shared_ptr<GameObject> textbox{};
+  shared_ptr<GameObject> dimmer{};
+  DialogLine::Side side{};
+  inline static Vec2<Cart> Left{100, 100};
+  inline static Vec2<Cart> Right{SCREEN_WIDTH - 450, 100};
+  int index{};
+
+  void GetNextLine();
 
 public:
   Dialog(GameObject &go, string dialogFile);
@@ -48,6 +50,6 @@ public:
 
   void Update(float dt);
   void Render(Vec2<Cart> camera);
-    inline CType Key() const { return CType::Dialog; }
+  inline CType Key() const { return CType::Dialog; }
   void Start();
 };

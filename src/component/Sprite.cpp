@@ -11,7 +11,7 @@
 #define MODULE "Sprite"
 
 Sprite::Sprite(GameObject& associated, const string& file, bool followsCamera)
-    : Component(associated) {
+    : Component(associated){
     Open(file);
 
     this->followsCamera = followsCamera;
@@ -64,7 +64,7 @@ void Sprite::RenderAt(float x, float y) {
 
     SDL_SetTextureAlphaMod(texture->inner, Alpha);
     SDL_RenderCopyExF(game.Renderer(), texture->inner, &clipRect, &destRect,
-                      associated.angle * 180 / PI, nullptr, SDL_FLIP_NONE);
+                      associated.angle * 180 / PI, nullptr, fipHorizontal ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
 
     if (flash) {
         SDL_SetTextureBlendMode(texture->inner, SDL_BLENDMODE_ADD);

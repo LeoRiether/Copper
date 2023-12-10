@@ -1,3 +1,3 @@
 < Copper: Hello World!
 < Copper: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas lobortis congue placerat. Quisque enim velit, imperdiet quis elit ut, facilisis euismod 
-< Copper: More text
+> Copper: On the right!

@@ -11,7 +11,7 @@
 
 #define MODULE "State"
 
-State::State(): playerMovement(true) {
+State::State() {
 	camera->SetSpeed(Vec2<Cart>{250, 250});
 }
 

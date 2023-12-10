@@ -54,5 +54,5 @@ class State {
 
     inline bool QuitRequested() const { return quitRequested; }
     inline Camera& GetCamera() const { return *camera.get(); }
-	bool playerMovement;
+	bool playerMovement{true};
 };
