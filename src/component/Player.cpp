@@ -10,7 +10,6 @@
 #include "GameObject.h"
 #include "InputManager.h"
 #include "Prefabs.h"
-#include "SDL_render.h"
 #include "component/Animation.h"
 #include "component/Bullet.h"
 #include "component/Collider.h"
@@ -210,7 +209,10 @@ void Player::UpdateState(float dt) {
         if (dashState.timeout.Get() >= DASH_TIMEOUT &&
             (input.KeyPress(DASH_KEY) ||
              input.ControllerPress(SDL_CONTROLLER_BUTTON_LEFTSHOULDER))) {
-            ChangeState(Dashing);
+            if (state == Attacking)
+                attackState.queuedDash = true;
+            else
+                ChangeState(Dashing);
         }
     };
 
@@ -300,6 +302,7 @@ void Player::UpdateState(float dt) {
         }
         case Attacking: {
             checkAttack();
+            checkDashEvent();
 
             auto anim = (Animation*)associated.GetComponent(CType::Animation);
             if (!anim) fail("no associated Animation");
@@ -323,6 +326,8 @@ void Player::UpdateState(float dt) {
                             : input.Mouse() - associated.box.Center());
                     anim->SoftPlay("attack_" + direction.toString());
                     anim->currentFrame = frame;
+                } else if (attackState.queuedDash) {
+                    ChangeState(Dashing);
                 } else {
                     ChangeState(Idle);
                 }
