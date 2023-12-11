@@ -83,6 +83,7 @@ void EnemyFollower::Start() {
 void EnemyFollower::Update(float dt) {
     if (!Player::player) return;
 
+    knockbackVelocity = knockbackVelocity * 0.70;
     stunnedLevel = std::max<float>(0.0, stunnedLevel - dt);
 
     updateState(dt);
@@ -112,6 +113,12 @@ void EnemyFollower::updateState(float) {
             break;
         }
         case Attacking: {
+            auto anim = (Animation*)associated.GetComponent(CType::Animation);
+            if (!anim) fail("no associated Animation");
+
+            if (anim->currentFrame >= 21) {
+                switchState(Pursuing);
+            }
             break;
         }
     }
@@ -126,6 +133,8 @@ void EnemyFollower::updatePosition(float dt) {
         delta = delta * std::max(0.05f, 1 - stunnedLevel);
         associated.box.OffsetBy(delta);
     };
+
+    associated.box.OffsetBy(knockbackVelocity * dt);
 
     auto deployCollider = [&]() {
         attackState.phase++;
@@ -143,7 +152,9 @@ void EnemyFollower::updatePosition(float dt) {
 
         // Slash sprite
         auto pos = (associated.box.Center() + direction.toVec() * 60.0f);
-        associated.RequestAdd(MakeSlash(pos, direction.toVec().angle()));
+        auto slash = MakeSlash(pos, direction.toVec().angle());
+        slash->angle = direction.toVec().angle();
+        associated.RequestAdd(slash);
     };
 
     switch (state) {
@@ -284,6 +295,12 @@ void EnemyFollower::NotifyCollision(GameObject& other) {
         if (state == Attacking) {
             switchState(Pursuing);
         }
+
+        stunnedLevel += 0.2;
+
+        // Knockback
+        float kb = 1'500'000 * Game::Instance().DeltaTime();
+        knockbackVelocity = Vec2<Cart>{kb, 0}.GetRotated(other.angle);
 
         other.RequestDelete();
     }

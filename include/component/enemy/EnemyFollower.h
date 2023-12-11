@@ -9,7 +9,7 @@
 class EnemyFollower : public Component {
    private:
     const float speed{Consts::GetFloat("player.walking_speed") / 1.5f};
-    const float attackDistance{50.0f};
+    const float attackDistance{63.0f};
 
     enum State {
         Roaming,
@@ -27,6 +27,7 @@ class EnemyFollower : public Component {
     Direction direction{NoneX, Down};
 
     float stunnedLevel{0};
+    Vec2<Cart> knockbackVelocity{0, 0};
 
     void updateState(float dt);
     void updatePosition(float dt);

@@ -253,7 +253,9 @@ void Player::UpdateState(float dt) {
 
         // Slash sprite
         auto pos = (associated.box.Center() + direction.toVec() * 60.0f);
-        associated.RequestAdd(MakeSlash(pos, direction.toVec().angle()));
+        auto slash = MakeSlash(pos, direction.toVec().angle());
+        slash->angle = direction.toVec().angle();
+        associated.RequestAdd(slash);
     };
 
     switch (state) {
@@ -391,36 +393,6 @@ void Player::ConstrainToTile() {
 }
 
 void Player::Render(Vec2<Cart> camera) {
-    auto drawAnIsometricSquareOnTheGround = [&]() {
-        const auto& renderer = Game::Instance().Renderer();
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-        for (int i = 1400; i < 2000; i += 10) {
-            for (int j = 100; j < 700; j += 10) {
-                Vec2<Iso> iso{(float)i, (float)j};
-                Vec2<Cart> cart = iso.toCart();
-                SDL_Rect rect{(int)cart.x - (int)camera.x,
-                              (int)cart.y - (int)camera.y, 3, 3};
-                SDL_RenderFillRect(renderer, &rect);
-            }
-        }
-    };
-
-    auto drawPlayerPosition = [&]() {
-        static GameObject* text;
-        if (text == nullptr) {
-            text = new GameObject{};
-            text->AddComponent(new Text{*text, ASSETS "/font/Call me maybe.ttf",
-                                        30, Text::Blended, "?",
-                                        SDL_Color{255, 255, 0, 255}});
-        }
-        auto textComponent = (Text*)text->GetComponent(CType::Text);
-        auto pos = associated.box.Foot().toCart();
-        textComponent->SetText(std::to_string(pos.x) + ", " +
-                               std::to_string(pos.y));
-        text->box.SetFoot({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 10});
-        textComponent->Render(Vec2<Cart>{0, 0});
-    };
-
     auto drawChunk = [&]() {
         auto iso = (IsoCollider*)associated.GetComponent(CType::IsoCollider);
         if (!iso) fail("no IsoCollider");
