@@ -6,8 +6,6 @@
 #include "GameObject.h"
 #include "component/Animation.h"
 #include "component/Bar.h"
-#include "component/LifeBarManager.h"
-#include "component/CameraFollower.h"
 #include "component/Bullet.h"
 #include "component/BulletShaker.h"
 #include "component/Collider.h"
@@ -18,7 +16,10 @@
 #include "component/IsoCollider.h"
 #include "component/KeepSoundAlive.h"
 #include "component/KillTimeout.h"
+#include "component/LifeBarManager.h"
+#include "component/OverheadHpBar.h"
 #include "component/Player.h"
+#include "component/Slash.h"
 #include "component/Sound.h"
 #include "component/Sprite.h"
 #include "component/StageTransitionDimmer.h"
@@ -39,10 +40,10 @@ GameObject* MakePlayer() {
     go->AddComponent(new Player{*go});
     go->AddComponent((new IsoCollider{*go})
                          ->WithTag(tag::Player)
-                         ->WithBase({681.329, 425.945, 107.613, 107.613})
+                         ->WithBase({390.975, 153.522, 45.8416, 45.8416})
                          ->ScaleToSprite());
     go->AddComponent((new Collider{*go})
-                         ->WithBase({75.5414, 104.845, 127.273, 231.782})
+                         ->WithBase({97.716, 56.2834, 41.2575, 101.234})
                          ->ScaleToSprite());
     go->AddComponent((new Sound{*go, ASSETS "/audio/Gravel - Run.wav", 90}));
     return go;
@@ -74,6 +75,7 @@ GameObject* MakeEnemyFollower() {
     auto go = new GameObject{};
     auto body = (new RobotCan{*go})->WithStopDistance(100);
     go->AddComponent(body);
+    go->AddComponent(new OverheadHpBar{*go, 100, 100});
     go->AddComponent((new EnemyFollower{*go})->WithRobotCan(body));
     go->AddComponent(
         (new Collider{*go})->WithBase({18.8157, 3.4533, 32.6644, 76.6754}));
@@ -89,6 +91,7 @@ GameObject* MakeEnemyDistancer() {
     auto go = new GameObject{};
     auto body = (new RobotCan{*go})->WithStopDistance(300);
     go->AddComponent(body);
+    go->AddComponent(new OverheadHpBar{*go, 100, 100});
     go->AddComponent((new EnemyDistancer{*go})->WithRobotCan(body));
     go->AddComponent(
         (new Collider{*go})->WithBase({18.8157, 3.4533, 32.6644, 76.6754}));
@@ -226,6 +229,21 @@ GameObject* MakeOneOffAudio(std::string file, int volume) {
     return go->AddComponent(sound)->AddComponent(new KeepSoundAlive{*go});
 }
 
+GameObject* MakeSlash(Vec2<Cart> center, float angle) {
+    auto go = new GameObject{};
+    auto sprite = new Sprite{*go, ASSETS "/img/slash.png"};
+    auto animation = Animation::horizontal(*go, *sprite, 5, 0.05);
+    go->AddComponent(sprite)
+        ->AddComponent(animation)
+        ->AddComponent(new KillTimeout{*go, 5 * 0.05})
+        ->AddComponent(new Slash{*go, angle});
+    animation->Play("default");
+    go->box.SetCenter(center);
+    go->angle = angle;
+    go->renderLayer = 3;
+    return go;
+}
+
 vector<GameObject*> MakeMap1Colliders() {
     const Rect rects[] = {
         {2098.07, 279.521, 481.1, 561.283},
@@ -267,6 +285,21 @@ vector<GameObject*> MakeMap1Colliders() {
     return objects;
 }
 
+GameObject* MakeLifeBar() {
+    auto go = new GameObject{};
+    int maxBar = 10;
+    Vec2<Cart> dimension = {412, 144};
+    int space = 20;
+    auto lifeBar =
+        new Bar{*go, "assets/img/Lifebar.png", maxBar, dimension, space};
+    lifeBar->SetBarState(maxBar);
+    go->box.SetCenter(Vec2<Cart>{10, 10});
+    go->renderLayer = 200;
+    auto hpManager = new LifeBarManager(*go, 100, lifeBar);
+    go->AddComponent(hpManager);
+  return go;
+}
+
 GameObject* MakeDialog(std::string dialogFile){
 		auto go = new GameObject{};
 		auto dialog = new Dialog{*go, dialogFile};
@@ -274,25 +307,6 @@ GameObject* MakeDialog(std::string dialogFile){
 		go->renderLayer = 101;
 		return go;
 	}
-
-GameObject *MakeLifeBar() {
-  auto go = new GameObject{};
-  int maxBar = 10;
-  Vec2<Cart> dimension = {412, 144};
-  int space = 20;
-  auto lifeBar =
-      new Bar{*go, "assets/img/Lifebar.png", maxBar, dimension, space};
-  lifeBar->SetBarState(maxBar);
-  go->box.SetCenter(Vec2<Cart>{10, 10});
-  go->renderLayer = 100;
-  auto hpManager = new LifeBarManager(*go, 100, lifeBar);
-//   auto cf = new CameraFollower{*go, Vec2<Cart>{10, 10}};
-
-  go->AddComponent(hpManager);
-//   go->AddComponent(cf);
-
-  return go;
-}
 
 GameObject* MakeDialogTrigger(Rect base, std::string dialogFile){
 	auto go = new GameObject{};

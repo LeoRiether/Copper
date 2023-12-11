@@ -27,6 +27,7 @@ void State::Resume() {}
 
 weak_ptr<GameObject> State::RequestAddObject(GameObject* go) {
     shared_ptr<GameObject> ptr{go};
+    ptr->weak = std::weak_ptr(ptr);
     addRequests.emplace_back(ptr);
     return ptr;
 }

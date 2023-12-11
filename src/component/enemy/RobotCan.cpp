@@ -1,10 +1,12 @@
 #include "component/enemy/RobotCan.h"
 
 #include "CType.h"
+#include "Camera.h"
 #include "Game.h"
 #include "Prefabs.h"
 #include "component/Animation.h"
 #include "component/Bullet.h"
+#include "component/OverheadHpBar.h"
 #include "component/Sprite.h"
 #include "math/Direction.h"
 #include "physics/Tags.h"
@@ -92,6 +94,13 @@ RobotCan::RobotCan(GameObject& associated) : Component(associated) {
     direction = Direction{NoneX, Down};
 }
 
+void RobotCan::Start() {
+    bool isCompanion = associated.GetComponent(CType::Companion) != nullptr;
+    if (!isCompanion)
+        Game::Instance().GetState().GetCamera().SecondaryFollow(
+            associated.weak);
+}
+
 void RobotCan::Update(float dt) {
     associated.box.OffsetBy(knockbackVelocity * dt);
     knockbackVelocity = knockbackVelocity * 0.70;
@@ -103,6 +112,8 @@ void RobotCan::Update(float dt) {
             ((Sprite*)sprite.get())->WithFlash(false);
         }
     }
+
+    stunnedLevel = std::max<float>(0.0, stunnedLevel - dt);
 }
 
 void RobotCan::Render(Vec2<Cart>) {}
@@ -110,10 +121,25 @@ void RobotCan::Render(Vec2<Cart>) {}
 void RobotCan::NotifyCollision(GameObject& other) {
     auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
     bool isCompanion = associated.GetComponent(CType::Companion) != nullptr;
-    if (bullet && bullet->TargetsPlayer() == isCompanion) {
+
+    bool bulletHit = bullet && bullet->TargetsPlayer() == isCompanion;
+    bool meleeHit = other.tags.test(tag::PlayerHitbox);
+    if (bulletHit || meleeHit) {
         if (!isCompanion) {
-            hp -= 25;
-            if (hp <= 0) {
+            auto bar =
+                (OverheadHpBar*)associated.GetComponent(CType::OverheadHpBar);
+            if (bar) {
+                bar->SetHp(bar->Hp() - 25);
+            }
+
+            // Trauma
+            if (meleeHit) {
+                Game::Instance().AddTrauma(0.3);
+                Game::Instance().Slowdown(0.03, 0.2);
+                stunnedLevel += 1.0f;
+            }
+
+            if (bar && bar->Hp() <= 0) {
                 Die();
                 other.RequestDelete();
                 return;
@@ -145,7 +171,9 @@ RobotCan* RobotCan::WithStopDistance(float value) {
 }
 
 RobotCan* RobotCan::WithHp(int hp) {
-    this->hp = hp;
+    auto bar = (OverheadHpBar*)associated.GetComponent(CType::OverheadHpBar);
+    if (!bar) fail("WithHp called, but no associated OverheadHpBar");
+    bar->SetHp(hp);
     return this;
 }
 

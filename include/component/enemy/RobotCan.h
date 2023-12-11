@@ -18,10 +18,13 @@ class RobotCan : public Component {
     float stopDistance{300};
     Component* behavior;
 
+    float stunnedLevel{0};
+
     Direction direction{NoneX, Down};
 
     RobotCan(GameObject& associated);
 
+    void Start();
     void Update(float dt);
     void Render(Vec2<Cart> camera);
     inline CType Key() const { return CType::RobotCan; }
@@ -36,5 +39,4 @@ class RobotCan : public Component {
    private:
     Vec2<Cart> knockbackVelocity{0, 0};
     float flashTimeout{0};
-    int hp{100};
 };

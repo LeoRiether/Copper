@@ -102,7 +102,7 @@ void Companion::updateState(float dt) {
     auto& input = InputManager::Instance();
 
     auto checkShootInput = [&]() {
-        if (input.MousePress(1) ||
+        if (input.MousePress(3) ||
             input.ControllerPress(SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)) {
             auto mouseDelta = input.HasController()
                                   ? input.AxisVec(1)

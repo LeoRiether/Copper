@@ -22,8 +22,14 @@ class ControlsTutorial : public Component {
 
    private:
     struct State {
-        const char* text;
+        const char* keyboardText;
+        const char* controllerText;
         function<bool(InputManager&)> shouldAdvance;
+
+        inline const char* text() {
+            auto& input = InputManager::Instance();
+            return input.HasController() ? controllerText : keyboardText;
+        }
     };
 
     int index{0};

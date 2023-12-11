@@ -36,4 +36,6 @@ enum class CType {
     LifeBarManager,
 	DialogTrigger,
 	Tooltip,
+    OverheadHpBar,
+    Slash,
 };

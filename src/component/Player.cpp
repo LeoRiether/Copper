@@ -6,17 +6,20 @@
 #include "CType.h"
 #include "Consts.h"
 #include "Game.h"
+#include "GameData.h"
 #include "GameObject.h"
 #include "InputManager.h"
 #include "Prefabs.h"
-#include "SDL_render.h"
 #include "component/Animation.h"
 #include "component/Bullet.h"
+#include "component/Collider.h"
+#include "component/KillTimeout.h"
 #include "component/Sound.h"
 #include "component/Sprite.h"
 #include "component/Text.h"
 #include "math/Direction.h"
 #include "physics/CollisionEngine.h"
+#include "physics/Tags.h"
 #include "util.h"
 
 #define MODULE "Player"
@@ -26,39 +29,69 @@ Player* Player::player;
 Player::Player(GameObject& associated) : Component(associated) {
     Player::player = this;
 
-    auto sprite = new Sprite{associated, ASSETS "/img/copper_running.png"};
+    auto sprite = new Sprite{associated, ASSETS "/img/copper/spritesheet.png"};
     sprite->SetHasShadow(true);
-    sprite->SetScale(90.0f / (sprite->SheetHeight() / 8.0f));
+    sprite->SetScale(150.0f / (sprite->SheetHeight() / 16.0f));
     associated.AddComponent(sprite);
 
     {
         auto anim = new Animation{associated, *sprite};
-        GridKeyframe grid{7, 8, sprite->SheetWidth(), sprite->SheetHeight(),
-                          0.05};
+        GridKeyframe grid{20, 16, sprite->SheetWidth(), sprite->SheetHeight(),
+                          0.02};
 
-        auto row = [&](int i, int startJ, int frames) {
+        auto row = [&](int i, int startJ, int frames, float frameTime) {
             Keyframes kf;
-            for (int j = startJ; j < startJ + frames; j++)
+            for (int j = startJ; j < startJ + frames; j++) {
+                grid.frameTime = frameTime;
                 kf.push_back(grid.At(j, i));
+            }
             return kf;
         };
 
-        anim->AddKeyframes("SE", row(0, 0, 7));
-        anim->AddKeyframes("S", row(1, 0, 7));
-        anim->AddKeyframes("SW", row(2, 0, 7));
-        anim->AddKeyframes("W", row(3, 0, 7));
-        anim->AddKeyframes("NW", row(4, 0, 7));
-        anim->AddKeyframes("N", row(5, 0, 7));
-        anim->AddKeyframes("NE", row(6, 0, 7));
-        anim->AddKeyframes("E", row(7, 0, 7));
-        anim->AddKeyframes("idle_SE", row(0, 0, 1));
-        anim->AddKeyframes("idle_S", row(1, 0, 1));
-        anim->AddKeyframes("idle_SW", row(2, 0, 1));
-        anim->AddKeyframes("idle_W", row(3, 0, 1));
-        anim->AddKeyframes("idle_NW", row(4, 0, 1));
-        anim->AddKeyframes("idle_N", row(5, 0, 1));
-        anim->AddKeyframes("idle_NE", row(6, 0, 1));
-        anim->AddKeyframes("idle_E", row(7, 0, 1));
+        // This kind of row has a configurable progression of frameTimes
+        // auto row2 = [&](int i, int startJ, vector<float> frameTimes) {
+        //     Keyframes kf;
+        //     int frames = frameTimes.size();
+        //     for (int j = startJ; j < startJ + frames; j++) {
+        //         grid.frameTime = frameTimes[j - startJ];
+        //         kf.push_back(grid.At(j, i));
+        //     }
+        //     return kf;
+        // };
+
+        // This is a row modified to repeat the last frame a few times
+        auto row3 = [&](int i, int startJ, int frames, float frameTime) {
+            auto r = row(i, startJ, frames, frameTime);
+            r.push_back(r.back());
+            r.push_back(r.back());
+            r.push_back(r.back());
+            return r;
+        };
+
+        anim->AddKeyframes("S", row(0, 0, 20, 0.02));
+        anim->AddKeyframes("SW", row(1, 0, 20, 0.02));
+        anim->AddKeyframes("W", row(2, 0, 20, 0.02));
+        anim->AddKeyframes("NW", row(3, 0, 20, 0.02));
+        anim->AddKeyframes("N", row(4, 0, 20, 0.02));
+        anim->AddKeyframes("NE", row(5, 0, 20, 0.02));
+        anim->AddKeyframes("E", row(6, 0, 20, 0.02));
+        anim->AddKeyframes("SE", row(7, 0, 20, 0.02));
+        anim->AddKeyframes("attack_S", row3(8, 0, 20, 0.06));
+        anim->AddKeyframes("attack_SW", row3(9, 0, 20, 0.06));
+        anim->AddKeyframes("attack_W", row3(10, 0, 20, 0.06));
+        anim->AddKeyframes("attack_NW", row3(11, 0, 20, 0.06));
+        anim->AddKeyframes("attack_N", row3(12, 0, 20, 0.06));
+        anim->AddKeyframes("attack_NE", row3(13, 0, 20, 0.06));
+        anim->AddKeyframes("attack_E", row3(14, 0, 20, 0.06));
+        anim->AddKeyframes("attack_SE", row3(15, 0, 20, 0.06));
+        anim->AddKeyframes("idle_S", row(0, 3, 1, 1));
+        anim->AddKeyframes("idle_SW", row(1, 3, 1, 1));
+        anim->AddKeyframes("idle_W", row(2, 3, 1, 1));
+        anim->AddKeyframes("idle_NW", row(3, 3, 1, 1));
+        anim->AddKeyframes("idle_N", row(4, 3, 1, 1));
+        anim->AddKeyframes("idle_NE", row(5, 3, 1, 1));
+        anim->AddKeyframes("idle_E", row(6, 3, 1, 1));
+        anim->AddKeyframes("idle_SE", row(7, 3, 1, 1));
         anim->Play("idle_S");  // just to kickstart the associated.box...
         associated.AddComponent(anim);
     }
@@ -75,42 +108,52 @@ void Player::Start() {
 void Player::ChangeState(State newState) {
     // Transition out of old state
     switch (state) {
-        case Idle: {
-            break;
-        }
-        case Walking: {
-            break;
-        }
-        case Dashing: {
-            dashState.timeout.Restart();
-            break;
-        }
+        case Idle:
+        case Walking:
+        case Attacking:
         case StageTransition: {
             break;
         }
+        case Dashing: {
+            associated.angle = 0;
+            dashState.timeout.Restart();
+            break;
+        }
     }
+
+    auto anim = (Animation*)associated.GetComponent(CType::Animation);
 
     // Transition into new state
     state = newState;
     switch (newState) {
         case Idle: {
-            auto anim = (Animation*)associated.GetComponent(CType::Animation);
             anim->SoftPlay("idle_" + direction.toString());
             break;
         }
         case Walking: {
             stepsTimer.Restart();
-            auto anim = (Animation*)associated.GetComponent(CType::Animation);
             anim->SoftPlay(direction.toString());
             break;
         }
         case Dashing: {
-            dashState.timeSinceStart.Restart();
+            dashState = {};
+            associated.angle = PI / 2.3;
+            anim->SoftPlay("idle_" + direction.toString());
+            break;
+        }
+        case Attacking: {
+            attackState = {};
+
+            auto& input = InputManager::Instance();
+            direction = Direction::approxFromVec(
+                input.HasController()
+                    ? input.AxisVec(-1)
+                    : input.Mouse() - associated.box.Center());
+            anim->SoftPlay("attack_" + direction.toString(), false);
             break;
         }
         case StageTransition: {
             stepsTimer.Restart();
-            auto anim = (Animation*)associated.GetComponent(CType::Animation);
             anim->SoftPlay(direction.toString());
             break;
         }
@@ -122,8 +165,6 @@ void Player::MaybeChangeState(State newState) {
 }
 
 void Player::Update(float dt) {
-	if (!Game::Instance().GetState().playerMovement)
-		return;
     UpdateState(dt);
     UpdatePosition(dt);
 
@@ -145,6 +186,19 @@ void Player::Update(float dt) {
         if (!iso) fail("player without IsoCollider...");
         Trail.push_back(iso->box.Center().transmute<Iso>());
     }
+
+    // Damage logic
+    static int& invincible = Consts::GetInt("debug.invincible");
+    if (hpLoss > 0) {
+        hpLossTimer.Update(dt);
+        if (hpLossTimer.Get() > 1) {
+            hpLossTimer.Restart();
+            hp -= hpLoss <= hp ? hpLoss : hp;
+            if (invincible && hp <= 0) hp = 1;
+            hpLoss = 0;
+        }
+    }
+    GameData::playerHp = hp;
 }
 
 void Player::UpdateState(float dt) {
@@ -155,7 +209,10 @@ void Player::UpdateState(float dt) {
         if (dashState.timeout.Get() >= DASH_TIMEOUT &&
             (input.KeyPress(DASH_KEY) ||
              input.ControllerPress(SDL_CONTROLLER_BUTTON_LEFTSHOULDER))) {
-            ChangeState(Dashing);
+            if (state == Attacking)
+                attackState.queuedDash = true;
+            else
+                ChangeState(Dashing);
         }
     };
 
@@ -175,6 +232,38 @@ void Player::UpdateState(float dt) {
         }
     };
 
+    auto checkAttack = [&]() {
+        if (input.MousePress(1) ||
+            input.ControllerPress(SDL_CONTROLLER_BUTTON_X)) {
+            if (state == Attacking) {
+                attackState.queuedAttack = true;
+            } else if (state == Dashing) {
+                dashState.queuedAttack = true;
+            } else {
+                ChangeState(Attacking);
+            }
+        }
+    };
+
+    auto deployCollider = [&]() {
+        attackState.colliderDeployed = true;
+
+        Rect hitbox{0, 0, 100, 100};
+        hitbox.SetCenter(associated.box.Center() + direction.toVec() * 50.0f);
+
+        // Collider
+        auto go = new GameObject{};
+        go->tags.set(tag::PlayerHitbox);
+        go->tags.set(tag::Bullet);  // a different kind of bullet...
+        go->AddComponent((new Collider{*go})->WithBase(hitbox));
+        go->AddComponent(new KillTimeout{*go, 0.2});
+        associated.RequestAdd(go);
+
+        // Slash sprite
+        auto pos = (associated.box.Center() + direction.toVec() * 60.0f);
+        associated.RequestAdd(MakeSlash(pos, direction.toVec().angle()));
+    };
+
     switch (state) {
         case Idle: {
             auto currentDirection = Direction::fromInput();
@@ -183,6 +272,7 @@ void Player::UpdateState(float dt) {
                 ChangeState(Walking);
             }
             checkDashEvent();
+            checkAttack();
             break;
         }
         case Walking: {
@@ -198,14 +288,56 @@ void Player::UpdateState(float dt) {
                 direction = currentDirection;
             }
             checkDashEvent();
+            checkAttack();
             makeStepSound();
             break;
         }
         case Dashing: {
             dashState.timeSinceStart.Update(dt);
             if (dashState.timeSinceStart.Get() >= DASH_DURATION) {
-                ChangeState(Idle);
+                ChangeState(dashState.queuedAttack ? Attacking : Idle);
             }
+            checkAttack();
+            break;
+        }
+        case Attacking: {
+            checkAttack();
+            checkDashEvent();
+
+            auto anim = (Animation*)associated.GetComponent(CType::Animation);
+            if (!anim) fail("no associated Animation");
+            int frame = anim->currentFrame;
+
+            bool nextPhase = false;
+            nextPhase |= attackState.phase == 0 && frame >= 11;
+            nextPhase |= attackState.phase == 1 && frame >= 15;
+            nextPhase |= attackState.phase == 2 && frame >= 22;
+            if (nextPhase) {
+                if (attackState.queuedAttack && attackState.phase < 2) {
+                    attackState.phase++;
+                    attackState.queuedAttack = false;
+                    attackState.colliderDeployed = false;
+
+                    // Player can change direction between phases as well!
+                    auto& input = InputManager::Instance();
+                    direction = Direction::approxFromVec(
+                        input.HasController()
+                            ? input.AxisVec(-1)
+                            : input.Mouse() - associated.box.Center());
+                    anim->SoftPlay("attack_" + direction.toString());
+                    anim->currentFrame = frame;
+                } else if (attackState.queuedDash) {
+                    ChangeState(Dashing);
+                } else {
+                    ChangeState(Idle);
+                }
+            }
+
+            if (!attackState.colliderDeployed &&
+                (frame == 5 || frame == 11 || frame == 19)) {
+                deployCollider();
+            }
+
             break;
         }
         case StageTransition: {
@@ -220,22 +352,29 @@ void Player::UpdatePosition(float dt) {
     knockbackVelocity = knockbackVelocity * 0.70;
 
     auto& input = InputManager::Instance();
-    auto moveVec = [&]() {
-        return input.HasController() ? input.AxisVec(-1) : direction.toVec();
+    auto getMoveVec = [&]() {
+        moveVec = input.HasController() ? input.AxisVec(-1) : direction.toVec();
+        return moveVec = moveVec * walkingSpeed;
     };
 
     switch (state) {
         case Idle: {
+            moveVec = {0, 0};
             break;
         }
         case Walking:
         case StageTransition: {
-            Vec2<Cart> speed = moveVec() * walkingSpeed * dt;
+            Vec2<Cart> speed = getMoveVec() * dt;
             associated.box.OffsetBy(speed);
             break;
         }
         case Dashing: {
-            Vec2<Cart> speed = moveVec() * walkingSpeed * 2.5 * dt;
+            Vec2<Cart> speed = getMoveVec() * 2.5 * dt;
+            associated.box.OffsetBy(speed);
+            break;
+        }
+        case Attacking: {
+            Vec2<Cart> speed = getMoveVec() * 0.2 * dt;
             associated.box.OffsetBy(speed);
             break;
         }
@@ -321,6 +460,10 @@ void Player::Render(Vec2<Cart> camera) {
 void Player::NotifyCollision(GameObject& other) {
     auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
     if (bullet && bullet->TargetsPlayer()) {
+        // Takes damage
+        hpLoss += bullet->Damage();
+        hpLossTimer.Restart();
+
         // Flash
         auto sprite = (Sprite*)associated.GetComponent(CType::Sprite);
         sprite->WithFlash(true);

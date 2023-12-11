@@ -36,7 +36,7 @@ void TitleState::Update(float dt) {
     }
 
     if (input.KeyPress(SDL_SCANCODE_SPACE) ||
-        input.ControllerPress(SDL_CONTROLLER_BUTTON_X)) {
+        input.ControllerPress(SDL_CONTROLLER_BUTTON_A)) {
         log("pushing StageState");
         Game::Instance().RequestPush(new StageState{});
     }
@@ -75,9 +75,11 @@ void TitleState::Start() {
 
     {
         auto go = new GameObject{};
+        auto& input = InputManager::Instance();
+        auto text =
+            input.HasController() ? "press X to start" : "press SPACE to start";
         go->AddComponent(new Text{*go, ASSETS "/font/THEROOTS.TTF", 30,
-                                  Text::Blended, "press SPACE to start",
-                                  colorFromHex("dda08d")});
+                                  Text::Blended, text, colorFromHex("dda08d")});
         go->AddComponent(new TextBlinker{*go, 4.0f});
         go->box.SetCenter({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f + 140});
         RequestAddObject(go);

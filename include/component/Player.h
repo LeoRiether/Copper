@@ -6,6 +6,7 @@
 #include "CType.h"
 #include "Component.h"
 #include "Consts.h"
+#include "GameData.h"
 #include "GameObject.h"
 #include "Timer.h"
 #include "math/Direction.h"
@@ -16,8 +17,16 @@ constexpr float DASH_DURATION = 0.3;
 constexpr float DASH_TIMEOUT = 0.2;
 
 struct DashState {
-    Timer timeSinceStart;
-    Timer timeout;
+    Timer timeSinceStart{};
+    Timer timeout{};
+    bool queuedAttack{false};
+};
+
+struct AttackState {
+    int phase{0};
+    bool queuedAttack{false};
+    bool queuedDash{false};
+    bool colliderDeployed{false};
 };
 
 class Player : public Component {
@@ -26,20 +35,24 @@ class Player : public Component {
         Idle,
         Walking,
         Dashing,
+        Attacking,
         StageTransition,
     };
 
     vector<Vec2<Iso>> Trail{};
 
-    int hp;
-    int hpLoss;
+    int hp{GameData::playerHp};
+    int hpLoss{0};
+
+    Vec2<Cart> moveVec{};
 
    private:
     float& walkingSpeed{Consts::GetFloat("player.walking_speed")};
     float& stepsTiming{Consts::GetFloat("player.steps_timing")};
 
     Direction direction{NoneX, Down};
-    DashState dashState;
+    DashState dashState{};
+    AttackState attackState{};
     Timer stepsTimer{};
     Timer trailTimer{};
 

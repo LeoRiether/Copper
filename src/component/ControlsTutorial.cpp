@@ -4,6 +4,7 @@
 #include "InputManager.h"
 #include "component/Player.h"
 #include "component/Text.h"
+#include "math/Interpolate.h"
 #include "util.h"
 
 #define MODULE "ControlsTutorial"
@@ -11,27 +12,49 @@
 vector<ControlsTutorial::State> ControlsTutorial::states = {
     {
         "This state advances after the first frame",
+        "",
         [](InputManager&) { return true; },
     },
     {
         "press W A S D\nto move",
+        "move the LEFT KNOB\nto move ",
         [](InputManager&) { return !Direction::fromInput().isNone(); },
     },
     {
         "press SPACE\nto dash",
+        "press L1\nto dash",
         [](InputManager& input) {
             return input.KeyPress(DASH_KEY) ||
                    input.ControllerPress(SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
         },
     },
     {
-        "LEFT CLICK with\nyour mouse\nto fire",
+        "aim with\nyour MOUSE",
+        "aim with\nyour RIGHT KNOB",
+        [](InputManager&) {
+            static float hackyTimer{1.0};
+            hackyTimer -= FRAME_MS / 1000.0f;
+            return hackyTimer <= 0;
+        },
+    },
+    {
+        "attack with your\nLEFT CLICK",
+        "attack with\nSQUARE",
         [](InputManager& input) {
-            return input.IsMouseDown(1) ||
+            return input.MousePress(1) ||
+                   input.ControllerPress(SDL_CONTROLLER_BUTTON_X);
+        },
+    },
+    {
+        "or RIGHT CLICK\nto fire",
+        "or press R1\nto fire",
+        [](InputManager& input) {
+            return input.IsMouseDown(3) ||
                    input.ControllerPress(SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
         },
     },
     {
+        "KILL all enemies\nto win\n Good Luck",
         "KILL all enemies\nto win\n Good Luck",
         [](InputManager&) {
             static float hackyTimer{1.2};
@@ -52,24 +75,20 @@ void ControlsTutorial::Update(float dt) {
         associated.box.SetFoot(player->associated.box.Head());
     }
 
-    auto lerp = [&](float p, float from, float to) {
-        return from + (to - from) * p;
-    };
-
     if (fadingOut > 0) {
-        text->SetAlpha(lerp((fadingTime - fadingOut) / fadingTime, 255, 0));
+        text->SetAlpha(lerp(255, 0, (fadingTime - fadingOut) / fadingTime));
         fadingOut -= dt;
         if (fadingOut <= 0) {
             index++;
             if (index < (int)states.size()) {
-                text->SetText(states[index].text);
+                text->SetText(states[index].text());
                 fadingIn = fadingTime;  // switchState(FadingIn)
             } else {
                 associated.RequestDelete();  // :knife:
             }
         }
     } else if (fadingIn > 0) {
-        text->SetAlpha(lerp((fadingTime - fadingIn) / fadingTime, 0, 255));
+        text->SetAlpha(lerp(0, 255, (fadingTime - fadingIn) / fadingTime));
         fadingIn -= dt;
         if (fadingIn <= 0) {
             text->SetAlpha(255);

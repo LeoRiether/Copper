@@ -2,6 +2,7 @@
 
 #include "Game.h"
 #include "SDL_include.h"
+#include "math/Interpolate.h"
 
 #define MODULE "StageTransitionDimmer"
 
@@ -24,12 +25,8 @@ void StageTransitionDimmer::Update(float dt) {
 }
 
 void StageTransitionDimmer::Render(Vec2<Cart>) {
-    auto lerp = [&](float p) { return from + (to - from) * p; };
-    auto qerp_in = [&](float p) { return lerp(p * p); };
-    auto qerp_out = [&](float p) { return lerp(1 - (1 - p) * (1 - p)); };
-
     float p = std::min(1.0f, now / duration);
-    float alpha = easing == In ? qerp_in(p) : qerp_out(p);
+    float alpha = easing == In ? qerp_in(from, to, p) : qerp_out(from, to, p);
 
     auto renderer = Game::Instance().Renderer();
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_MOD);

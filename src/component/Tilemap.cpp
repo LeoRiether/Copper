@@ -124,7 +124,7 @@ Tilemap* Tilemap::WithColliders(Rect base) {
     Start();  // just to make sure we have everything.....
     this->base = base;
 
-    std::unordered_set<int> ignoredTileIds = {173};
+    std::unordered_set<int> ignoredTileIds = {173, 185};
 
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
@@ -138,6 +138,38 @@ Tilemap* Tilemap::WithColliders(Rect base) {
         }
     }
 
+    return this;
+}
+
+Tilemap* Tilemap::WithFloorColliders(Rect base) {
+    Start();  // just to make sure we have everything.....
+    this->base = base;
+
+    const std::pair<int, int> delta[4] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+
+    for (int i = -1; i <= height; i++) {
+        for (int j = -1; j <= width; j++) {
+            auto filled = [&](int i, int j) {
+                return i >= 0 && i < height && j >= 0 && j < width &&
+                       map[At(i, j)] >= 0;
+            };
+            if (filled(i, j)) continue;
+
+            bool isBorder = false;
+            for (int k = 0; k < 4; k++) {
+                auto [di, dj] = delta[k];
+                isBorder |= filled(i + di, j + dj);
+            }
+            if (!isBorder) continue;
+
+            auto b = baseForTile(i, j);
+            associated.AddComponent((new IsoCollider{associated})
+                                        ->WithTag(tag::Terrain)
+                                        ->WithBase(b));
+        }
+    }
+
+    this->base = {0, 0, 0, 0};
     return this;
 }
 
@@ -233,33 +265,4 @@ void Tilemap::load(const string& csv) {
     // }
 
     file.close();
-}
-
-Tilemap* Tilemap::WithFloorColliders(Rect base) {
-    Start();  // just to make sure we have everything.....
-    this->base = base;
-
-    const std::pair<int, int> delta[4] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-
-    for (int i = -1; i <= height; i++) {
-        for (int j = -1; j <= width; j++) {
-            int id = map[At(i, j)];
-            if (id != 0) continue;
-
-            bool isBorder = false;
-            for (int k = 0; k < 4; k++) {
-                auto [di, dj] = delta[k];
-                int ni = i + di, nj = j + dj;
-                // isBorder |= 
-            }
-
-            break;
-            auto b = baseForTile(i, j);
-            associated.AddComponent((new IsoCollider{associated})
-                                        ->WithTag(tag::Terrain)
-                                        ->WithBase(b));
-        }
-    }
-
-    return this;
 }

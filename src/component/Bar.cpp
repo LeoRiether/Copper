@@ -1,7 +1,6 @@
 #include "component/Bar.h"
 
 #include "component/Sprite.h"
-#include "math/Rect.h"
 
 Bar::Bar(GameObject &go, string file, int maxBar, Vec2<Cart> barDimension,
          int space)
