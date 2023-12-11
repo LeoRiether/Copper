@@ -31,8 +31,6 @@ using std::string;
 void MakeStage1(StageState& s, string stage) {
     constexpr float tilescale = 128.0f;
 
-    stage = "main"; // BUG: this shouldn't be commited :)
-
     // Translates from "tiled coordinates" to cartesian screen coordinates
     auto worldPos = [&](Vec2<Iso> isoPos) {
         return ((isoPos + Vec2<Iso>{-2, -8}) * tilescale).toCart();

@@ -464,7 +464,7 @@ void Player::NotifyCollision(GameObject& other) {
 
     if (isBullet || enemyHitbox) {
         // Takes damage
-        hpLoss += bullet->Damage();
+        hpLoss += isBullet ? bullet->Damage() : 25;
         hpLossTimer.Restart();
 
         // Flash
