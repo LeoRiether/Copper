@@ -37,12 +37,12 @@ void Sprite::SetClip(int x, int y, int w, int h) {
 }
 void Sprite::SetClip(SDL_Rect rect) { clipRect = rect; }
 
-Sprite* Sprite::WithFlash(bool f) {
-    flash = f;
+Sprite* Sprite::WithFlash(float timeout) {
+    flashTimeout = timeout;
     return this;
 }
 
-void Sprite::Update(float) {}
+void Sprite::Update(float dt) { flashTimeout -= dt; }
 
 void Sprite::RenderAt(float x, float y) {
     Game& game = Game::Instance();
@@ -69,7 +69,7 @@ void Sprite::RenderAt(float x, float y) {
     SDL_RenderCopyExF(game.Renderer(), texture->inner, &clipRect, &destRect,
                       associated.angle * 180 / PI, nullptr, SDL_FLIP_NONE);
 
-    if (flash) {
+    if (flashTimeout > 0) {
         SDL_SetTextureBlendMode(texture->inner, SDL_BLENDMODE_ADD);
         for (int i = 0; i < 3; i++)
             SDL_RenderCopyExF(game.Renderer(), texture->inner, &clipRect,

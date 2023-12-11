@@ -16,7 +16,7 @@ class Sprite : public Component {
     Vec2<Cart> scale{1, 1};
 
     bool hasShadow{false};
-    bool flash{false};
+    float flashTimeout{0};
 
     bool followsCamera;
 
@@ -38,7 +38,7 @@ class Sprite : public Component {
     inline void SetScale(float x) { scale = {x, x}; }
     inline void SetHasShadow(bool flag) { hasShadow = flag; }
 
-    Sprite* WithFlash(bool f);
+    Sprite* WithFlash(float timeout);
 
     inline bool IsOpen() { return texture != nullptr; }
 

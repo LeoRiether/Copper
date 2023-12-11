@@ -49,13 +49,12 @@ GameObject* MakePlayer() {
 
 GameObject* MakeCompanion() {
     auto go = new GameObject{};
-    go->AddComponent(new RobotCan{*go});
     go->AddComponent(new Companion{*go});
     go->AddComponent(
-        (new Collider{*go})->WithBase({18.8157, 3.4533, 32.6644, 76.6754}));
+        (new Collider{*go})->WithBase({15.6793, 22.2168, 39.7406, 56.9443}));
     go->AddComponent((new IsoCollider{*go})
                          ->WithTag(tag::Entity)
-                         ->WithBase({147.784, 76.4568, 51.9192, 52.6069}));
+                         ->WithBase({159.529, 87.2253, 59.6754, 59.6754}));
     go->tags.set(tag::Entity);
     return go;
 }

@@ -95,24 +95,12 @@ RobotCan::RobotCan(GameObject& associated) : Component(associated) {
 }
 
 void RobotCan::Start() {
-    bool isCompanion = associated.GetComponent(CType::Companion) != nullptr;
-    if (!isCompanion)
-        Game::Instance().GetState().GetCamera().SecondaryFollow(
-            associated.weak);
+    Game::Instance().GetState().GetCamera().SecondaryFollow(associated.weak);
 }
 
 void RobotCan::Update(float dt) {
     associated.box.OffsetBy(knockbackVelocity * dt);
     knockbackVelocity = knockbackVelocity * 0.70;
-
-    flashTimeout -= dt;
-    if (flashTimeout <= 0) {
-        flashTimeout = INFINITY;  // won't trigger this part again very soon
-        for (auto& sprite : associated.GetAllComponents(CType::Sprite)) {
-            ((Sprite*)sprite.get())->WithFlash(false);
-        }
-    }
-
     stunnedLevel = std::max<float>(0.0, stunnedLevel - dt);
 }
 
@@ -120,37 +108,32 @@ void RobotCan::Render(Vec2<Cart>) {}
 
 void RobotCan::NotifyCollision(GameObject& other) {
     auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
-    bool isCompanion = associated.GetComponent(CType::Companion) != nullptr;
-
-    bool bulletHit = bullet && bullet->TargetsPlayer() == isCompanion;
+    bool bulletHit = bullet && !bullet->TargetsPlayer();
     bool meleeHit = other.tags.test(tag::PlayerHitbox);
     if (bulletHit || meleeHit) {
-        if (!isCompanion) {
-            auto bar =
-                (OverheadHpBar*)associated.GetComponent(CType::OverheadHpBar);
-            if (bar) {
-                bar->SetHp(bar->Hp() - 25);
-            }
+        auto bar =
+            (OverheadHpBar*)associated.GetComponent(CType::OverheadHpBar);
+        if (bar) {
+            bar->SetHp(bar->Hp() - 25);
+        }
 
-            // Trauma
-            if (meleeHit) {
-                Game::Instance().AddTrauma(0.3);
-                Game::Instance().Slowdown(0.03, 0.2);
-                stunnedLevel += 1.0f;
-            }
+        if (bar && bar->Hp() <= 0) {
+            Die();
+            other.RequestDelete();
+            return;
+        }
 
-            if (bar && bar->Hp() <= 0) {
-                Die();
-                other.RequestDelete();
-                return;
-            }
+        // Trauma
+        if (meleeHit) {
+            Game::Instance().AddTrauma(0.3);
+            Game::Instance().Slowdown(0.03, 0.2);
+            stunnedLevel += 1.0f;
         }
 
         // Flash
         for (auto& sprite : associated.GetAllComponents(CType::Sprite)) {
-            ((Sprite*)sprite.get())->WithFlash(true);
+            ((Sprite*)sprite.get())->WithFlash(0.08);
         }
-        flashTimeout = 0.08;
 
         // Explosion
         auto hitpoint = other.box.Center();

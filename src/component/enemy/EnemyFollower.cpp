@@ -83,14 +83,6 @@ void EnemyFollower::Start() {
 void EnemyFollower::Update(float dt) {
     if (!Player::player) return;
 
-    flashTimeout -= dt;
-    if (flashTimeout <= 0) {
-        flashTimeout = INFINITY;  // won't trigger this part again very soon
-        for (auto& sprite : associated.GetAllComponents(CType::Sprite)) {
-            ((Sprite*)sprite.get())->WithFlash(false);
-        }
-    }
-
     stunnedLevel = std::max<float>(0.0, stunnedLevel - dt);
 
     updateState(dt);
@@ -160,6 +152,7 @@ void EnemyFollower::updatePosition(float dt) {
                         Steering{}.AddTerrain(selfPos)->Result().toCart();
             moveDelta = moveDelta.normalize();
             moveBy(moveDelta * speed * dt);
+            break;
         }
         case Pursuing: {
             auto maybePlayerPos = Player::player->LookForMe(iso->box);
@@ -279,9 +272,8 @@ void EnemyFollower::NotifyCollision(GameObject& other) {
 
         // Flash
         for (auto& sprite : associated.GetAllComponents(CType::Sprite)) {
-            ((Sprite*)sprite.get())->WithFlash(true);
+            ((Sprite*)sprite.get())->WithFlash(0.08);
         }
-        flashTimeout = 0.08;
 
         // Explosion
         auto hitpoint = other.box.Center();

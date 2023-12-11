@@ -168,14 +168,6 @@ void Player::Update(float dt) {
     UpdateState(dt);
     UpdatePosition(dt);
 
-    // Flash reset
-    flashTimeout -= dt;
-    if (flashTimeout <= 0) {
-        flashTimeout = INFINITY;  // won't trigger this part again very soon
-        auto sprite = (Sprite*)associated.GetComponent(CType::Sprite);
-        sprite->WithFlash(false);
-    }
-
     // Leave trail
     trailTimer.Update(dt);
     if (trailTimer.Get() >= 0.1) {
@@ -469,8 +461,7 @@ void Player::NotifyCollision(GameObject& other) {
 
         // Flash
         auto sprite = (Sprite*)associated.GetComponent(CType::Sprite);
-        sprite->WithFlash(true);
-        flashTimeout = 0.03;
+        sprite->WithFlash(0.03);
 
         // Explosion
         auto hitpoint = other.box.Center();

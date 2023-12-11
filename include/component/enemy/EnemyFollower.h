@@ -26,7 +26,6 @@ class EnemyFollower : public Component {
     Vec2<Cart> moveDelta{};
     Direction direction{NoneX, Down};
 
-    float flashTimeout{0};
     float stunnedLevel{0};
 
     void updateState(float dt);

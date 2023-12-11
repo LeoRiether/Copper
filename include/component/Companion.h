@@ -19,6 +19,7 @@ class Companion : public Component {
 
     void Update(float dt);
     void Render(Vec2<Cart> camera);
+    void NotifyCollision(GameObject& other);
 
    private:
     float& speed{Consts::GetFloat("companion.speed")};
@@ -29,6 +30,7 @@ class Companion : public Component {
     Timer firingTimeout{}, walkingToIdleTimeout{}, tooFarTimer{};
 
     Vec2<Cart> moveDelta{0, 0};
+    Direction direction{NoneX, Down};
 
     void updatePosition(float dt);
     void updateCore(float dt);
