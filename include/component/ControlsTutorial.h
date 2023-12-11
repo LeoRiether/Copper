@@ -30,6 +30,4 @@ class ControlsTutorial : public Component {
     constexpr static float fadingTime{0.5};
     float fadingIn{0}, fadingOut{0}, alpha{255};
     static vector<State> states;
-
-    void setAlpha(Text& text, float a);
 };

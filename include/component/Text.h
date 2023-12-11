@@ -46,6 +46,7 @@ class Text : public Component {
     void SetFontFile(string fontFile);
     void SetFontSize(int fontSize);
 	void SetWrapWidth(int wrapWidth);
+	void SetAlpha(float a);
 
     void RemakeTexture();
 };

@@ -57,7 +57,7 @@ void ControlsTutorial::Update(float dt) {
     };
 
     if (fadingOut > 0) {
-        setAlpha(*text, lerp((fadingTime - fadingOut) / fadingTime, 255, 0));
+        text->SetAlpha(lerp((fadingTime - fadingOut) / fadingTime, 255, 0));
         fadingOut -= dt;
         if (fadingOut <= 0) {
             index++;
@@ -69,10 +69,10 @@ void ControlsTutorial::Update(float dt) {
             }
         }
     } else if (fadingIn > 0) {
-        setAlpha(*text, lerp((fadingTime - fadingIn) / fadingTime, 0, 255));
+        text->SetAlpha(lerp((fadingTime - fadingIn) / fadingTime, 0, 255));
         fadingIn -= dt;
         if (fadingIn <= 0) {
-            setAlpha(*text, 255);
+            text->SetAlpha(255);
             // switchState(WaitForInput)
         }
     } else {
@@ -83,9 +83,3 @@ void ControlsTutorial::Update(float dt) {
     }
 }
 
-void ControlsTutorial::setAlpha(Text& text, float a) {
-    alpha = a;
-    auto color = text.Color();
-    color.a = alpha;
-    text.SetColor(color);
-}

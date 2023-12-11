@@ -18,6 +18,7 @@
 #include "component/Dialog.h"
 #include "component/Tilemap.h"
 #include "component/Tileset.h"
+#include "component/Tooltip.h"
 #include "physics/CollisionEngine.h"
 #include "physics/Tags.h"
 #include "util.h"
@@ -58,6 +59,10 @@ void StageState::Start() {
 
     auto hpBar = MakeLifeBar();
     RequestAddObject(hpBar);
+
+    auto tooltipGo = new GameObject{};
+    tooltipGo->AddComponent(new Tooltip{*tooltipGo});
+    RequestAddObject(tooltipGo);
 
     StartArray();
     started = true;

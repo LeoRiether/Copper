@@ -70,6 +70,11 @@ void Text::SetWrapWidth(int wp) {
   RemakeTexture();
 }
 
+void Text::SetAlpha(float a) {
+    color.a = a;
+	RemakeTexture();
+}
+
 void Text::RemakeTexture() {
     font = Resources::Font(fontFile, fontSize);
 
