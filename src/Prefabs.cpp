@@ -71,15 +71,15 @@ GameObject* MakeControlsTutorial() {
 
 GameObject* MakeEnemyFollower() {
     auto go = new GameObject{};
-    auto body = (new RobotCan{*go})->WithStopDistance(100);
-    go->AddComponent(body);
-    go->AddComponent(new OverheadHpBar{*go, 100, 100});
-    go->AddComponent((new EnemyFollower{*go})->WithRobotCan(body));
-    go->AddComponent(
-        (new Collider{*go})->WithBase({18.8157, 3.4533, 32.6644, 76.6754}));
+    go->AddComponent(new OverheadHpBar{*go, 150, 150});
+    go->AddComponent(new EnemyFollower{*go});
     go->AddComponent((new IsoCollider{*go})
                          ->WithTag(tag::Entity)
-                         ->WithBase({147.784, 76.4568, 51.9192, 52.6069}));
+                         ->WithBase({390.975, 153.522, 45.8416, 45.8416})
+                         ->ScaleToSprite());
+    go->AddComponent((new Collider{*go})
+                         ->WithBase({97.716, 56.2834, 41.2575, 101.234})
+                         ->ScaleToSprite());
     go->tags.set(tag::Entity);
     go->tags.set(tag::Enemy);
     return go;

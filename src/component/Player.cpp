@@ -459,7 +459,10 @@ void Player::Render(Vec2<Cart> camera) {
 
 void Player::NotifyCollision(GameObject& other) {
     auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
-    if (bullet && bullet->TargetsPlayer()) {
+    bool isBullet = bullet && bullet->TargetsPlayer();
+    bool enemyHitbox = other.tags.test(tag::EnemyHitbox);
+
+    if (isBullet || enemyHitbox) {
         // Takes damage
         hpLoss += bullet->Damage();
         hpLossTimer.Restart();

@@ -31,6 +31,8 @@ using std::string;
 void MakeStage1(StageState& s, string stage) {
     constexpr float tilescale = 128.0f;
 
+    stage = "main"; // BUG: this shouldn't be commited :)
+
     // Translates from "tiled coordinates" to cartesian screen coordinates
     auto worldPos = [&](Vec2<Iso> isoPos) {
         return ((isoPos + Vec2<Iso>{-2, -8}) * tilescale).toCart();
@@ -62,6 +64,8 @@ void MakeStage1(StageState& s, string stage) {
 
                 // Enemies
                 MakeEnemyFollower()->WithFootAt(worldPos({149, 127})),
+                MakeEnemyFollower()->WithFootAt(worldPos({150, 127})),
+                MakeEnemyFollower()->WithFootAt(worldPos({151, 127})),
                 MakeEnemyDistancer()->WithFootAt(worldPos({150, 146})),
                 MakeEnemyDistancer()->WithFootAt(worldPos({172, 145})),
                 MakeEnemyDistancer()->WithFootAt(worldPos({170, 117})),

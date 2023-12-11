@@ -12,5 +12,6 @@ inline constexpr int Entity = 3;
 inline constexpr int Enemy = 4;
 inline constexpr int Bullet = 5;
 inline constexpr int PlayerHitbox = 6;
-inline constexpr int Trigger = 7;
+inline constexpr int EnemyHitbox = 7;
+inline constexpr int Trigger = 8;
 }  // namespace tag

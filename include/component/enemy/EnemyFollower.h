@@ -3,23 +3,46 @@
 #include "Component.h"
 #include "Consts.h"
 #include "GameObject.h"
-#include "component/enemy/RobotCan.h"
+#include "math/Direction.h"
 #include "math/Vec2.h"
 
 class EnemyFollower : public Component {
    private:
-    RobotCan* self;
+    const float speed{Consts::GetFloat("player.walking_speed") / 1.5f};
+    const float attackDistance{50.0f};
 
-    float& speed{Consts::GetFloat("robotcan.speed")};
+    enum State {
+        Roaming,
+        Pursuing,
+        Attacking,
+    } state{Roaming};
 
-    Vec2<Cart> moveDelta;
+    struct AttackState {
+        int phase{0};
+    } attackState{};
+
+    Vec2<Cart> spawnPoint{};
+    Vec2<Cart> roamingTarget{};
+    Vec2<Cart> moveDelta{};
+    Direction direction{NoneX, Down};
+
+    float flashTimeout{0};
+    float stunnedLevel{0};
+
+    void updateState(float dt);
+    void updatePosition(float dt);
+    void switchState(State newState);
+
+    void allAnimsPlay(const string& id, bool loops=true);
 
    public:
     EnemyFollower(GameObject& go);
-    EnemyFollower* WithRobotCan(RobotCan* self);
 
+    void Start();
     void Update(float dt);
     void Render(Vec2<Cart> camera);
+    void NotifyCollision(GameObject& other);
+    void Die();
 
     inline CType Key() const { return CType::EnemyBehavior; }
 };

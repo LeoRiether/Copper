@@ -158,7 +158,7 @@ void RobotCan::NotifyCollision(GameObject& other) {
         associated.RequestAdd(MakeExplosion1()->WithCenterAt(hitpoint));
 
         // Knockback
-        float kb = 80000 * Game::Instance().DeltaTime();
+        float kb = 150'000 * Game::Instance().DeltaTime();
         knockbackVelocity = Vec2<Cart>{kb, 0}.GetRotated(other.angle);
 
         other.RequestDelete();
