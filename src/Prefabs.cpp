@@ -304,7 +304,7 @@ GameObject* MakeDialog(std::string dialogFile){
 		auto go = new GameObject{};
 		auto dialog = new Dialog{*go, dialogFile};
 		go->AddComponent(dialog);
-		go->renderLayer = 101;
+		go->renderLayer = 201;
 		return go;
 	}
 
