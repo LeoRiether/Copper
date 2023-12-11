@@ -34,7 +34,7 @@
 #error "Unknown compiler"
 #endif
 #undef INCLUDE_SDL
-#endif  // INCLUDE_SDL
+#endif // INCLUDE_SDL
 
 /************************************************
  *				 SDL_image.h *
@@ -52,7 +52,7 @@
 #error "Unknown compiler"
 #endif
 #undef INCLUDE_SDL_IMAGE
-#endif  // INCLUDE_SDL_IMAGE
+#endif // INCLUDE_SDL_IMAGE
 
 /************************************************
  *				 SDL_mixer.h *
@@ -70,7 +70,7 @@
 #error "Unknown compiler"
 #endif
 #undef INCLUDE_SDL_MIXER
-#endif  // INCLUDE_SDL_MIXER
+#endif // INCLUDE_SDL_MIXER
 
 /************************************************
  *				  SDL_ttf.h
@@ -89,7 +89,7 @@
 #error "Unknown compiler"
 #endif
 #undef INCLUDE_SDL_TTF
-#endif  // INCLUDE_SDL_TTF
+#endif // INCLUDE_SDL_TTF
 
 /************************************************
  *				  SDL_net.h
@@ -108,4 +108,4 @@
 #error "Unknown compiler"
 #endif
 #undef INCLUDE_SDL_NET
-#endif  // INCLUDE_SDL_NET
+#endif // INCLUDE_SDL_NET

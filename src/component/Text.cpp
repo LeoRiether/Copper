@@ -8,7 +8,7 @@
 #define MODULE "Text"
 
 Text::Text(GameObject& associated, string fontFile, int fontSize,
-           TextStyle style, string text, SDL_Color color)
+           TextStyle style, string text, SDL_Color color, int wp)
     : Component(associated),
       font(nullptr),
       texture(nullptr),
@@ -16,7 +16,8 @@ Text::Text(GameObject& associated, string fontFile, int fontSize,
       style(style),
       fontFile(std::move(fontFile)),
       fontSize(fontSize),
-      color(color) {
+      color(color),
+	  wrapWidth(wp){
     if (this->text.empty()) {
         warn(
             "constructor called with empty text. This will probably not work "
@@ -64,6 +65,15 @@ void Text::SetFontSize(int fs) {
     fontSize = fs;
     RemakeTexture();
 }
+void Text::SetWrapWidth(int wp) {
+  wrapWidth = wp;
+  RemakeTexture();
+}
+
+void Text::SetAlpha(float a) {
+    color.a = a;
+	RemakeTexture();
+}
 
 void Text::RemakeTexture() {
     font = Resources::Font(fontFile, fontSize);
@@ -89,7 +99,7 @@ void Text::RemakeTexture() {
             TTF_SetFontWrappedAlign(font->inner, TTF_WRAPPED_ALIGN_CENTER);
 #endif
             surface = TTF_RenderUTF8_Blended_Wrapped(font->inner, text.c_str(),
-                                                     color, 0);
+                                                     color, wrapWidth);
             break;
         }
     }

@@ -46,4 +46,6 @@ class Sprite : public Component {
     void Render(Vec2<Cart> camera);
     void RenderAt(float x, float y);
     inline CType Key() const { return CType::Sprite; }
+
+	bool fipHorizontal{false};
 };

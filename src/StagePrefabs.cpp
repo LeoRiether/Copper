@@ -7,6 +7,7 @@
 #include "Game.h"
 #include "GameObject.h"
 #include "Prefabs.h"
+#include "component/DialogTrigger.h"
 #include "component/EndOfStageTrigger.h"
 #include "component/InfiniteBg.h"
 #include "component/IsoCollider.h"
@@ -72,6 +73,13 @@ void MakeStage1(StageState& s, string stage) {
                 MakeEnemyDistancer()->WithFootAt(worldPos({179, 124})),
                 MakeEnemyDistancer()->WithFootAt(worldPos({178, 124})),
                 MakeEnemyDistancer()->WithFootAt(worldPos({179, 123})),
+
+				//Dialog triggers
+				
+				MakeDialogTrigger({19765, 19447, 200, 200}
+						, ASSETS "/dialog/sample.txt"),
+				MakeDialogTrigger({21177, 19939, 200, 200}
+						, ASSETS "/dialog/other.txt"),
 
                 // End of stage triggers are kind of weird sorry
                 (go = new GameObject{})

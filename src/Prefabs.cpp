@@ -11,6 +11,8 @@
 #include "component/Collider.h"
 #include "component/Companion.h"
 #include "component/ControlsTutorial.h"
+#include "component/Dialog.h"
+#include "component/DialogTrigger.h"
 #include "component/IsoCollider.h"
 #include "component/KeepSoundAlive.h"
 #include "component/KillTimeout.h"
@@ -293,8 +295,25 @@ GameObject* MakeLifeBar() {
     go->box.SetCenter(Vec2<Cart>{10, 10});
     go->renderLayer = 200;
     auto hpManager = new LifeBarManager(*go, 100, lifeBar);
-
     go->AddComponent(hpManager);
-
-    return go;
+  return go;
 }
+
+GameObject* MakeDialog(std::string dialogFile){
+		auto go = new GameObject{};
+		auto dialog = new Dialog{*go, dialogFile};
+		go->AddComponent(dialog);
+		go->renderLayer = 201;
+		return go;
+	}
+
+GameObject* MakeDialogTrigger(Rect base, std::string dialogFile){
+	auto go = new GameObject{};
+	go->AddComponent((new IsoCollider{*go})
+			->WithTag(tag::Trigger)
+			->WithBase(base));
+	go->AddComponent(new DialogTrigger(*go, dialogFile));
+	go->renderLayer = 100;
+	return go;
+}
+

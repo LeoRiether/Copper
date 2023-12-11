@@ -15,8 +15,10 @@
 #include "component/FPSCounter.h"
 #include "component/InfiniteBg.h"
 #include "component/Sound.h"
+#include "component/Dialog.h"
 #include "component/Tilemap.h"
 #include "component/Tileset.h"
+#include "component/Tooltip.h"
 #include "physics/CollisionEngine.h"
 #include "physics/Tags.h"
 #include "util.h"
@@ -41,7 +43,7 @@ void StageState::Start() {
     //////////////////////////////
     //        Load Stage        //
     //////////////////////////////
-    MakeStage1(*this);
+    MakeStage1(*this, "main");
 
     /////////////////////////////////////
     //        Controls Tutorial        //
@@ -56,6 +58,10 @@ void StageState::Start() {
     ///////////////////////////
     auto hpBar = MakeLifeBar();
     RequestAddObject(hpBar);
+
+    auto tooltipGo = new GameObject{};
+    tooltipGo->AddComponent(new Tooltip{*tooltipGo});
+    RequestAddObject(tooltipGo);
 
     StartArray();
     started = true;

@@ -16,67 +16,67 @@ EndState::EndState() {}
 EndState::~EndState() {}
 
 void EndState::LoadAssets() {
-    // uhm, I'm doing everything in EndState::Start()...
+  // uhm, I'm doing everything in EndState::Start()...
 }
 
 void EndState::Update(float dt) {
-    ProcessAddRequests();
+  ProcessAddRequests();
 
-    auto& input = InputManager::Instance();
-    input.Update();
+  auto &input = InputManager::Instance();
+  input.Update();
 
-    if (input.QuitRequested() || input.KeyPress(SDL_SCANCODE_ESCAPE)) {
-        quitRequested = true;
-        return;
-    }
+  if (input.QuitRequested() || input.KeyPress(SDL_SCANCODE_ESCAPE)) {
+    quitRequested = true;
+    return;
+  }
 
-    if (input.KeyPress(SDL_SCANCODE_SPACE)) {
-        // Go back to the TitleState, which should be already pushed!
-        Game::Instance().RequestPop();
-    }
+  if (input.KeyPress(SDL_SCANCODE_SPACE)) {
+    // Go back to the TitleState, which should be already pushed!
+    Game::Instance().RequestPop();
+  }
 
-    UpdateArray(dt);
+  UpdateArray(dt);
 }
 
 void EndState::Render() { RenderArray(); }
 
 void EndState::Start() {
-    auto bgGO = new GameObject{};
+  auto bgGO = new GameObject{};
 
-    if (GameData::playerVictory) {
-        bgMusic = Music{ASSETS "/audio/endStateWin.ogg"};
-        bgGO->AddComponent(new Sprite{*bgGO, ASSETS "/img/win.jpg"});
-    } else {
-        bgMusic = Music{ASSETS "/audio/endStateLose.ogg"};
-        bgGO->AddComponent(new Sprite{*bgGO, ASSETS "/img/lose.jpg"});
-    }
+  if (GameData::playerVictory) {
+    bgMusic = Music{ASSETS "/audio/endStateWin.ogg"};
+    bgGO->AddComponent(new Sprite{*bgGO, ASSETS "/img/win.jpg"});
+  } else {
+    bgMusic = Music{ASSETS "/audio/endStateLose.ogg"};
+    bgGO->AddComponent(new Sprite{*bgGO, ASSETS "/img/lose.jpg"});
+  }
 
-    bgMusic.Play();
+  bgMusic.Play();
 
-    bgGO->box.x = 0;
-    bgGO->box.y = 0;
-    RequestAddObject(bgGO);
+  bgGO->box.x = 0;
+  bgGO->box.y = 0;
+  RequestAddObject(bgGO);
 
-    {
-        auto text = new GameObject{};
-        text->AddComponent(new Text{*text, ASSETS "/font/Call me maybe.ttf", 50,
-                                    Text::Blended, "ESC . Sair",
-                                    colorFromHex("#F0A029")});
-        text->AddComponent(new TextBlinker{*text, 1.5});
-        text->box.SetCenter(Vec2<Cart>{SCREEN_WIDTH / 2.0f, 0});
-        text->box.y = SCREEN_HEIGHT - 120;
-        RequestAddObject(text);
-    }
-    {
-        auto text = new GameObject{};
-        text->AddComponent(new Text{*text, ASSETS "/font/Call me maybe.ttf", 50,
-                                    Text::Blended, "Espaco . Jogar de novo",
-                                    colorFromHex("#F0A029")});
-        text->AddComponent(new TextBlinker{*text, 1.5});
-        text->box.SetCenter(Vec2<Cart>{SCREEN_WIDTH / 2.0f, 0});
-        text->box.y = SCREEN_HEIGHT - 180;
-        RequestAddObject(text);
-    }
+  {
+    auto text = new GameObject{};
+    text->AddComponent(new Text{*text, ASSETS "/font/Call me maybe.ttf", 50,
+                                Text::Blended, "ESC . Sair",
+                                colorFromHex("#F0A029")});
+    text->AddComponent(new TextBlinker{*text, 1.5});
+    text->box.SetCenter(Vec2<Cart>{SCREEN_WIDTH / 2.0f, 0});
+    text->box.y = SCREEN_HEIGHT - 120;
+    RequestAddObject(text);
+  }
+  {
+    auto text = new GameObject{};
+    text->AddComponent(new Text{*text, ASSETS "/font/Call me maybe.ttf", 50,
+                                Text::Blended, "Espaco . Jogar de novo",
+                                colorFromHex("#F0A029")});
+    text->AddComponent(new TextBlinker{*text, 1.5});
+    text->box.SetCenter(Vec2<Cart>{SCREEN_WIDTH / 2.0f, 0});
+    text->box.y = SCREEN_HEIGHT - 180;
+    RequestAddObject(text);
+  }
 }
 
 void EndState::Pause() { bgMusic.Stop(); }

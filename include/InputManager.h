@@ -21,6 +21,8 @@ constexpr int MOVE_RIGHT_KEY = SDL_SCANCODE_D;
 
 constexpr int DASH_KEY = SDL_SCANCODE_SPACE;
 
+constexpr int NEXT_KEY = SDL_SCANCODE_N;
+constexpr int INTERACT_KEY = SDL_SCANCODE_E;
 enum class InputState { Up = false, Down = true };
 
 enum class MouseWheelState { Down = -1, None = 0, Up = 1 };
