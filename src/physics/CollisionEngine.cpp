@@ -86,6 +86,8 @@ void CollisionEngine::ClearState() {
 
 // Requires state to be `Update`d!
 void CollisionEngine::Solve() {
+    set<GOPair> curCollisionPairs;
+
     // Entity/Player--Terrain collision
     auto processEntity = [&](GameObject* entity) {
         auto entityIso = (IsoCollider*)entity->GetComponent(CType::IsoCollider);
@@ -148,7 +150,6 @@ void CollisionEngine::Solve() {
     }
 
     // Bullet--Player/Entity/VTerrain
-    set<GOPair> curBulletOtherCollisions;
     for (auto bullet : bullets) {
         auto hurtbox = (Collider*)bullet->GetComponent(CType::Collider);
 
@@ -159,7 +160,7 @@ void CollisionEngine::Solve() {
                 Collision::IsColliding(hurtbox->box, hitbox->box, bullet->angle,
                                        entity->angle)) {
                 entity->NotifyCollision(*bullet);
-                curBulletOtherCollisions.emplace(bullet->weak, entity->weak);
+                curCollisionPairs.emplace(bullet->weak, entity->weak);
             }
         }
 
@@ -170,7 +171,7 @@ void CollisionEngine::Solve() {
                 Collision::IsColliding(hurtbox->box, hitbox->box, bullet->angle,
                                        player->angle)) {
                 player->NotifyCollision(*bullet);
-                curBulletOtherCollisions.emplace(bullet->weak, player->weak);
+                curCollisionPairs.emplace(bullet->weak, player->weak);
             }
         }
 
@@ -179,8 +180,7 @@ void CollisionEngine::Solve() {
             if (Collision::IsColliding(hurtbox->box, vterrain.c->box,
                                        bullet->angle, vterrain.go->angle)) {
                 vterrain.go->NotifyCollision(*bullet);
-                curBulletOtherCollisions.emplace(bullet->weak,
-                                                 vterrain.go->weak);
+                curCollisionPairs.emplace(bullet->weak, vterrain.go->weak);
             }
         }
     }
@@ -204,7 +204,7 @@ void CollisionEngine::Solve() {
         }
     }
 
-    processCollisionPairs(curBulletOtherCollisions);
+    processCollisionPairs(curCollisionPairs);
 }
 
 bool CollisionEngine::TerrainContains(const Vec2<Iso> point) {
