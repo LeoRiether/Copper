@@ -46,4 +46,6 @@ class GameObject {
     GameObject* WithCenterAt(Vec2<Cart> position);
 
     void NotifyCollision(GameObject& other);
+    void NotifyCollisionEnter(GameObject& other);
+    void NotifyCollisionLeave(GameObject& other);
 };
