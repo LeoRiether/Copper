@@ -241,7 +241,7 @@ void Player::UpdateState(float dt) {
         attackState.colliderDeployed = true;
 
         Rect hitbox{0, 0, 100, 100};
-        hitbox.SetCenter(associated.box.Center() + direction.toVec() * 50.0f);
+        hitbox.SetCenter(associated.box.Center() + direction.toVec() * 70.0f);
 
         // Collider
         auto go = new GameObject{};
