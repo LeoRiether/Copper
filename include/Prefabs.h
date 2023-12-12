@@ -16,7 +16,7 @@ GameObject* MakeBullet(Vec2<Cart> center, float angle);
 GameObject* MakePlayerBullet(Vec2<Cart> center, float angle);
 GameObject* MakeVigaB();
 GameObject* MakeExplosion1();
-GameObject* MakeExplosion3();
+GameObject* MakeExplosion3(Vec2<Cart> scale = Vec2<Cart>{1,1});
 GameObject* MakeExplosion4();
 GameObject* MakeStageTransitionDimmer_FadeIn();
 GameObject* MakeStageTransitionDimmer_FadeOut();

@@ -38,4 +38,5 @@ enum class CType {
 	Tooltip,
     OverheadHpBar,
     Slash,
+	Exploder,
 };

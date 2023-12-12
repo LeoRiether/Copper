@@ -425,6 +425,7 @@ void Player::NotifyCollision(GameObject& other) {
     auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
     bool isBullet = bullet && bullet->TargetsPlayer();
     bool enemyHitbox = other.tags.test(tag::EnemyHitbox);
+	bool explosion = other.tags.test(tag::Explosion);
 
     if (isBullet || enemyHitbox) {
         // Takes damage
@@ -450,6 +451,8 @@ void Player::NotifyCollision(GameObject& other) {
         // Add trauma
         Game::Instance().AddTrauma(0.4);
 
+		if (explosion)
+				return;
         other.RequestDelete();
     }
 }

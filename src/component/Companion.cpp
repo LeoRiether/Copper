@@ -252,6 +252,7 @@ void Companion::Render(Vec2<Cart> camera) {
 void Companion::NotifyCollision(GameObject& other) {
     auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
     bool bulletHit = bullet && bullet->TargetsPlayer();
+	bool explosion = other.tags.test(tag::Explosion);
     if (bulletHit) {
         // Flash
         for (auto& sprite : associated.GetAllComponents(CType::Sprite)) {
@@ -263,6 +264,8 @@ void Companion::NotifyCollision(GameObject& other) {
         hitpoint = hitpoint + Vec2<Cart>{25, 0}.GetRotated(other.angle);
         associated.RequestAdd(MakeExplosion1()->WithCenterAt(hitpoint));
         
+		if (explosion)
+				return;
         other.RequestDelete();
     }
 }

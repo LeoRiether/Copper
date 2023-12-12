@@ -261,6 +261,7 @@ void EnemyFollower::NotifyCollision(GameObject& other) {
 
     bool bulletHit = bullet && !bullet->TargetsPlayer();
     bool meleeHit = other.tags.test(tag::PlayerHitbox);
+	bool explosion = other.tags.test(tag::Explosion);
     if (bulletHit || meleeHit) {
         auto bar =
             (OverheadHpBar*)associated.GetComponent(CType::OverheadHpBar);
@@ -277,7 +278,8 @@ void EnemyFollower::NotifyCollision(GameObject& other) {
 
         if (bar && bar->Hp() <= 0) {
             Die();
-            other.RequestDelete();
+			if (!explosion)
+				other.RequestDelete();
             return;
         }
 
@@ -302,6 +304,8 @@ void EnemyFollower::NotifyCollision(GameObject& other) {
         float kb = 1'500'000 * Game::Instance().DeltaTime();
         knockbackVelocity = Vec2<Cart>{kb, 0}.GetRotated(other.angle);
 
+		if (explosion)
+				return;
         other.RequestDelete();
     }
 }
