@@ -195,6 +195,7 @@ void CollisionEngine::Solve() {
             if (e->box.CollidesWith(tbox)) {
                 trigger.go->NotifyCollision(entity);
                 entity.NotifyCollision(*trigger.go);
+                curCollisionPairs.emplace(trigger.go->weak, entity.weak);
             }
         };
 

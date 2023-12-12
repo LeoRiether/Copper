@@ -70,7 +70,7 @@ void Game::Run() {
     while (!stateStack.empty() && !stateStack.back()->QuitRequested()) {
         auto state = stateStack.back().get();
 
-        trauma *= 0.9;
+        trauma *= 0.92;
 
         auto loopstart = SDL_GetTicks();
 

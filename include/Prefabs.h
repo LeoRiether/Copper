@@ -26,3 +26,4 @@ vector<GameObject*> MakeMap1Colliders();
 GameObject* MakeDialog(std::string dialogFile);
 GameObject* MakeDialogTrigger(Rect base, std::string dialogFile);
 GameObject* MakeLifeBar();
+GameObject* MakeRandomPowerup();

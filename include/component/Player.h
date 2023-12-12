@@ -3,6 +3,7 @@
 #include <memory>
 #include <optional>
 
+#include "Powerups.h"
 #include "CType.h"
 #include "Component.h"
 #include "Consts.h"
@@ -86,4 +87,9 @@ class Player : public Component {
     void ChangeState(State newState);
     /* Only calls ChangeState if state != newState */
     void MaybeChangeState(State newState);
+
+
+    Powerups powerups{};
+    void AddPowerup(Powerups::Kind);
+    void RemovePowerup(Powerups::Kind);
 };

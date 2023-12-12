@@ -179,7 +179,8 @@ void Companion::updateState(float dt) {
         }
         case Firing: {
             firingTimeout.Update(dt);
-            if (firingTimeout.Get() >= firingTimeoutSecs) {
+            if (Player::player->powerups.ApplyToBulletTimeout(
+                    firingTimeout.Get()) >= firingTimeoutSecs) {
                 changeState(Looking);
             }
             break;
@@ -262,7 +263,7 @@ void Companion::NotifyCollision(GameObject& other) {
         auto hitpoint = other.box.Center();
         hitpoint = hitpoint + Vec2<Cart>{25, 0}.GetRotated(other.angle);
         associated.RequestAdd(MakeExplosion1()->WithCenterAt(hitpoint));
-        
+
         other.RequestDelete();
     }
 }

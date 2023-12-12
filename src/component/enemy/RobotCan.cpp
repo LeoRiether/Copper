@@ -1,5 +1,6 @@
 #include "component/enemy/RobotCan.h"
 
+#include "Consts.h"
 #include "CType.h"
 #include "Camera.h"
 #include "Game.h"
@@ -161,7 +162,10 @@ RobotCan* RobotCan::WithHp(int hp) {
 }
 
 void RobotCan::Die() {
+    static int& powerupChance = Consts::GetInt("powerup.chance");
     auto center = associated.box.Center();
     associated.RequestAdd(MakeExplosion4()->WithCenterAt(center));
     associated.RequestDelete();
+    if (randi(0, 99) < powerupChance)
+        associated.RequestAdd(MakeRandomPowerup()->WithCenterAt(center));
 }

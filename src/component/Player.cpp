@@ -9,6 +9,7 @@
 #include "GameData.h"
 #include "GameObject.h"
 #include "InputManager.h"
+#include "Powerups.h"
 #include "Prefabs.h"
 #include "component/Animation.h"
 #include "component/Bullet.h"
@@ -256,6 +257,9 @@ void Player::UpdateState(float dt) {
         auto slash = MakeSlash(pos, direction.toVec().angle());
         slash->angle = direction.toVec().angle();
         associated.RequestAdd(slash);
+
+        if (powerups.set & (1 << Powerups::StrongerAttack))
+            Game::Instance().AddTrauma(attackState.phase == 2 ? 1.0 : 0.7);
     };
 
     switch (state) {
@@ -348,7 +352,7 @@ void Player::UpdatePosition(float dt) {
     auto& input = InputManager::Instance();
     auto getMoveVec = [&]() {
         moveVec = input.HasController() ? input.AxisVec(-1) : direction.toVec();
-        return moveVec = moveVec * walkingSpeed;
+        return moveVec = moveVec * walkingSpeed * powerups.ApplyToSpeed(1.0f);
     };
 
     switch (state) {
@@ -481,4 +485,12 @@ std::optional<Vec2<Iso>> Player::LookForMe(Rect iv) {
     }
 
     return {};
+}
+
+////////////////////////////
+//        Powerups        //
+////////////////////////////
+void Player::AddPowerup(Powerups::Kind kind) { powerups.set |= 1 << kind; }
+void Player::RemovePowerup(Powerups::Kind kind) {
+    powerups.set &= ~(1 << kind);
 }
