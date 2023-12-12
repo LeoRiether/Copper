@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <set>
 #include <unordered_map>
 #include <vector>
 
@@ -8,13 +9,23 @@
 #include "component/Collider.h"
 #include "component/IsoCollider.h"
 
+using std::set;
 using std::shared_ptr;
 using std::unordered_map;
 using std::vector;
+using std::weak_ptr;
 
 using chunk_key = int64_t;
 struct chunk2 {
     int i, j;
+};
+
+struct GOPair {
+    weak_ptr<GameObject> a, b;
+    GOPair();
+    GOPair(weak_ptr<GameObject> a, weak_ptr<GameObject> b);
+
+    bool operator<(const GOPair rhs) const; 
 };
 
 // Honestly, this is not a class, this is a namespace
@@ -44,10 +55,13 @@ class CollisionEngine {
     static GameObject* player;
     static vector<GameObject*> entities;
     static vector<GameObject*> bullets;
+    static set<GOPair> bulletOtherCollisions;
 
     static void ClearState();
 
     static inline chunk_key ChunkKey(chunk2);
     static inline chunk2 Chunk2(Vec2<Cart>);
     static inline chunk2 IsoColliderChunk(IsoCollider*);
+
+    static void processBulletOtherCollisions(set<GOPair>& current);
 };

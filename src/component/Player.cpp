@@ -303,7 +303,7 @@ void Player::UpdateState(float dt) {
             int frame = anim->currentFrame;
 
             bool nextPhase = false;
-            nextPhase |= attackState.phase == 0 && frame >= 11;
+            nextPhase |= attackState.phase == 0 && frame >= 9;
             nextPhase |= attackState.phase == 1 && frame >= 15;
             nextPhase |= attackState.phase == 2 && frame >= 22;
             if (nextPhase) {

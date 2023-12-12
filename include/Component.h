@@ -23,4 +23,6 @@ class Component {
     virtual CType Key() const = 0;
 
     virtual void NotifyCollision(GameObject& other);
+    virtual void NotifyCollisionEnter(GameObject& other);
+    virtual void NotifyCollisionLeave(GameObject& other);
 };

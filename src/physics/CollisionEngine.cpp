@@ -22,6 +22,17 @@ vector<CollisionEngine::IG> CollisionEngine::triggers;
 GameObject* CollisionEngine::player;
 vector<GameObject*> CollisionEngine::entities;
 vector<GameObject*> CollisionEngine::bullets;
+set<GOPair> CollisionEngine::bulletOtherCollisions;
+
+GOPair::GOPair() : a(), b() {}
+GOPair::GOPair(weak_ptr<GameObject> a, weak_ptr<GameObject> b) : a(a), b(b) {}
+
+bool GOPair::operator<(const GOPair rhs) const {
+    auto get = [&](weak_ptr<GameObject> w) {
+        return w.expired() ? nullptr : w.lock().get();
+    };
+    return std::tuple{get(a), get(b)} < std::tuple{get(rhs.a), get(rhs.b)};
+}
 
 void CollisionEngine::Update(const vector<shared_ptr<GameObject>>& objects) {
     ClearState();
@@ -137,6 +148,7 @@ void CollisionEngine::Solve() {
     }
 
     // Bullet--Player/Entity/VTerrain
+    set<GOPair> curBulletOtherCollisions;
     for (auto bullet : bullets) {
         auto hurtbox = (Collider*)bullet->GetComponent(CType::Collider);
 
@@ -147,6 +159,7 @@ void CollisionEngine::Solve() {
                 Collision::IsColliding(hurtbox->box, hitbox->box, bullet->angle,
                                        entity->angle)) {
                 entity->NotifyCollision(*bullet);
+                curBulletOtherCollisions.emplace(bullet->weak, entity->weak);
             }
         }
 
@@ -157,6 +170,7 @@ void CollisionEngine::Solve() {
                 Collision::IsColliding(hurtbox->box, hitbox->box, bullet->angle,
                                        player->angle)) {
                 player->NotifyCollision(*bullet);
+                curBulletOtherCollisions.emplace(bullet->weak, player->weak);
             }
         }
 
@@ -165,9 +179,13 @@ void CollisionEngine::Solve() {
             if (Collision::IsColliding(hurtbox->box, vterrain.c->box,
                                        bullet->angle, vterrain.go->angle)) {
                 vterrain.go->NotifyCollision(*bullet);
+                curBulletOtherCollisions.emplace(bullet->weak,
+                                                 vterrain.go->weak);
             }
         }
     }
+
+    processBulletOtherCollisions(curBulletOtherCollisions);
 
     // Trigger--Player/Entity
     for (auto& trigger : triggers) {
@@ -240,4 +258,31 @@ inline chunk2 CollisionEngine::Chunk2(Vec2<Cart> pos) {
 
 inline chunk2 CollisionEngine::IsoColliderChunk(IsoCollider* iso) {
     return Chunk2(iso->box.Center().transmute<Iso>().toCart());
+}
+
+void CollisionEngine::processBulletOtherCollisions(
+    set<GOPair>& currentCollisions) {
+    // Collision enter
+    for (auto& [bullet, other] : currentCollisions) {
+        if (!bullet.expired() && !other.expired() &&
+            !bulletOtherCollisions.count({bullet, other})) {
+            auto b = bullet.lock();
+            auto o = other.lock();
+            b->NotifyCollisionEnter(*o);
+            o->NotifyCollisionEnter(*b);
+        }
+    }
+
+    // Collision leave
+    for (auto& [bullet, other] : bulletOtherCollisions) {
+        if (!bullet.expired() && !other.expired() &&
+            !currentCollisions.count({bullet, other})) {
+            auto b = bullet.lock();
+            auto o = other.lock();
+            b->NotifyCollisionLeave(*o);
+            o->NotifyCollisionLeave(*b);
+        }
+    }
+
+    bulletOtherCollisions = currentCollisions;
 }

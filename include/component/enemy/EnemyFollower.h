@@ -33,7 +33,8 @@ class EnemyFollower : public Component {
     void updatePosition(float dt);
     void switchState(State newState);
 
-    void allAnimsPlay(const string& id, bool loops=true);
+    void animsSoftPlay(const string& id, bool loops = true);
+    void animsPlay(const string& id, bool loops = true);
 
    public:
     EnemyFollower(GameObject& go);

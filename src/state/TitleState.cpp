@@ -90,8 +90,6 @@ void TitleState::Start() {
     mechanismGlitch->Play();
 }
 
-void TitleState::Pause() { /* mechanismGlitch->Stop(); */
-}
+void TitleState::Pause() { mechanismGlitch->Stop(); }
 
-void TitleState::Resume() { /* mechanismGlitch->Play(); */
-}
+void TitleState::Resume() { mechanismGlitch->Play(); }

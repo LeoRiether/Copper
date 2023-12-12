@@ -177,12 +177,12 @@ void EnemyFollower::updatePosition(float dt) {
             moveDelta = moveDelta.normalize();
 
             direction = Direction::approxFromVec(moveDelta);
-            allAnimsPlay("walk_" + direction.toString());
+            animsSoftPlay("walk_" + direction.toString());
             auto realDistVec =
                 Player::player->associated.box.Center() - selfPos.toCart();
             if (realDistVec.norm2() >= attackDistance * attackDistance) {
                 moveBy(moveDelta * speed * dt);
-            } else {
+            } else if (stunnedLevel < 0.1) {
                 switchState(Attacking);
             }
             break;
@@ -216,18 +216,18 @@ void EnemyFollower::switchState(State newState) {
             roamingTarget = spawnPoint + displacement;
             direction = Direction::approxFromVec(roamingTarget -
                                                  associated.box.Center());
-            allAnimsPlay("walk_" + direction.toString());
+            animsSoftPlay("walk_" + direction.toString());
             break;
         }
         case Pursuing: {
-            allAnimsPlay("walk_" + direction.toString());
+            animsSoftPlay("walk_" + direction.toString());
             break;
         }
         case Attacking: {
             auto delta = Player::player->associated.box.Center() -
                          associated.box.Center();
             direction = Direction::approxFromVec(delta);
-            allAnimsPlay("attack_" + direction.toString());
+            animsPlay("attack_" + direction.toString());
             attackState = {};
             break;
         }
@@ -319,9 +319,16 @@ void EnemyFollower::Die() {
 ///////////////////////////////////
 //        Animation utils        //
 ///////////////////////////////////
-void EnemyFollower::allAnimsPlay(const string& id, bool loops) {
+void EnemyFollower::animsSoftPlay(const string& id, bool loops) {
     auto& anims = associated.GetAllComponents(CType::Animation);
     for (auto& anim : anims) {
         ((Animation*)anim.get())->SoftPlay(id, loops);
+    }
+}
+
+void EnemyFollower::animsPlay(const string& id, bool loops) {
+    auto& anims = associated.GetAllComponents(CType::Animation);
+    for (auto& anim : anims) {
+        ((Animation*)anim.get())->Play(id, loops);
     }
 }

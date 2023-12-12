@@ -90,3 +90,15 @@ void GameObject::NotifyCollision(GameObject& other) {
         for (auto& component : cs) component->NotifyCollision(other);
     }
 }
+
+void GameObject::NotifyCollisionEnter(GameObject& other) {
+    for (auto& [key, cs] : components) {
+        for (auto& component : cs) component->NotifyCollisionEnter(other);
+    }
+}
+
+void GameObject::NotifyCollisionLeave(GameObject& other) {
+    for (auto& [key, cs] : components) {
+        for (auto& component : cs) component->NotifyCollisionLeave(other);
+    }
+}
