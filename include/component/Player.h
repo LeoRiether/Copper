@@ -58,7 +58,6 @@ class Player : public Component {
 
     Timer hpLossTimer{};
 
-    float flashTimeout{0};
     Vec2<Cart> knockbackVelocity{0, 0};
 
     void UpdateState(float dt);

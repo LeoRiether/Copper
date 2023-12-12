@@ -33,7 +33,7 @@ class EnemyDistancer : public Component {
     float& pursueTimeConst{Consts::GetFloat("robotcan.pursue_time")};
 
     void switchState(State newState);
-    void allAnimsPlay(const string& id);
+    void animsSoftPlay(const string& id);
 
     bool seesPlayer();
 

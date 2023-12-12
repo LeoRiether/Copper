@@ -85,11 +85,9 @@ void TitleState::Start() {
         RequestAddObject(go);
     }
 
-    // mechanismGlitch->Play();
+    mechanismGlitch->Play();
 }
 
-void TitleState::Pause() { /* mechanismGlitch->Stop(); */
-}
+void TitleState::Pause() { mechanismGlitch->Stop(); }
 
-void TitleState::Resume() { /* mechanismGlitch->Play(); */
-}
+void TitleState::Resume() { mechanismGlitch->Play(); }

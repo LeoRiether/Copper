@@ -46,12 +46,12 @@ void EnemyDistancer::Update(float dt) {
         const float stop2 = self->stopDistance * self->stopDistance;
         if (distVec.norm2() > stop2 &&
             (walkingTime >= 0.3 || walkingTime == 0)) {
-            allAnimsPlay("idle_" + (-self->direction).toString());
+            animsSoftPlay("idle_" + (-self->direction).toString());
             walkingTime = 0;
             return;
         }
 
-        allAnimsPlay("walk_" + self->direction.toString());
+        animsSoftPlay("walk_" + self->direction.toString());
         moveBy(distVec * speed * dt);
         walkingTime += dt;
     };
@@ -72,7 +72,7 @@ void EnemyDistancer::Update(float dt) {
         moveDelta = moveDelta.normalize();
 
         self->direction = Direction::approxFromVec(moveDelta);
-        allAnimsPlay("walk_" + self->direction.toString());
+        animsSoftPlay("walk_" + self->direction.toString());
 
         auto realDistVec =
             Player::player->associated.box.Center() - selfPos.toCart();
@@ -147,15 +147,15 @@ void EnemyDistancer::switchState(State newState) {
         Game::Instance().GetState().RequestAddObject(go);
 
         const auto dir = Direction::approxFromVec(delta);
-        allAnimsPlay("fire1_" + dir.toString());
+        animsSoftPlay("fire1_" + dir.toString());
 
-        // auto decay = [&](float x) { return -x * x / 20'000.0f + 100.0f; };
-        // auto volume = decay(delta.norm());
-        // if (volume > 0) {
-        //     associated.RequestAdd(
-        //         MakeOneOffAudio(ASSETS "/audio/Bullet_1.wav",
-        //         round(volume)));
-        // }
+         auto decay = [&](float x) { return -x * x / 20'000.0f + 100.0f; };
+         auto volume = decay(delta.norm());
+         if (volume > 0) {
+             associated.RequestAdd(
+                 MakeOneOffAudio(ASSETS "/audio/Bullet_1.wav",
+                 round(volume)));
+         }
     };
 
     // Try to find an angle that doesn't immediately meet with a wall
@@ -178,7 +178,7 @@ void EnemyDistancer::switchState(State newState) {
         case Roaming: {
             findRoamingDelta();
             auto dir = Direction::approxFromVec(roamingDelta);
-            allAnimsPlay("walk_" + dir.toString());
+            animsSoftPlay("walk_" + dir.toString());
 
             roamingTimeout.Restart();
             roamingTimeout.Delay(randf(0, 0.5));
@@ -186,7 +186,7 @@ void EnemyDistancer::switchState(State newState) {
         }
         case Standing: {
             auto dir = Direction::approxFromVec(roamingDelta);
-            allAnimsPlay("idle_" + dir.toString());
+            animsSoftPlay("idle_" + dir.toString());
             standingStillTimeout.Restart();
             break;
         }
@@ -208,7 +208,7 @@ void EnemyDistancer::switchState(State newState) {
         case KeepingDistance: {
             findRoamingDelta();
             auto dir = Direction::approxFromVec(roamingDelta);
-            allAnimsPlay("walk_" + dir.toString());
+            animsSoftPlay("walk_" + dir.toString());
 
             roamingTimeout.Restart();
             roamingTimeout.Delay(randf(-0.6, 0.3));
@@ -219,13 +219,19 @@ void EnemyDistancer::switchState(State newState) {
     state = newState;
 }
 
-void EnemyDistancer::allAnimsPlay(const string& id) {
+///////////////////////////////////
+//        Animation utils        //
+///////////////////////////////////
+void EnemyDistancer::animsSoftPlay(const string& id) {
     auto& anims = associated.GetAllComponents(CType::Animation);
     for (auto& anim : anims) {
         ((Animation*)anim.get())->SoftPlay(id);
     }
 }
 
+///////////////////////
+//        idk        //
+///////////////////////
 bool EnemyDistancer::seesPlayer() {
     auto self = associated.box.Center().toIso();
     auto player = Player::player->associated.box.Center().toIso();

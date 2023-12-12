@@ -29,9 +29,13 @@ enum class CType {
     StageTransitionDimmer,
     EndOfStageTrigger,
     Companion,
+	Dialog,
+	Dimmer,
     ControlsTutorial,
     Bar,
     LifeBarManager,
+	DialogTrigger,
+	Tooltip,
     OverheadHpBar,
     Slash,
 };

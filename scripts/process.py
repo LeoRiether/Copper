@@ -51,6 +51,20 @@ RULES = [
             "img/copper/attack.png",
         ],
     ),
+    Concat(
+        "img/Companion/core.png",
+        [
+            "img/Companion/WalkCore.png",
+            "img/Companion/FireCore.png",
+        ]
+    ),
+    Concat(
+        "img/Companion/base.png",
+        [
+            "img/Companion/WalkBase.png",
+            "img/Companion/FireBase.png",
+        ]
+    ),
 ]
 
 

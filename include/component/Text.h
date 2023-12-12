@@ -27,10 +27,11 @@ class Text : public Component {
     string fontFile;
     int fontSize;
     SDL_Color color;
+	int wrapWidth;
 
    public:
     Text(GameObject& associated, string fontFile, int fontSize, TextStyle style,
-         string text, SDL_Color color);
+         string text, SDL_Color color, int wrapWidth = 0);
     ~Text();
 
     void Update(float dt);
@@ -44,6 +45,8 @@ class Text : public Component {
     void SetStyle(TextStyle style);
     void SetFontFile(string fontFile);
     void SetFontSize(int fontSize);
+	void SetWrapWidth(int wrapWidth);
+	void SetAlpha(float a);
 
     void RemakeTexture();
 };

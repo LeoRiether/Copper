@@ -1,0 +1,2 @@
+< Copper: This is another dialog!
+> Copper: Two dialog triggers!

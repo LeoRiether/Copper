@@ -7,9 +7,9 @@
 #include "Prefabs.h"
 #include "SDL_render.h"
 #include "component/Animation.h"
+#include "component/Bullet.h"
 #include "component/IsoCollider.h"
 #include "component/Player.h"
-#include "component/enemy/RobotCan.h"
 #include "math/Direction.h"
 #include "physics/Steering.h"
 #include "physics/Tags.h"
@@ -19,6 +19,70 @@
 
 Companion::Companion(GameObject& go) : Component(go) {
     associated.tags.set(tag::Entity);
+
+    auto baseSprite = new Sprite{associated, ASSETS "/img/Companion/base.png"};
+    baseSprite->SetHasShadow(true);
+    associated.AddComponent(baseSprite);
+
+    auto coreSprite = new Sprite{associated, ASSETS "/img/Companion/core.png"};
+    coreSprite->SetHasShadow(true);
+    associated.AddComponent(coreSprite);
+
+    // Animation
+    {
+        auto coreAnim = new Animation{associated, *coreSprite};
+        GridKeyframe coreGrid{20, 16, coreSprite->SheetWidth(),
+                              coreSprite->SheetHeight(), 0.1};
+
+        auto baseAnim = new Animation{associated, *baseSprite};
+        GridKeyframe baseGrid{20, 16, baseSprite->SheetWidth(),
+                              baseSprite->SheetHeight(), 0.1};
+
+        auto row = [&](GridKeyframe& grid, int i, int startJ, int frames,
+                       float frameTime = 0.1) {
+            Keyframes kf;
+            for (int j = startJ; j < startJ + frames; j++) {
+                kf.push_back(grid.At(j, i));
+                kf.back().frameTime = frameTime;
+            }
+            return kf;
+        };
+
+        struct item_t {
+            const char* id;
+            int columns;
+            float frameTime;
+        };
+        constexpr item_t items[] = {
+            {"walk_S", 20, 0.05},  {"walk_SW", 20, 0.05}, {"walk_W", 20, 0.05},
+            {"walk_NW", 20, 0.05}, {"walk_N", 20, 0.05},  {"walk_NE", 20, 0.05},
+            {"walk_E", 20, 0.05},  {"walk_SE", 20, 0.05}, {"fire_S", 5, 0.1},
+            {"fire_SW", 5, 0.1},   {"fire_W", 5, 0.1},    {"fire_NW", 5, 0.1},
+            {"fire_N", 5, 0.1},    {"fire_NE", 5, 0.1},   {"fire_E", 5, 0.1},
+            {"fire_SE", 5, 0.1},
+        };
+        constexpr int n = sizeof(items) / sizeof(*items);
+
+        for (int i = 0; i < n; i++) {
+            const auto& item = items[i];
+            coreAnim->AddKeyframes(
+                item.id, row(coreGrid, i, 0, item.columns, item.frameTime));
+            baseAnim->AddKeyframes(
+                item.id, row(baseGrid, i, 0, item.columns, item.frameTime));
+        }
+
+        constexpr const char* idles[] = {"idle_S",  "idle_SW", "idle_W",
+                                         "idle_NW", "idle_N",  "idle_NE",
+                                         "idle_E",  "idle_SE"};
+        for (int i = 0; i < 8; i++) {
+            coreAnim->AddKeyframes(idles[i], row(coreGrid, i, 0, 1, 1.0));
+            baseAnim->AddKeyframes(idles[i], row(baseGrid, i, 0, 1, 1.0));
+        }
+
+        baseAnim->Play("walk_S");  // just to kickstart the associated.box...
+        associated.AddComponent(coreAnim);
+        associated.AddComponent(baseAnim);
+    }
 }
 
 //////////////////////////////////////////
@@ -33,12 +97,6 @@ void Companion::Update(float dt) {
 }
 
 void Companion::updatePosition(float dt) {
-    auto rc = (RobotCan*)associated.GetComponent(CType::RobotCan);
-    if (!rc) {
-        warn("no associated RobotCan!");
-        return;
-    }
-
     auto iso = (IsoCollider*)associated.GetComponent(CType::IsoCollider);
     if (!iso) fail("companion without IsoCollider...");
     auto selfPos = iso->box.Center().transmute<Iso>();
@@ -60,7 +118,6 @@ void Companion::updatePosition(float dt) {
     }
 
     if (!maybePlayerPos) {
-        allAnimsPlay("hide_" + rc->direction.toString(), false);
         return;
     }
 
@@ -69,14 +126,14 @@ void Companion::updatePosition(float dt) {
     moveDelta = moveDelta.normalize();
 
     if (realDistVec.norm2() > stopDistance * stopDistance) {
-        rc->direction = Direction::approxFromVec(moveDelta);
-        baseAnimPlay("walk_" + rc->direction.toString());
+        direction = Direction::approxFromVec(moveDelta);
+        baseAnimPlay("walk_" + direction.toString());
         associated.box.OffsetBy(moveDelta * speed * dt);
         walkingToIdleTimeout.Restart();
     } else {
         walkingToIdleTimeout.Update(dt);
         if (walkingToIdleTimeout.Get() >= 0.1)
-            baseAnimPlay("idle_" + rc->direction.toString());
+            baseAnimPlay("idle_" + direction.toString());
     }
 }
 
@@ -110,7 +167,7 @@ void Companion::updateState(float dt) {
             associated.RequestAdd(
                 MakePlayerBullet(associated.box.Center(), mouseDelta.angle()));
             auto dir = Direction::approxFromVec(mouseDelta);
-            coreAnimPlay("fire1_" + dir.toString(), false);
+            coreAnimPlay("fire_" + dir.toString(), false);
             changeState(Firing);
         }
     };
@@ -186,5 +243,26 @@ void Companion::Render(Vec2<Cart> camera) {
                               {pos.x - 7, pos.y - 1, 14, 2}};
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 128);
         SDL_RenderFillRectsF(renderer, rects, 2);
+    }
+}
+
+///////////////////////////////////
+//        NotifyCollision        //
+///////////////////////////////////
+void Companion::NotifyCollision(GameObject& other) {
+    auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
+    bool bulletHit = bullet && bullet->TargetsPlayer();
+    if (bulletHit) {
+        // Flash
+        for (auto& sprite : associated.GetAllComponents(CType::Sprite)) {
+            ((Sprite*)sprite.get())->WithFlash(0.08);
+        }
+
+        // Explosion
+        auto hitpoint = other.box.Center();
+        hitpoint = hitpoint + Vec2<Cart>{25, 0}.GetRotated(other.angle);
+        associated.RequestAdd(MakeExplosion1()->WithCenterAt(hitpoint));
+        
+        other.RequestDelete();
     }
 }

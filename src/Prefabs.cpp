@@ -11,6 +11,8 @@
 #include "component/Collider.h"
 #include "component/Companion.h"
 #include "component/ControlsTutorial.h"
+#include "component/Dialog.h"
+#include "component/DialogTrigger.h"
 #include "component/IsoCollider.h"
 #include "component/KeepSoundAlive.h"
 #include "component/KillTimeout.h"
@@ -49,13 +51,12 @@ GameObject* MakePlayer() {
 
 GameObject* MakeCompanion() {
     auto go = new GameObject{};
-    go->AddComponent(new RobotCan{*go});
     go->AddComponent(new Companion{*go});
     go->AddComponent(
-        (new Collider{*go})->WithBase({18.8157, 3.4533, 32.6644, 76.6754}));
+        (new Collider{*go})->WithBase({15.6793, 22.2168, 39.7406, 56.9443}));
     go->AddComponent((new IsoCollider{*go})
                          ->WithTag(tag::Entity)
-                         ->WithBase({147.784, 76.4568, 51.9192, 52.6069}));
+                         ->WithBase({159.529, 87.2253, 59.6754, 59.6754}));
     go->tags.set(tag::Entity);
     return go;
 }
@@ -71,15 +72,15 @@ GameObject* MakeControlsTutorial() {
 
 GameObject* MakeEnemyFollower() {
     auto go = new GameObject{};
-    auto body = (new RobotCan{*go})->WithStopDistance(100);
-    go->AddComponent(body);
-    go->AddComponent(new OverheadHpBar{*go, 100, 100});
-    go->AddComponent((new EnemyFollower{*go})->WithRobotCan(body));
-    go->AddComponent(
-        (new Collider{*go})->WithBase({18.8157, 3.4533, 32.6644, 76.6754}));
+    go->AddComponent(new OverheadHpBar{*go, 150, 150});
+    go->AddComponent(new EnemyFollower{*go});
     go->AddComponent((new IsoCollider{*go})
                          ->WithTag(tag::Entity)
-                         ->WithBase({147.784, 76.4568, 51.9192, 52.6069}));
+                         ->WithBase({390.975, 153.522, 45.8416, 45.8416})
+                         ->ScaleToSprite());
+    go->AddComponent((new Collider{*go})
+                         ->WithBase({97.716, 56.2834, 41.2575, 101.234})
+                         ->ScaleToSprite());
     go->tags.set(tag::Entity);
     go->tags.set(tag::Enemy);
     return go;
@@ -294,8 +295,25 @@ GameObject* MakeLifeBar() {
     go->box.SetCenter(Vec2<Cart>{10, 10});
     go->renderLayer = 200;
     auto hpManager = new LifeBarManager(*go, 100, lifeBar);
-
     go->AddComponent(hpManager);
-
-    return go;
+  return go;
 }
+
+GameObject* MakeDialog(std::string dialogFile){
+		auto go = new GameObject{};
+		auto dialog = new Dialog{*go, dialogFile};
+		go->AddComponent(dialog);
+		go->renderLayer = 201;
+		return go;
+	}
+
+GameObject* MakeDialogTrigger(Rect base, std::string dialogFile){
+	auto go = new GameObject{};
+	go->AddComponent((new IsoCollider{*go})
+			->WithTag(tag::Trigger)
+			->WithBase(base));
+	go->AddComponent(new DialogTrigger(*go, dialogFile));
+	go->renderLayer = 100;
+	return go;
+}
+
