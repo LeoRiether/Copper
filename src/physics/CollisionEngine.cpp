@@ -22,7 +22,7 @@ vector<CollisionEngine::IG> CollisionEngine::triggers;
 GameObject* CollisionEngine::player;
 vector<GameObject*> CollisionEngine::entities;
 vector<GameObject*> CollisionEngine::bullets;
-set<GOPair> CollisionEngine::bulletOtherCollisions;
+set<GOPair> CollisionEngine::collisionPairs;
 
 GOPair::GOPair() : a(), b() {}
 GOPair::GOPair(weak_ptr<GameObject> a, weak_ptr<GameObject> b) : a(a), b(b) {}
@@ -185,8 +185,6 @@ void CollisionEngine::Solve() {
         }
     }
 
-    processBulletOtherCollisions(curBulletOtherCollisions);
-
     // Trigger--Player/Entity
     for (auto& trigger : triggers) {
         auto& tbox = trigger.c->box;
@@ -205,6 +203,8 @@ void CollisionEngine::Solve() {
             process(*entity);
         }
     }
+
+    processCollisionPairs(curBulletOtherCollisions);
 }
 
 bool CollisionEngine::TerrainContains(const Vec2<Iso> point) {
@@ -260,29 +260,26 @@ inline chunk2 CollisionEngine::IsoColliderChunk(IsoCollider* iso) {
     return Chunk2(iso->box.Center().transmute<Iso>().toCart());
 }
 
-void CollisionEngine::processBulletOtherCollisions(
-    set<GOPair>& currentCollisions) {
+void CollisionEngine::processCollisionPairs(set<GOPair>& currentCollisions) {
     // Collision enter
-    for (auto& [bullet, other] : currentCollisions) {
-        if (!bullet.expired() && !other.expired() &&
-            !bulletOtherCollisions.count({bullet, other})) {
-            auto b = bullet.lock();
-            auto o = other.lock();
-            b->NotifyCollisionEnter(*o);
-            o->NotifyCollisionEnter(*b);
+    for (auto& [a, b] : currentCollisions) {
+        if (!a.expired() && !b.expired() && !collisionPairs.count({a, b})) {
+            auto x = a.lock();
+            auto y = b.lock();
+            x->NotifyCollisionEnter(*y);
+            y->NotifyCollisionEnter(*x);
         }
     }
 
     // Collision leave
-    for (auto& [bullet, other] : bulletOtherCollisions) {
-        if (!bullet.expired() && !other.expired() &&
-            !currentCollisions.count({bullet, other})) {
-            auto b = bullet.lock();
-            auto o = other.lock();
-            b->NotifyCollisionLeave(*o);
-            o->NotifyCollisionLeave(*b);
+    for (auto& [a, b] : collisionPairs) {
+        if (!a.expired() && !b.expired() && !currentCollisions.count({a, b})) {
+            auto x = a.lock();
+            auto y = b.lock();
+            x->NotifyCollisionLeave(*y);
+            y->NotifyCollisionLeave(*x);
         }
     }
 
-    bulletOtherCollisions = currentCollisions;
+    collisionPairs = currentCollisions;
 }

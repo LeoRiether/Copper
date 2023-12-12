@@ -55,7 +55,7 @@ class CollisionEngine {
     static GameObject* player;
     static vector<GameObject*> entities;
     static vector<GameObject*> bullets;
-    static set<GOPair> bulletOtherCollisions;
+    static set<GOPair> collisionPairs;
 
     static void ClearState();
 
@@ -63,5 +63,5 @@ class CollisionEngine {
     static inline chunk2 Chunk2(Vec2<Cart>);
     static inline chunk2 IsoColliderChunk(IsoCollider*);
 
-    static void processBulletOtherCollisions(set<GOPair>& current);
+    static void processCollisionPairs(set<GOPair>& current);
 };
