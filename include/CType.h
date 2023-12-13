@@ -44,4 +44,5 @@ enum class CType {
     StrongerAttack,
     Pickupable,
     HitMarker,
+	PointCounter,
 };
