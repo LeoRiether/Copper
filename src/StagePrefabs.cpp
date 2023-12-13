@@ -179,12 +179,12 @@ void MakeStage1(StageState& s, string stage) {
             if (!enemySelected[i]) {
                 delete go;
             } else {
-                s.Request(AddObject(go));
+                s.RequestAddObject(go));
                 s.EnemyCount++;
             }
             i++;
         } else {
-            s.Request(AddObject(go));
+            s.RequestAddObject(go);
         }
     }
 
