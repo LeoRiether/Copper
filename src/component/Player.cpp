@@ -343,7 +343,7 @@ void Player::UpdateState(float dt) {
 
 void Player::UpdatePosition(float dt) {
     associated.box.OffsetBy(knockbackVelocity * dt);
-    knockbackVelocity = knockbackVelocity * 0.70;
+    knockbackVelocity = knockbackVelocity * 0.90;
 
     auto& input = InputManager::Instance();
     auto getMoveVec = [&]() {
@@ -425,7 +425,7 @@ void Player::NotifyCollisionEnter(GameObject& other) {
     auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
     bool isBullet = bullet && bullet->TargetsPlayer();
     bool enemyHitbox = other.tags.test(tag::EnemyHitbox);
-	bool explosion = other.tags.test(tag::Explosion);
+    bool explosion = other.tags.test(tag::Explosion);
 
     if (isBullet || enemyHitbox) {
         // Takes damage
@@ -441,21 +441,24 @@ void Player::NotifyCollisionEnter(GameObject& other) {
         hitpoint = hitpoint + Vec2<Cart>{25, 0}.GetRotated(other.angle);
         associated.RequestAdd(MakeExplosion1()->WithCenterAt(hitpoint));
 
-		if (explosion) {
-			// Knockback
-			float kb = 3'500'000 * Game::Instance().DeltaTime();
-			knockbackVelocity = Vec2<Cart>{kb, 0}.GetRotated(other.angle);
-			// Slowdown
-			Game::Instance().Slowdown(0.01, 0.3);
+        if (explosion) {
+            // Knockback
+            float kb = 10000000.0f * Game::Instance().DeltaTime();
+            knockbackVelocity =
+                knockbackVelocity + Vec2<Cart>{kb, 0}.GetRotated(other.angle);
 
-			// Add trauma
-			Game::Instance().AddTrauma(1);
-				return;
-		}
+            // Slowdown
+            Game::Instance().Slowdown(0.01, 0.3);
+
+            // Add trauma
+            Game::Instance().AddTrauma(1);
+            return;
+        }
 
         // Knockback
-        float kb = 1'500'000 * Game::Instance().DeltaTime();
-        knockbackVelocity = Vec2<Cart>{kb, 0}.GetRotated(other.angle);
+        float kb = 150000 * Game::Instance().DeltaTime();
+        knockbackVelocity =
+            knockbackVelocity + Vec2<Cart>{kb, 0}.GetRotated(other.angle);
 
         // Slowdown
         Game::Instance().Slowdown(0.03, 0.1);
