@@ -106,7 +106,7 @@ void RobotCan::Update(float dt) {
 
 void RobotCan::Render(Vec2<Cart>) {}
 
-void RobotCan::NotifyCollision(GameObject& other) {
+void RobotCan::NotifyCollisionEnter(GameObject& other) {
     auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
     bool bulletHit = bullet && !bullet->TargetsPlayer();
     bool meleeHit = other.tags.test(tag::PlayerHitbox);

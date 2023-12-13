@@ -256,7 +256,7 @@ void EnemyFollower::Render(Vec2<Cart> camera) {
 ///////////////////////////////////
 //        NotifyCollision        //
 ///////////////////////////////////
-void EnemyFollower::NotifyCollision(GameObject& other) {
+void EnemyFollower::NotifyCollisionEnter(GameObject& other) {
     auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
 
     bool bulletHit = bullet && !bullet->TargetsPlayer();

@@ -421,7 +421,7 @@ void Player::Render(Vec2<Cart> camera) {
     }
 }
 
-void Player::NotifyCollision(GameObject& other) {
+void Player::NotifyCollisionEnter(GameObject& other) {
     auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
     bool isBullet = bullet && bullet->TargetsPlayer();
     bool enemyHitbox = other.tags.test(tag::EnemyHitbox);
@@ -441,6 +441,18 @@ void Player::NotifyCollision(GameObject& other) {
         hitpoint = hitpoint + Vec2<Cart>{25, 0}.GetRotated(other.angle);
         associated.RequestAdd(MakeExplosion1()->WithCenterAt(hitpoint));
 
+		if (explosion) {
+			// Knockback
+			float kb = 3'500'000 * Game::Instance().DeltaTime();
+			knockbackVelocity = Vec2<Cart>{kb, 0}.GetRotated(other.angle);
+			// Slowdown
+			Game::Instance().Slowdown(0.01, 0.3);
+
+			// Add trauma
+			Game::Instance().AddTrauma(1);
+				return;
+		}
+
         // Knockback
         float kb = 1'500'000 * Game::Instance().DeltaTime();
         knockbackVelocity = Vec2<Cart>{kb, 0}.GetRotated(other.angle);
@@ -451,8 +463,6 @@ void Player::NotifyCollision(GameObject& other) {
         // Add trauma
         Game::Instance().AddTrauma(0.4);
 
-		if (explosion)
-				return;
         other.RequestDelete();
     }
 }

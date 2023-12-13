@@ -249,7 +249,7 @@ void Companion::Render(Vec2<Cart> camera) {
 ///////////////////////////////////
 //        NotifyCollision        //
 ///////////////////////////////////
-void Companion::NotifyCollision(GameObject& other) {
+void Companion::NotifyCollisionEnter(GameObject& other) {
     auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
     bool bulletHit = bullet && bullet->TargetsPlayer();
 	bool explosion = other.tags.test(tag::Explosion);
