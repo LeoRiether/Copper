@@ -13,6 +13,7 @@
 #include "component/ControlsTutorial.h"
 #include "component/Dialog.h"
 #include "component/DialogTrigger.h"
+#include "component/HitMarker.h"
 #include "component/IsoCollider.h"
 #include "component/KeepSoundAlive.h"
 #include "component/KillTimeout.h"
@@ -333,5 +334,11 @@ GameObject* MakeRandomPowerup() {
     go->AddComponent((new IsoCollider{*go})
                          ->WithTag(tag::Trigger)
                          ->WithBase({80.415, 13.9493, 91.6036, 92.9458}));
+    return go;
+}
+
+GameObject* MakeHitMarker(int dmg) {
+    auto go = new GameObject{};
+    go->AddComponent(new HitMarker{*go, dmg});
     return go;
 }

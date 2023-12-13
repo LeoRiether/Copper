@@ -43,4 +43,5 @@ enum class CType {
     MarioStar,
     StrongerAttack,
     Pickupable,
+    HitMarker,
 };

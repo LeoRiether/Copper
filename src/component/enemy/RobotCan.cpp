@@ -1,8 +1,8 @@
 #include "component/enemy/RobotCan.h"
 
-#include "Consts.h"
 #include "CType.h"
 #include "Camera.h"
+#include "Consts.h"
 #include "Game.h"
 #include "Prefabs.h"
 #include "component/Animation.h"
@@ -116,6 +116,8 @@ void RobotCan::NotifyCollision(GameObject& other) {
             (OverheadHpBar*)associated.GetComponent(CType::OverheadHpBar);
         if (bar) {
             bar->SetHp(bar->Hp() - 25);
+            associated.RequestAdd(
+                MakeHitMarker(25)->WithFootAt(associated.box.Head()));
         }
 
         if (bar && bar->Hp() <= 0) {

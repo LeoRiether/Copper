@@ -267,6 +267,8 @@ void EnemyFollower::NotifyCollision(GameObject& other) {
             (OverheadHpBar*)associated.GetComponent(CType::OverheadHpBar);
         if (bar) {
             bar->SetHp(bar->Hp() - 25);
+            associated.RequestAdd(
+                MakeHitMarker(25)->WithFootAt(associated.box.Head()));
         }
 
         // Trauma
