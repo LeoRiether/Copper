@@ -174,15 +174,17 @@ void MakeStage1(StageState& s, string stage) {
 
     int i = 0;
     for (auto go : c.gen()) {
-        s.RequestAddObject(go);
 
         if (go->tags.test(tag::Enemy)) {
             if (!enemySelected[i]) {
-                go->RequestDelete();
+                delete go;
             } else {
+                s.Request ddObject(go);
                 s.EnemyCount++;
             }
             i++;
+        } else {
+            s.Request ddObject(go);
         }
     }
 
