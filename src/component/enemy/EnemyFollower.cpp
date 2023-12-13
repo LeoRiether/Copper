@@ -1,5 +1,6 @@
 #include "component/enemy/EnemyFollower.h"
 
+#include "Consts.h"
 #include "Game.h"
 #include "Prefabs.h"
 #include "component/Animation.h"
@@ -266,6 +267,8 @@ void EnemyFollower::NotifyCollision(GameObject& other) {
             (OverheadHpBar*)associated.GetComponent(CType::OverheadHpBar);
         if (bar) {
             bar->SetHp(bar->Hp() - 25);
+            associated.RequestAdd(
+                MakeHitMarker(25)->WithFootAt(associated.box.Head()));
         }
 
         // Trauma
@@ -299,7 +302,7 @@ void EnemyFollower::NotifyCollision(GameObject& other) {
         stunnedLevel += 0.2;
 
         // Knockback
-        float kb = 1'500'000 * Game::Instance().DeltaTime();
+        float kb = 150'000 * Game::Instance().DeltaTime();
         knockbackVelocity = Vec2<Cart>{kb, 0}.GetRotated(other.angle);
 
         other.RequestDelete();
@@ -307,9 +310,12 @@ void EnemyFollower::NotifyCollision(GameObject& other) {
 }
 
 void EnemyFollower::Die() {
+    static int& powerupChance = Consts::GetInt("powerup.chance");
     auto center = associated.box.Center();
     associated.RequestAdd(MakeExplosion4()->WithCenterAt(center));
     associated.RequestDelete();
+    if (randi(0, 99) < powerupChance)
+        associated.RequestAdd(MakeRandomPowerup()->WithCenterAt(center));
 }
 
 ///////////////////////////////////

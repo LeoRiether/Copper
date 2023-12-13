@@ -13,11 +13,13 @@
 #include "component/ControlsTutorial.h"
 #include "component/Dialog.h"
 #include "component/DialogTrigger.h"
+#include "component/HitMarker.h"
 #include "component/IsoCollider.h"
 #include "component/KeepSoundAlive.h"
 #include "component/KillTimeout.h"
 #include "component/LifeBarManager.h"
 #include "component/OverheadHpBar.h"
+#include "component/Pickupable.h"
 #include "component/Player.h"
 #include "component/Slash.h"
 #include "component/Sound.h"
@@ -27,6 +29,9 @@
 #include "component/enemy/EnemyDistancer.h"
 #include "component/enemy/EnemyFollower.h"
 #include "component/enemy/RobotCan.h"
+#include "component/powerup/DoubledBullets.h"
+#include "component/powerup/Speedy.h"
+#include "component/powerup/StrongerAttack.h"
 #include "physics/Tags.h"
 #include "util.h"
 
@@ -296,24 +301,44 @@ GameObject* MakeLifeBar() {
     go->renderLayer = 200;
     auto hpManager = new LifeBarManager(*go, 100, lifeBar);
     go->AddComponent(hpManager);
-  return go;
+    return go;
 }
 
-GameObject* MakeDialog(std::string dialogFile){
-		auto go = new GameObject{};
-		auto dialog = new Dialog{*go, dialogFile};
-		go->AddComponent(dialog);
-		go->renderLayer = 201;
-		return go;
-	}
-
-GameObject* MakeDialogTrigger(Rect base, std::string dialogFile){
-	auto go = new GameObject{};
-	go->AddComponent((new IsoCollider{*go})
-			->WithTag(tag::Trigger)
-			->WithBase(base));
-	go->AddComponent(new DialogTrigger(*go, dialogFile));
-	go->renderLayer = 100;
-	return go;
+GameObject* MakeDialog(std::string dialogFile) {
+    auto go = new GameObject{};
+    auto dialog = new Dialog{*go, dialogFile};
+    go->AddComponent(dialog);
+    go->renderLayer = 201;
+    return go;
 }
 
+GameObject* MakeDialogTrigger(Rect base, std::string dialogFile) {
+    auto go = new GameObject{};
+    go->AddComponent(
+        (new IsoCollider{*go})->WithTag(tag::Trigger)->WithBase(base));
+    go->AddComponent(new DialogTrigger(*go, dialogFile));
+    go->renderLayer = 100;
+    return go;
+}
+
+GameObject* MakeRandomPowerup() {
+    auto go = new GameObject{};
+    int roll = randi(0, 2);
+    if (roll == 0)
+        go->AddComponent(new DoubledBullets{*go});
+    else if (roll == 1)
+        go->AddComponent(new Speedy{*go});
+    else if (roll == 2)
+        go->AddComponent(new StrongerAttack{*go});
+    go->AddComponent(new Pickupable{*go});
+    go->AddComponent((new IsoCollider{*go})
+                         ->WithTag(tag::Trigger)
+                         ->WithBase({80.415, 13.9493, 91.6036, 92.9458}));
+    return go;
+}
+
+GameObject* MakeHitMarker(int dmg) {
+    auto go = new GameObject{};
+    go->AddComponent(new HitMarker{*go, dmg});
+    return go;
+}

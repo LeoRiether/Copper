@@ -38,4 +38,10 @@ enum class CType {
 	Tooltip,
     OverheadHpBar,
     Slash,
+    DoubledBullets,
+    Speedy,
+    MarioStar,
+    StrongerAttack,
+    Pickupable,
+    HitMarker,
 };

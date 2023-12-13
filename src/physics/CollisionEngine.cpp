@@ -22,6 +22,17 @@ vector<CollisionEngine::IG> CollisionEngine::triggers;
 GameObject* CollisionEngine::player;
 vector<GameObject*> CollisionEngine::entities;
 vector<GameObject*> CollisionEngine::bullets;
+set<GOPair> CollisionEngine::collisionPairs;
+
+GOPair::GOPair() : a(), b() {}
+GOPair::GOPair(weak_ptr<GameObject> a, weak_ptr<GameObject> b) : a(a), b(b) {}
+
+bool GOPair::operator<(const GOPair rhs) const {
+    auto get = [&](weak_ptr<GameObject> w) {
+        return w.expired() ? nullptr : w.lock().get();
+    };
+    return std::tuple{get(a), get(b)} < std::tuple{get(rhs.a), get(rhs.b)};
+}
 
 void CollisionEngine::Update(const vector<shared_ptr<GameObject>>& objects) {
     ClearState();
@@ -75,6 +86,8 @@ void CollisionEngine::ClearState() {
 
 // Requires state to be `Update`d!
 void CollisionEngine::Solve() {
+    set<GOPair> curCollisionPairs;
+
     // Entity/Player--Terrain collision
     auto processEntity = [&](GameObject* entity) {
         auto entityIso = (IsoCollider*)entity->GetComponent(CType::IsoCollider);
@@ -147,6 +160,7 @@ void CollisionEngine::Solve() {
                 Collision::IsColliding(hurtbox->box, hitbox->box, bullet->angle,
                                        entity->angle)) {
                 entity->NotifyCollision(*bullet);
+                curCollisionPairs.emplace(bullet->weak, entity->weak);
             }
         }
 
@@ -157,6 +171,7 @@ void CollisionEngine::Solve() {
                 Collision::IsColliding(hurtbox->box, hitbox->box, bullet->angle,
                                        player->angle)) {
                 player->NotifyCollision(*bullet);
+                curCollisionPairs.emplace(bullet->weak, player->weak);
             }
         }
 
@@ -165,6 +180,7 @@ void CollisionEngine::Solve() {
             if (Collision::IsColliding(hurtbox->box, vterrain.c->box,
                                        bullet->angle, vterrain.go->angle)) {
                 vterrain.go->NotifyCollision(*bullet);
+                curCollisionPairs.emplace(bullet->weak, vterrain.go->weak);
             }
         }
     }
@@ -179,6 +195,7 @@ void CollisionEngine::Solve() {
             if (e->box.CollidesWith(tbox)) {
                 trigger.go->NotifyCollision(entity);
                 entity.NotifyCollision(*trigger.go);
+                curCollisionPairs.emplace(trigger.go->weak, entity.weak);
             }
         };
 
@@ -187,6 +204,8 @@ void CollisionEngine::Solve() {
             process(*entity);
         }
     }
+
+    processCollisionPairs(curCollisionPairs);
 }
 
 bool CollisionEngine::TerrainContains(const Vec2<Iso> point) {
@@ -240,4 +259,28 @@ inline chunk2 CollisionEngine::Chunk2(Vec2<Cart> pos) {
 
 inline chunk2 CollisionEngine::IsoColliderChunk(IsoCollider* iso) {
     return Chunk2(iso->box.Center().transmute<Iso>().toCart());
+}
+
+void CollisionEngine::processCollisionPairs(set<GOPair>& currentCollisions) {
+    // Collision enter
+    for (auto& [a, b] : currentCollisions) {
+        if (!a.expired() && !b.expired() && !collisionPairs.count({a, b})) {
+            auto x = a.lock();
+            auto y = b.lock();
+            x->NotifyCollisionEnter(*y);
+            y->NotifyCollisionEnter(*x);
+        }
+    }
+
+    // Collision leave
+    for (auto& [a, b] : collisionPairs) {
+        if (!a.expired() && !b.expired() && !currentCollisions.count({a, b})) {
+            auto x = a.lock();
+            auto y = b.lock();
+            x->NotifyCollisionLeave(*y);
+            y->NotifyCollisionLeave(*x);
+        }
+    }
+
+    collisionPairs = currentCollisions;
 }

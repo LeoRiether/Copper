@@ -49,8 +49,6 @@ GameObject* GameObject::AddComponent(Component* cmp) {
 }
 
 // NOTE: components are removed without maintaining order
-// PERF: this could be O(same-key components) now, but I don't think the method
-// is even used ever
 GameObject* GameObject::RemoveComponent(Component* cmp) {
     auto key = cmp->Key();
     auto& cs = components[key];
@@ -88,5 +86,17 @@ GameObject* GameObject::WithCenterAt(Vec2<Cart> position) {
 void GameObject::NotifyCollision(GameObject& other) {
     for (auto& [key, cs] : components) {
         for (auto& component : cs) component->NotifyCollision(other);
+    }
+}
+
+void GameObject::NotifyCollisionEnter(GameObject& other) {
+    for (auto& [key, cs] : components) {
+        for (auto& component : cs) component->NotifyCollisionEnter(other);
+    }
+}
+
+void GameObject::NotifyCollisionLeave(GameObject& other) {
+    for (auto& [key, cs] : components) {
+        for (auto& component : cs) component->NotifyCollisionLeave(other);
     }
 }

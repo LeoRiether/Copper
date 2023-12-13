@@ -2,6 +2,7 @@
 
 #include "CType.h"
 #include "Camera.h"
+#include "Consts.h"
 #include "Game.h"
 #include "Prefabs.h"
 #include "component/Animation.h"
@@ -115,6 +116,8 @@ void RobotCan::NotifyCollision(GameObject& other) {
             (OverheadHpBar*)associated.GetComponent(CType::OverheadHpBar);
         if (bar) {
             bar->SetHp(bar->Hp() - 25);
+            associated.RequestAdd(
+                MakeHitMarker(25)->WithFootAt(associated.box.Head()));
         }
 
         if (bar && bar->Hp() <= 0) {
@@ -161,7 +164,10 @@ RobotCan* RobotCan::WithHp(int hp) {
 }
 
 void RobotCan::Die() {
+    static int& powerupChance = Consts::GetInt("powerup.chance");
     auto center = associated.box.Center();
     associated.RequestAdd(MakeExplosion4()->WithCenterAt(center));
     associated.RequestDelete();
+    if (randi(0, 99) < powerupChance)
+        associated.RequestAdd(MakeRandomPowerup()->WithCenterAt(center));
 }

@@ -11,3 +11,5 @@ void Component::Update(float) {}
 void Component::Render(Vec2<Cart>) {}
 
 void Component::NotifyCollision(GameObject &) {}
+void Component::NotifyCollisionEnter(GameObject &) {}
+void Component::NotifyCollisionLeave(GameObject &) {}
