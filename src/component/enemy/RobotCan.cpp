@@ -8,6 +8,7 @@
 #include "component/Animation.h"
 #include "component/Bullet.h"
 #include "component/OverheadHpBar.h"
+#include "component/Player.h"
 #include "component/Sprite.h"
 #include "math/Direction.h"
 #include "physics/Tags.h"
@@ -112,6 +113,11 @@ void RobotCan::NotifyCollision(GameObject& other) {
     bool bulletHit = bullet && !bullet->TargetsPlayer();
     bool meleeHit = other.tags.test(tag::PlayerHitbox);
     if (bulletHit || meleeHit) {
+
+        // Player stops loosing HP
+        Player::player->hpLoss = 0;
+        Player::player->hpLossTimer.Restart();
+
         auto bar =
             (OverheadHpBar*)associated.GetComponent(CType::OverheadHpBar);
         if (bar) {
