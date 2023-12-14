@@ -12,6 +12,8 @@
 #include "InputManager.h"
 #include "Prefabs.h"
 #include "StagePrefabs.h"
+#include "component/Animation.h"
+#include "component/CoinCounter.h"
 #include "component/Dialog.h"
 #include "component/FPSCounter.h"
 #include "component/InfiniteBg.h"
@@ -63,6 +65,21 @@ void StageState::Start() {
     auto tooltipGo = new GameObject{};
     tooltipGo->AddComponent(new Tooltip{*tooltipGo});
     RequestAddObject(tooltipGo);
+
+	auto coinCounterGo = new GameObject{};
+	coinCounterGo->AddComponent(new CoinCounter{*coinCounterGo});
+	RequestAddObject(coinCounterGo);
+
+	auto coin = (new GameObject{})->WithCenterAt(Vec2<Cart>{638, 10169});//SCREEN_WIDTH-200, 200});
+	auto coinSprite = new Sprite{*coin,
+		ASSETS "/img/lego_studs.png", false};
+	coinSprite->SetScale(0.1);
+	auto animation = Animation::horizontal(*coin,
+			*coinSprite,
+			32, 0.2);
+	animation->Play("default", true);
+	coin->renderLayer = 200;
+	RequestAddObject(coin);
 
     StartArray();
     started = true;
