@@ -10,34 +10,43 @@
 #define MODULE "CoinCounter"
 
 int CoinCounter::coins = 0;
+int CoinCounter::target = 0;
 CoinCounter* CoinCounter::coinCounter = nullptr;
 CoinCounter::CoinCounter(GameObject& go): Component(go){
     auto text = new Text{go,
                          ASSETS "/font/AldotheApache.ttf",
                          30,
                          Text::Blended,
-                         "1000",
+                         "0",
                          colorFromHex("#FF0000"),
+						 0,
 						 true};
     go.AddComponent(text);
-//	go.box.SetCenter({SCREEN_WIDTH-150, 200});
-	go.box.SetCenter({ 479, 10156 });
+	go.box.SetCenter({SCREEN_WIDTH-50, 67});
 	go.renderLayer = 200;
-	auto coin = (new GameObject{})->WithCenterAt(Vec2<Cart>{638, 10169});//SCREEN_WIDTH-200, 200});
+	auto coin = (new GameObject{})->WithCenterAt(Vec2<Cart>{SCREEN_WIDTH-120, 50});
 	auto coinSprite = new Sprite{*coin,
-		ASSETS "/img/lego_studs.png", false};
-	coinSprite->SetScale(0.1);
+		ASSETS "/img/lego_studs.png", true};
+	coinSprite->SetScale(0.5);
 	auto animation = Animation::horizontal(*coin,
 			*coinSprite,
-			32, 0.2);
+			32, 0.05);
 	animation->Play("default", true);
-	go.RequestAdd(coin);
+	coin->AddComponent(coinSprite);
+	coin->AddComponent(animation);
 	coin->renderLayer = 200;
+	go.RequestAdd(coin);
 	coinCounter = this;
 }
 
-void CoinCounter::AddCoins(int c) {
-	
+void CoinCounter::Update(float) {
+	if (coins < target){
+		auto text = (Text*)associated.GetComponent(CType::Text);
+		text->SetText(std::to_string(++coins));
+	}
 }
 
-void CoinCounter::Render(){}
+void CoinCounter::AddCoin() {
+	target = coins + 5;
+}
+

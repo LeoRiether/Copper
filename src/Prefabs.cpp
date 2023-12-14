@@ -8,6 +8,7 @@
 #include "component/Bar.h"
 #include "component/Bullet.h"
 #include "component/BulletShaker.h"
+#include "component/Coin.h"
 #include "component/Collider.h"
 #include "component/Companion.h"
 #include "component/ControlsTutorial.h"
@@ -341,4 +342,21 @@ GameObject* MakeHitMarker(int dmg) {
     auto go = new GameObject{};
     go->AddComponent(new HitMarker{*go, dmg});
     return go;
+}
+
+GameObject* MakeCoin() {
+	auto coin = new GameObject{};
+	auto coinSprite = new Sprite{*coin,
+		ASSETS "/img/lego_studs.png"};
+	coinSprite->SetScale(0.5);
+	auto animation = Animation::horizontal(*coin,
+			*coinSprite,
+			32, 0.05);
+	animation->Play("default", true);
+	coin->AddComponent(coinSprite);
+	coin->AddComponent(animation);
+	coin->AddComponent(new Coin{*coin});
+	coin->AddComponent((new IsoCollider{*coin})->WithTag(tag::Trigger)
+			->WithBase({50, 20.9493, 60, 50}));
+	return coin;
 }

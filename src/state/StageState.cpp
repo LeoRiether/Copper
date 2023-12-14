@@ -70,17 +70,6 @@ void StageState::Start() {
 	coinCounterGo->AddComponent(new CoinCounter{*coinCounterGo});
 	RequestAddObject(coinCounterGo);
 
-	auto coin = (new GameObject{})->WithCenterAt(Vec2<Cart>{638, 10169});//SCREEN_WIDTH-200, 200});
-	auto coinSprite = new Sprite{*coin,
-		ASSETS "/img/lego_studs.png", false};
-	coinSprite->SetScale(0.1);
-	auto animation = Animation::horizontal(*coin,
-			*coinSprite,
-			32, 0.2);
-	animation->Play("default", true);
-	coin->renderLayer = 200;
-	RequestAddObject(coin);
-
     StartArray();
     started = true;
 
@@ -128,6 +117,10 @@ void StageState::Update(float dt) {
             if (go->tags.test(tag::Enemy)) go->RequestDelete();
         }
     }
+
+	if (input.KeyPress(SDL_SCANCODE_I)) {
+		RequestAddObject(MakeCoin()->WithCenterAt({input.MouseX(), input.MouseY()}));
+	}
 
     // Handle updates
     CollisionEngine::Update(objects);

@@ -45,4 +45,5 @@ enum class CType {
     Pickupable,
     HitMarker,
 	CoinCounter,
+	Coin,
 };
