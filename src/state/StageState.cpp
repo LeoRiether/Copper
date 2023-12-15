@@ -12,13 +12,14 @@
 #include "InputManager.h"
 #include "Prefabs.h"
 #include "StagePrefabs.h"
+#include "component/Dialog.h"
 #include "component/FPSCounter.h"
 #include "component/InfiniteBg.h"
 #include "component/Sound.h"
-#include "component/Dialog.h"
 #include "component/Tilemap.h"
 #include "component/Tileset.h"
 #include "component/Tooltip.h"
+#include "component/powerup/StrongerAttack.h"
 #include "physics/CollisionEngine.h"
 #include "physics/Tags.h"
 #include "util.h"
@@ -26,12 +27,12 @@
 #define MODULE "StageState"
 
 StageState::~StageState() {
-  delete music;
-  objects.clear();
+    delete music;
+    objects.clear();
 }
 
 void StageState::Start() {
-  LoadAssets();
+    LoadAssets();
 
     ///////////////////////////////
     //        FPS Counter        //
@@ -39,6 +40,17 @@ void StageState::Start() {
     auto fpsGo = new GameObject;
     fpsGo->AddComponent(new FPSCounter{*fpsGo});
     RequestAddObject(fpsGo);
+
+    //////////////////////////////
+    //        Background        //
+    //////////////////////////////
+    {
+        auto go = new GameObject;
+        go->box = Rect{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+        go->AddComponent(new InfiniteBg{*go, ASSETS "/img/acidbg2.png"});
+        go->renderLayer = -10;
+        RequestAddObject(go);
+    }
 
     //////////////////////////////
     //        Load Stage        //
@@ -66,7 +78,7 @@ void StageState::Start() {
     StartArray();
     started = true;
 
-  // music->Play();
+    // music->Play();
 }
 
 void StageState::Pause() {}
@@ -74,17 +86,17 @@ void StageState::Pause() {}
 void StageState::Resume() {}
 
 void StageState::LoadAssets() {
-  // Background music
-  music = new Music(ASSETS "/audio/stageState.ogg");
+    // Background music
+    music = new Music(ASSETS "/audio/stageState.ogg");
 }
 
 void StageState::Update(float dt) {
-  // process add requests here so added objects are updated before their first
-  // render
-  ProcessAddRequests();
+    // process add requests here so added objects are updated before their first
+    // render
+    ProcessAddRequests();
 
-  auto &input = InputManager::Instance();
-  input.Update();
+    auto& input = InputManager::Instance();
+    input.Update();
 
     if (input.QuitRequested()) {
         quitRequested = true;
@@ -107,8 +119,7 @@ void StageState::Update(float dt) {
 
     if (input.KeyPress(SDL_SCANCODE_0)) {
         for (auto& go : objects) {
-            if (go->tags.test(tag::Enemy))
-                go->RequestDelete();
+            if (go->tags.test(tag::Enemy)) go->RequestDelete();
         }
     }
 
@@ -137,8 +148,7 @@ void StageState::Update(float dt) {
         } else {
             i++;
         }
-    
-  }
+    }
 }
 
 void StageState::Render() { RenderArray(); }

@@ -2,11 +2,13 @@
 
 #include "CType.h"
 #include "Camera.h"
+#include "Consts.h"
 #include "Game.h"
 #include "Prefabs.h"
 #include "component/Animation.h"
 #include "component/Bullet.h"
 #include "component/OverheadHpBar.h"
+#include "component/Player.h"
 #include "component/Sprite.h"
 #include "math/Direction.h"
 #include "physics/Tags.h"
@@ -112,10 +114,17 @@ void RobotCan::NotifyCollisionEnter(GameObject& other) {
     bool meleeHit = other.tags.test(tag::PlayerHitbox);
 	bool explosion = other.tags.test(tag::Explosion);
     if (bulletHit || meleeHit) {
+
+        // Player stops loosing HP
+        Player::player->hpLoss = 0;
+        Player::player->hpLossTimer.Restart();
+
         auto bar =
             (OverheadHpBar*)associated.GetComponent(CType::OverheadHpBar);
         if (bar) {
             bar->SetHp(bar->Hp() - 25);
+            associated.RequestAdd(
+                MakeHitMarker(25)->WithFootAt(associated.box.Head()));
         }
 
         if (bar && bar->Hp() <= 0) {
@@ -165,7 +174,10 @@ RobotCan* RobotCan::WithHp(int hp) {
 }
 
 void RobotCan::Die() {
+    static int& powerupChance = Consts::GetInt("powerup.chance");
     auto center = associated.box.Center();
     associated.RequestAdd(MakeExplosion4()->WithCenterAt(center));
     associated.RequestDelete();
+    if (randi(0, 99) < powerupChance)
+        associated.RequestAdd(MakeRandomPowerup()->WithCenterAt(center));
 }

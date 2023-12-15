@@ -39,4 +39,10 @@ enum class CType {
     OverheadHpBar,
     Slash,
 	Exploder,
+    DoubledBullets,
+    Speedy,
+    MarioStar,
+    StrongerAttack,
+    Pickupable,
+    HitMarker,
 };

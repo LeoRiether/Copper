@@ -9,7 +9,7 @@ public:
   LifeBarManager(GameObject &go, int maxHP, Bar *lifeBar = nullptr);
   void Start(){};
   void Update(float dt);
-  void Render(Vec2<Cart>){};
+  void Render(Vec2<Cart> camera);
   inline CType Key() const { return CType::LifeBarManager; }
   void SetLifeBar(Bar *bar);
   // void SetEnergyBar(Bar *energyBar);
@@ -20,5 +20,6 @@ private:
   int maxHP;
   int prevHP;
   int prevLoss;
+  float remTime;
   // Bar *energyBar;
 };

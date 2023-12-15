@@ -1,5 +1,6 @@
 #include "component/Sound.h"
 
+#include "Consts.h"
 #include "Resources.h"
 
 #define MODULE "Sound"
@@ -18,9 +19,10 @@ Sound::~Sound() {
 }
 
 void Sound::Play(int times) {
+    static float& globalVolume = Consts::GetFloat("options.volume");
     if (chunk->inner) {
         channel = Mix_PlayChannel(-1, chunk->inner, times - 1);
-        Mix_Volume(channel, volume);
+        Mix_Volume(channel, roundf(volume * globalVolume));
     }
 }
 

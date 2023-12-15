@@ -22,7 +22,7 @@ vector<CollisionEngine::IG> CollisionEngine::triggers;
 GameObject* CollisionEngine::player;
 vector<GameObject*> CollisionEngine::entities;
 vector<GameObject*> CollisionEngine::bullets;
-set<GOPair> CollisionEngine::bulletOtherCollisions;
+set<GOPair> CollisionEngine::collisionPairs;
 
 GOPair::GOPair() : a(), b() {}
 GOPair::GOPair(weak_ptr<GameObject> a, weak_ptr<GameObject> b) : a(a), b(b) {}
@@ -86,6 +86,8 @@ void CollisionEngine::ClearState() {
 
 // Requires state to be `Update`d!
 void CollisionEngine::Solve() {
+    set<GOPair> curCollisionPairs;
+
     // Entity/Player--Terrain collision
     auto processEntity = [&](GameObject* entity) {
         auto entityIso = (IsoCollider*)entity->GetComponent(CType::IsoCollider);
@@ -148,7 +150,6 @@ void CollisionEngine::Solve() {
     }
 
     // Bullet--Player/Entity/VTerrain
-    set<GOPair> curBulletOtherCollisions;
     for (auto bullet : bullets) {
         auto hurtbox = (Collider*)bullet->GetComponent(CType::Collider);
 
@@ -159,7 +160,7 @@ void CollisionEngine::Solve() {
                 Collision::IsColliding(hurtbox->box, hitbox->box, bullet->angle,
                                        entity->angle)) {
                 entity->NotifyCollision(*bullet);
-                curBulletOtherCollisions.emplace(bullet->weak, entity->weak);
+                curCollisionPairs.emplace(bullet->weak, entity->weak);
             }
         }
 
@@ -170,7 +171,7 @@ void CollisionEngine::Solve() {
                 Collision::IsColliding(hurtbox->box, hitbox->box, bullet->angle,
                                        player->angle)) {
                 player->NotifyCollision(*bullet);
-                curBulletOtherCollisions.emplace(bullet->weak, player->weak);
+                curCollisionPairs.emplace(bullet->weak, player->weak);
             }
         }
 
@@ -179,13 +180,10 @@ void CollisionEngine::Solve() {
             if (Collision::IsColliding(hurtbox->box, vterrain.c->box,
                                        bullet->angle, vterrain.go->angle)) {
                 vterrain.go->NotifyCollision(*bullet);
-                curBulletOtherCollisions.emplace(bullet->weak,
-                                                 vterrain.go->weak);
+                curCollisionPairs.emplace(bullet->weak, vterrain.go->weak);
             }
         }
     }
-
-    processBulletOtherCollisions(curBulletOtherCollisions);
 
     // Trigger--Player/Entity
     for (auto& trigger : triggers) {
@@ -197,6 +195,7 @@ void CollisionEngine::Solve() {
             if (e->box.CollidesWith(tbox)) {
                 trigger.go->NotifyCollision(entity);
                 entity.NotifyCollision(*trigger.go);
+                curCollisionPairs.emplace(trigger.go->weak, entity.weak);
             }
         };
 
@@ -205,6 +204,8 @@ void CollisionEngine::Solve() {
             process(*entity);
         }
     }
+
+    processCollisionPairs(curCollisionPairs);
 }
 
 bool CollisionEngine::TerrainContains(const Vec2<Iso> point) {
@@ -260,29 +261,26 @@ inline chunk2 CollisionEngine::IsoColliderChunk(IsoCollider* iso) {
     return Chunk2(iso->box.Center().transmute<Iso>().toCart());
 }
 
-void CollisionEngine::processBulletOtherCollisions(
-    set<GOPair>& currentCollisions) {
+void CollisionEngine::processCollisionPairs(set<GOPair>& currentCollisions) {
     // Collision enter
-    for (auto& [bullet, other] : currentCollisions) {
-        if (!bullet.expired() && !other.expired() &&
-            !bulletOtherCollisions.count({bullet, other})) {
-            auto b = bullet.lock();
-            auto o = other.lock();
-            b->NotifyCollisionEnter(*o);
-            o->NotifyCollisionEnter(*b);
+    for (auto& [a, b] : currentCollisions) {
+        if (!a.expired() && !b.expired() && !collisionPairs.count({a, b})) {
+            auto x = a.lock();
+            auto y = b.lock();
+            x->NotifyCollisionEnter(*y);
+            y->NotifyCollisionEnter(*x);
         }
     }
 
     // Collision leave
-    for (auto& [bullet, other] : bulletOtherCollisions) {
-        if (!bullet.expired() && !other.expired() &&
-            !currentCollisions.count({bullet, other})) {
-            auto b = bullet.lock();
-            auto o = other.lock();
-            b->NotifyCollisionLeave(*o);
-            o->NotifyCollisionLeave(*b);
+    for (auto& [a, b] : collisionPairs) {
+        if (!a.expired() && !b.expired() && !currentCollisions.count({a, b})) {
+            auto x = a.lock();
+            auto y = b.lock();
+            x->NotifyCollisionLeave(*y);
+            y->NotifyCollisionLeave(*x);
         }
     }
 
-    bulletOtherCollisions = currentCollisions;
+    collisionPairs = currentCollisions;
 }

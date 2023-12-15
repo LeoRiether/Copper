@@ -179,7 +179,8 @@ void Companion::updateState(float dt) {
         }
         case Firing: {
             firingTimeout.Update(dt);
-            if (firingTimeout.Get() >= firingTimeoutSecs) {
+            if (Player::player->powerups.ApplyToBulletTimeout(
+                    firingTimeout.Get()) >= firingTimeoutSecs) {
                 changeState(Looking);
             }
             break;
@@ -266,6 +267,7 @@ void Companion::NotifyCollisionEnter(GameObject& other) {
         
 		if (explosion)
 				return;
+
         other.RequestDelete();
     }
 }

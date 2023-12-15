@@ -3,6 +3,7 @@
 #include <memory>
 #include <optional>
 
+#include "Powerups.h"
 #include "CType.h"
 #include "Component.h"
 #include "Consts.h"
@@ -43,6 +44,7 @@ class Player : public Component {
 
     int hp{GameData::playerHp};
     int hpLoss{0};
+    Timer hpLossTimer{};
 
     Vec2<Cart> moveVec{};
 
@@ -55,8 +57,6 @@ class Player : public Component {
     AttackState attackState{};
     Timer stepsTimer{};
     Timer trailTimer{};
-
-    Timer hpLossTimer{};
 
     Vec2<Cart> knockbackVelocity{0, 0};
 
@@ -86,4 +86,9 @@ class Player : public Component {
     void ChangeState(State newState);
     /* Only calls ChangeState if state != newState */
     void MaybeChangeState(State newState);
+
+
+    Powerups powerups{};
+    void AddPowerup(Powerups::Kind);
+    void RemovePowerup(Powerups::Kind);
 };

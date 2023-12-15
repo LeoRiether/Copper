@@ -49,8 +49,6 @@ GameObject* GameObject::AddComponent(Component* cmp) {
 }
 
 // NOTE: components are removed without maintaining order
-// PERF: this could be O(same-key components) now, but I don't think the method
-// is even used ever
 GameObject* GameObject::RemoveComponent(Component* cmp) {
     auto key = cmp->Key();
     auto& cs = components[key];
