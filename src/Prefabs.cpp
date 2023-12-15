@@ -47,7 +47,7 @@ GameObject* MakePlayer() {
     go->AddComponent(new Player{*go});
     go->AddComponent((new IsoCollider{*go})
                          ->WithTag(tag::Player)
-                         ->WithBase({ 368.171, 138.745, 124.892, 122.601 })
+                         ->WithBase({368.171, 138.745, 124.892, 122.601})
                          ->ScaleToSprite());
     go->AddComponent((new Collider{*go})
                          ->WithBase({97.716, 56.2834, 41.2575, 101.234})
@@ -112,8 +112,8 @@ GameObject* MakeEnemyDistancer() {
 GameObject* MakeBarril() {
     auto go = new GameObject{};
     auto sprite = new Sprite{*go, ASSETS "/img/Barris.png"};
-	go->box.w = sprite->SheetWidth();
-	go->box.h = sprite->SheetHeight();
+    go->box.w = sprite->SheetWidth();
+    go->box.h = sprite->SheetHeight();
     go->AddComponent(sprite);
     go->AddComponent((new IsoCollider{*go})
                          ->WithTag(tag::Terrain)
@@ -198,7 +198,7 @@ GameObject* MakeExplosion1() {
 GameObject* MakeExplosion3(Vec2<Cart> scale) {
     auto go = new GameObject{};
     auto sprite = new Sprite{*go, ASSETS "/img/explosion-3.png"};
-	sprite->SetScale(scale);
+    sprite->SetScale(scale);
     auto animation = Animation::horizontal(*go, *sprite, 10, 0.09);
     animation->Play("default", false);  // kickstart box
     go->AddComponent(sprite);
@@ -351,18 +351,70 @@ GameObject* MakeHitMarker(int dmg) {
 }
 
 GameObject* MakeCoin() {
-	auto coin = new GameObject{};
-	auto coinSprite = new Sprite{*coin,
-		ASSETS "/img/lego_studs.png"};
-	coinSprite->SetScale(0.5);
-	auto animation = Animation::horizontal(*coin,
-			*coinSprite,
-			32, 0.05);
-	animation->Play("default", true);
-	coin->AddComponent(coinSprite);
-	coin->AddComponent(animation);
-	coin->AddComponent(new Coin{*coin});
-	coin->AddComponent((new IsoCollider{*coin})->WithTag(tag::Trigger)
-			->WithBase({50, 20.9493, 60, 50}));
-	return coin;
+    auto coin = new GameObject{};
+    auto coinSprite = new Sprite{*coin, ASSETS "/img/lego_studs.png"};
+    coinSprite->SetScale(0.5);
+    auto animation = Animation::horizontal(*coin, *coinSprite, 32, 0.05);
+    animation->Play("default", true);
+    coin->AddComponent(coinSprite);
+    coin->AddComponent(animation);
+    coin->AddComponent(new Coin{*coin});
+    coin->AddComponent((new IsoCollider{*coin})
+                           ->WithTag(tag::Trigger)
+                           ->WithBase({50, 20.9493, 60, 50}));
+    return coin;
+}
+
+GameObject* MakeC1() {
+    auto go = new GameObject{};
+    auto sprite = new Sprite{*go, ASSETS "/img/props/c1.png"};
+    sprite->SetScale(0.5f);
+    go->AddComponent(sprite);
+    go->AddComponent(
+        (new IsoCollider{*go})->WithBase({ 448, 72, 321, 379 })->WithTag(tag::Terrain)->ScaleToSprite());
+    return go;
+}
+
+GameObject* MakeC2() {
+    auto go = new GameObject{};
+    auto sprite = new Sprite{*go, ASSETS "/img/props/c2.png"};
+    sprite->SetScale(0.5f);
+    go->AddComponent(sprite);
+    go->AddComponent(
+        (new IsoCollider{*go})->WithBase({ 448, 72, 321, 379 })->WithTag(tag::Terrain)->ScaleToSprite());
+    return go;
+}
+
+GameObject* MakeC3() {
+    auto go = new GameObject{};
+    auto sprite = new Sprite{*go, ASSETS "/img/props/c3.png"};
+    sprite->SetScale(0.5f);
+    go->AddComponent(sprite);
+    go->AddComponent(
+        (new IsoCollider{*go})->WithBase({ 448, 72, 321, 379 })->WithTag(tag::Terrain)->ScaleToSprite());
+    return go;
+}
+
+GameObject* MakeBarril2() {
+    auto go = new GameObject{};
+    auto sprite = new Sprite{*go, ASSETS "/img/props/b2.png"};
+    go->box.w = sprite->SheetWidth();
+    go->box.h = sprite->SheetHeight();
+    go->AddComponent(sprite);
+    go->AddComponent((new IsoCollider{*go})
+                         ->WithTag(tag::Terrain)
+                         ->WithBase({338.457, 91.8543, 110.887, 109.314}));
+    go->AddComponent((new IsoCollider{*go})
+                         ->WithTag(tag::Terrain)
+                         ->WithBase({260.338, 86.0871, 82.0511, 166.461}));
+    go->AddComponent((new Collider{*go})
+                         ->WithTag(tag::VTerrain)
+                         ->WithBase({74.5427, 2.52368, 96.0102, 154.993}));
+    go->AddComponent((new Collider{*go})
+                         ->WithTag(tag::VTerrain)
+                         ->WithBase({1.47008, 42.173, 79.2986, 103.219}));
+    go->AddComponent((new BulletShaker{*go}));
+    go->AddComponent(new OverheadHpBar{*go, 150, 150});
+    go->AddComponent(new Exploder{*go});
+    return go;
 }

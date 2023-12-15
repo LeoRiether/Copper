@@ -48,8 +48,8 @@ void MakeStage1(StageState& s, string stage) {
 
     // min enemies
     std::unordered_map<string, int> minEnemy;
-    minEnemy["main"] = 4;
-    minEnemy["the one on the top left"] = 3;
+    minEnemy["main"] = 7;
+    minEnemy["the one on the top left"] = 6;
 
     std::unordered_map<string, __Component> components;
     components["main"] = {
@@ -65,6 +65,19 @@ void MakeStage1(StageState& s, string stage) {
                 MakeVigaB()->WithFootAt(worldPos({162, 132})),
                 MakeVigaB()->WithFootAt(worldPos({162, 131})),
                 MakeVigaB()->WithFootAt(worldPos({162, 130})),
+                MakeC1()->WithFootAt(worldPos({231, 212})),
+                MakeC1()->WithFootAt(worldPos({159, 153})),
+                MakeC2()->WithFootAt(worldPos({160, 154})),
+                MakeC1()->WithFootAt(worldPos({161, 155})),
+                MakeC2()->WithFootAt(worldPos({162, 156})),
+                MakeC3()->WithFootAt(worldPos({163, 157})),
+                MakeC3()->WithFootAt(worldPos({158, 155})),
+                MakeC2()->WithFootAt(worldPos({159, 157})),
+
+                MakeBarril()->WithFootAt(worldPos({161, 142})),
+                MakeBarril()->WithFootAt(worldPos({167, 145})),
+                MakeBarril()->WithFootAt(worldPos({160, 125})),
+                MakeBarril()->WithFootAt(worldPos({173, 129})),
 
                 // Enemies
                 MakeEnemyFollower()->WithFootAt(worldPos({149, 127})),
@@ -129,7 +142,8 @@ void MakeStage1(StageState& s, string stage) {
 
     // Select enemies (its rly ugly sry)
     int enemyNumber = 0;
-    for (auto go : components[stage].gen()) {
+    auto genobjs = components[stage].gen();
+    for (auto go : genobjs) {
         if (go->tags.test(tag::Enemy)) {enemyNumber++;}
     }
 
@@ -173,8 +187,7 @@ void MakeStage1(StageState& s, string stage) {
         MakeCompanion()->WithFootAt(base - Vec2<Cart>{-100, -100}));
 
     int i = 0;
-    for (auto go : c.gen()) {
-
+    for (auto go : genobjs) {
         if (go->tags.test(tag::Enemy)) {
             if (!enemySelected[i]) {
                 delete go;
