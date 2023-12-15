@@ -67,7 +67,7 @@ Dialog::Dialog(GameObject &go, std::string dialogFile)
   auto speakerGo = new GameObject{};
   auto speakerSprite = new Sprite{*speakerGo, ASSETS "/img/Copper_d.png"};
   speakerGo->AddComponent(speakerSprite);
-  speakerSprite->SetScale(0.2);
+  speakerSprite->SetScale(0.7);
   speakerGo->box.SetTopLeft(Left);
   speaker = shared_ptr<GameObject>{speakerGo};
 }

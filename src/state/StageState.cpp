@@ -58,7 +58,7 @@ void StageState::Start() {
     //////////////////////////////
     //        Load Stage        //
     //////////////////////////////
-    MakeStage1(*this, "main");
+    MakeStage1(*this, "the one with dialogs");
 
     /////////////////////////////////////
     //        Controls Tutorial        //

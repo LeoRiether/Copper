@@ -130,6 +130,28 @@ void MakeStage1(StageState& s, string stage) {
             };
         },
     };
+    components["the one with dialogs"] = {
+        {14, 154},
+        [&]() {
+            GameObject* go;
+            return vector<GameObject*>{
+                MakeDialogTrigger({955, 17845, 1000, 1000}
+						, ASSETS "/dialog/initial.txt"),
+                MakeDialogTrigger({19765, 19447, 200, 200}
+						, ASSETS "/dialog/sample.txt"),
+                MakeDialogTrigger({19765, 19447, 200, 200}
+						, ASSETS "/dialog/sample.txt"),
+
+                (go = new GameObject{})
+                    ->AddComponent((new IsoCollider{*go})
+                                       ->WithTag(tag::Trigger)
+                                       ->WithBase({1191, 12765, 2043 - 1191,
+                                                   13585 - 12765}))
+                    ->AddComponent(new EndOfStageTrigger{*go}),
+
+            };
+        },
+    };
 
     vector<string> componentIds;
     componentIds.reserve(components.size());
