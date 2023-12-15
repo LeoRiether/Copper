@@ -11,7 +11,6 @@ class CoinCounter : public Component {
 	   inline CType Key() const { return CType::CoinCounter; }
 
 	   void AddCoin();
-	   Vec2<Cart> GetPos() {return associated.box.Center();}
 
    private:
 	   static int coins; 

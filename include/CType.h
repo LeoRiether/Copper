@@ -38,6 +38,7 @@ enum class CType {
 	Tooltip,
     OverheadHpBar,
     Slash,
+	Exploder,
     DoubledBullets,
     Speedy,
     MarioStar,
@@ -46,4 +47,5 @@ enum class CType {
     HitMarker,
 	CoinCounter,
 	Coin,
+	EnemyCounter,
 };

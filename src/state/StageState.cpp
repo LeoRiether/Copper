@@ -14,6 +14,7 @@
 #include "component/Animation.h"
 #include "component/CoinCounter.h"
 #include "component/Dialog.h"
+#include "component/EnemyCounter.h"
 #include "component/FPSCounter.h"
 #include "component/InfiniteBg.h"
 #include "component/Sound.h"
@@ -81,6 +82,10 @@ void StageState::Start() {
 	coinCounterGo->AddComponent(new CoinCounter{*coinCounterGo});
 	RequestAddObject(coinCounterGo);
 
+	auto enemyCountergo = new GameObject{};
+	enemyCountergo->AddComponent(new EnemyCounter{*enemyCountergo});
+	RequestAddObject(enemyCountergo);
+
     StartArray();
     started = true;
 
@@ -128,6 +133,11 @@ void StageState::Update(float dt) {
             if (go->tags.test(tag::Enemy)) go->RequestDelete();
         }
     }
+
+	if (input.KeyPress(SDL_SCANCODE_B)) {
+		RequestAddObject(MakeBarril()->WithCenterAt(
+					{input.MouseX(), input.MouseY()}));
+	}
 
 	if (input.KeyPress(SDL_SCANCODE_I)) {
 		RequestAddObject(MakeCoin()->WithCenterAt({input.MouseX(), input.MouseY()}));

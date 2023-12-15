@@ -14,6 +14,7 @@
 #include "component/ControlsTutorial.h"
 #include "component/Dialog.h"
 #include "component/DialogTrigger.h"
+#include "component/Exploder.h"
 #include "component/HitMarker.h"
 #include "component/IsoCollider.h"
 #include "component/KeepSoundAlive.h"
@@ -111,6 +112,8 @@ GameObject* MakeEnemyDistancer() {
 GameObject* MakeBarril() {
     auto go = new GameObject{};
     auto sprite = new Sprite{*go, ASSETS "/img/Barris.png"};
+	go->box.w = sprite->SheetWidth();
+	go->box.h = sprite->SheetHeight();
     go->AddComponent(sprite);
     go->AddComponent((new IsoCollider{*go})
                          ->WithTag(tag::Terrain)
@@ -125,6 +128,8 @@ GameObject* MakeBarril() {
                          ->WithTag(tag::VTerrain)
                          ->WithBase({1.47008, 42.173, 79.2986, 103.219}));
     go->AddComponent((new BulletShaker{*go}));
+    go->AddComponent(new OverheadHpBar{*go, 150, 150});
+    go->AddComponent(new Exploder{*go});
     return go;
 }
 
@@ -190,9 +195,10 @@ GameObject* MakeExplosion1() {
     return go;
 }
 
-GameObject* MakeExplosion3() {
+GameObject* MakeExplosion3(Vec2<Cart> scale) {
     auto go = new GameObject{};
     auto sprite = new Sprite{*go, ASSETS "/img/explosion-3.png"};
+	sprite->SetScale(scale);
     auto animation = Animation::horizontal(*go, *sprite, 10, 0.09);
     animation->Play("default", false);  // kickstart box
     go->AddComponent(sprite);

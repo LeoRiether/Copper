@@ -37,6 +37,8 @@ void BulletShaker::NotifyCollision(GameObject& other) {
         hitpoint = hitpoint + Vec2<Cart>{25, 0}.GetRotated(other.angle);
         associated.RequestAdd(MakeExplosion1()->WithCenterAt(hitpoint));
 
+		if (other.tags.test(tag::Explosion))
+				return;
         other.RequestDelete();
     }
 }

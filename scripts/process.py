@@ -11,6 +11,7 @@ Resize = namedtuple("Resize", ["path", "width", "height"], defaults=(None, None,
 Trim = namedtuple("Trim", ["path"])
 Concat = namedtuple("Concat", ["path", "inputs"])
 HConcat = namedtuple("HConcat", ["path", "inputs"])
+Crop = namedtuple("Crop", ["path"])
 
 RULES = [
     Trim("img/Barris.png"),

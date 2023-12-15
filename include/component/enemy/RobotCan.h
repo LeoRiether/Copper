@@ -29,7 +29,7 @@ class RobotCan : public Component {
     void Render(Vec2<Cart> camera);
     inline CType Key() const { return CType::RobotCan; }
 
-    void NotifyCollision(GameObject&);
+    void NotifyCollisionEnter(GameObject&);
 
     RobotCan* WithStopDistance(float value);
     RobotCan* WithHp(int hp);

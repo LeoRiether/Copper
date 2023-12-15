@@ -58,7 +58,7 @@ void Tooltip::SetText(std::string str){
 }
 
 void Tooltip::FadeIn(){
-	if (fadingIn > 0 || !invis)
+	if (fadingIn > 0)
 		return;
 	if (fadingOut > 0){
 		fadingIn = fadingOut;
@@ -70,7 +70,7 @@ void Tooltip::FadeIn(){
 }
 
 void Tooltip::FadeOut(){
-	if (fadingOut > 0 || invis)
+	if (fadingOut > 0)
 		return;
 	if (fadingIn > 0){
 		fadingOut = fadingIn;

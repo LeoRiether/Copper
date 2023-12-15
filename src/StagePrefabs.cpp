@@ -212,9 +212,22 @@ void MakeStage1(StageState& s, string stage) {
             }
         }
     };
+    tilemapRenderLayer = -4;
     addTilemap(ASSETS "/map/Padrão.png", 13, 19,
                ASSETS "/map/Salas copper V2_Copy of Group 2_FLOOR.csv", {0, 0},
                false, true, true);
+    tilemapRenderLayer = -3;
+    addTilemap(ASSETS "/map/tilesets v4.0/floor/6.png", 36, 7,
+               ASSETS "/map/tilesets v4.0/csv/Salas copper V2_Group 6_-Chao1.csv", {70, -2},
+               false, true, false);
+    tilemapRenderLayer = -2;
+    addTilemap(ASSETS "/map/tilesets v4.0/floor/6.png", 36, 7,
+               ASSETS "/map/tilesets v4.0/csv/Salas copper V2_Group 6_-Chao2.csv", {70, -11},
+               false, true, false);
+    tilemapRenderLayer = -1;
+    addTilemap(ASSETS "/map/tilesets v4.0/floor/6.png", 36, 7,
+               ASSETS "/map/tilesets v4.0/csv/Salas copper V2_Group 6_-Chao3.csv", {70, -11},
+               false, true, false);
     tilemapRenderLayer = 0;
     addTilemap(ASSETS "/map/Ferrugem.png", 13, 19,
                ASSETS "/map/Salas copper V2_Copy of Group 2_Tile Layer 11.csv",

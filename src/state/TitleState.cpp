@@ -5,9 +5,11 @@
 #include "GameObject.h"
 #include "InputManager.h"
 #include "Music.h"
+#include "component/Animation.h"
 #include "component/Text.h"
 #include "component/TextBlinker.h"
 #include "component/TextFadeIn.h"
+#include "Prefabs.h"
 #include "state/StageState.h"
 #include "state/ViewerState.h"
 #include "util.h"
@@ -38,6 +40,7 @@ void TitleState::Update(float dt) {
     if (input.KeyPress(SDL_SCANCODE_SPACE) ||
         input.ControllerPress(SDL_CONTROLLER_BUTTON_A)) {
         log("pushing StageState");
+		MakeOneOffAudio(ASSETS "/audio/metal-pipe.wav");
         Game::Instance().RequestPush(new StageState{});
     }
 
