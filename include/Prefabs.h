@@ -29,3 +29,7 @@ GameObject* MakeLifeBar();
 GameObject* MakeRandomPowerup();
 GameObject* MakeHitMarker(int dmg);
 GameObject* MakeCoin();
+GameObject* MakeC1();
+GameObject* MakeC2();
+GameObject* MakeC3();
+GameObject* MakeBarril2();
