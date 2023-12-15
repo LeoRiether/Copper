@@ -58,15 +58,18 @@ void StageState::Start() {
     //////////////////////////////
     //        Load Stage        //
     //////////////////////////////
-    MakeStage1(*this, "main");
+    if (GameData::stage == 0)
+        MakeStage1(*this, "the one with dialogs");
+    else
+        MakeStage1(*this);
 
     /////////////////////////////////////
     //        Controls Tutorial        //
     /////////////////////////////////////
-    if (GameData::firstStage) {
-        GameData::firstStage = false;
+    if (GameData::stage == 1) {
         RequestAddObject(MakeControlsTutorial());
     }
+    GameData::stage++;
 
     ///////////////////////////
     //          HUD          //
