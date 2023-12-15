@@ -5,19 +5,19 @@
 #include "component/Sprite.h"
 #include "component/Text.h"
 #include "Game.h"
+#include "GameData.h"
 #include "util.h"
 
 #define MODULE "CoinCounter"
 
-int CoinCounter::coins = 0;
-int CoinCounter::target = 0;
 CoinCounter* CoinCounter::coinCounter = nullptr;
 CoinCounter::CoinCounter(GameObject& go): Component(go){
+	target = GameData::coins;
     auto text = new Text{go,
                          ASSETS "/font/AldotheApache.ttf",
                          30,
                          Text::Blended,
-                         std::to_string(coins),
+                         std::to_string(GameData::coins),
                          colorFromHex("#FF0000"),
 						 0,
 						 true};
@@ -40,9 +40,9 @@ CoinCounter::CoinCounter(GameObject& go): Component(go){
 }
 
 void CoinCounter::Update(float) {
-	if (coins < target){
+	if (GameData::coins < target){
 		auto text = (Text*)associated.GetComponent(CType::Text);
-		text->SetText(std::to_string(++coins));
+		text->SetText(std::to_string(++GameData::coins));
 	}
 }
 
