@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "Consts.h"
 #include "Game.h"
+#include "GameData.h"
 #include "Prefabs.h"
 #include "component/Animation.h"
 #include "component/Bullet.h"
@@ -188,4 +189,6 @@ void RobotCan::Die() {
 			->WithCenterAt(center +
 				Vec2<Cart>{randi(0,30), randi(0,30)}));
 	}
+
+    GameData::enemiesKilled++;
 }

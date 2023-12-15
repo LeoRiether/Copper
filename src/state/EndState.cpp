@@ -45,30 +45,56 @@ void EndState::Render() { RenderArray(); }
 
 void EndState::Start() {
 
-  {
-    auto text = GameData::playerVictory?"VICTORY":"DEFEAT";
-    auto go = new GameObject{};
-    go->AddComponent(new Text{*go, ASSETS "/font/THEROOTS.TTF", 120,
-                              Text::Blended, text,
-                              colorFromHex("CB6D51")});
-    go->AddComponent(new TextFadeIn{*go, 1.0f});
-    go->box.SetCenter({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f - 50});
-    RequestAddObject(go);
-  }
+
 
   if (GameData::playerVictory) {
-    // (y)
+    {
+      auto bgGO = new GameObject{};
+      auto sprite = new Sprite{*bgGO, ASSETS "/img/Tela_vitoria.png"};
+      sprite->SetScale((float)SCREEN_WIDTH / sprite->SheetWidth());
+      bgGO->AddComponent(sprite);
+      RequestAddObject(bgGO);
+    }
   } else {
+    {
+      auto bgGO = new GameObject{};
+      auto sprite = new Sprite{*bgGO, ASSETS "/img/Tela derrota.png"};
+      sprite->SetScale((float)SCREEN_WIDTH / sprite->SheetWidth());
+      bgGO->AddComponent(sprite);
+      RequestAddObject(bgGO);
+    }
     {
       auto go = new GameObject{};
       auto& input = InputManager::Instance();
       auto text = "try again press SPACE";
-      go->AddComponent(new Text{*go, ASSETS "/font/THEROOTS.TTF", 30,
+      go->AddComponent(new Text{*go, ASSETS "/font/THEROOTS.TTF", 20,
                                 Text::Blended, text, colorFromHex("dda08d")});
       go->AddComponent(new TextBlinker{*go, 4.0f});
-      go->box.SetCenter({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f + 140});
+      go->box.SetCenter({SCREEN_WIDTH / 2.0f + 250, SCREEN_HEIGHT / 2.0f - 150});
       RequestAddObject(go);
     }
+  }
+
+  {
+    auto text = GameData::playerVictory?"VICTORY":"DEFEAT";
+    auto go = new GameObject{};
+    go->AddComponent(new Text{*go, ASSETS "/font/THEROOTS.TTF", 100,
+                              Text::Blended, text,
+                              colorFromHex("CB6D51")});
+    go->AddComponent(new TextFadeIn{*go, 1.0f});
+    go->box.SetCenter({SCREEN_WIDTH / 2.0f + 250, SCREEN_HEIGHT / 2.0f - 200});
+    RequestAddObject(go);
+  }
+
+  {
+    auto coinCounterGo = new GameObject{};
+    coinCounterGo->AddComponent(new CoinCounter{*coinCounterGo});
+    RequestAddObject(coinCounterGo);
+
+    EnemyCount = GameData::enemiesKilled;
+    auto enemyCountergo = new GameObject{};
+    enemyCountergo->AddComponent(new EnemyCounter{*enemyCountergo});
+    RequestAddObject(enemyCountergo);
   }
 
   // bgMusic.Play();
