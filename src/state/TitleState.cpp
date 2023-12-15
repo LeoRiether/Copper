@@ -59,22 +59,22 @@ void TitleState::Start() {
 
     {
         auto bgGO = new GameObject{};
-        auto sprite = new Sprite{*bgGO, ASSETS "/img/dim_splashscreen.png"};
+        auto sprite = new Sprite{*bgGO, ASSETS "/img/Capa.png"};
         sprite->SetScale((float)SCREEN_WIDTH / sprite->SheetWidth());
         bgGO->AddComponent(sprite);
         RequestAddObject(bgGO);
     }
 
-    {
-        auto go = new GameObject{};
-        go->AddComponent(new Text{*go, ASSETS "/font/THEROOTS.TTF", 120,
-                                  Text::Blended, "COPPER",
-                                  colorFromHex("CB6D51")});
-        go->AddComponent(new TextFadeIn{*go, 4.0f});
-        // go->box.SetFoot(Vec2<Cart>{SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 64});
-        go->box.SetCenter({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f});
-        RequestAddObject(go);
-    }
+    // {
+    //     auto go = new GameObject{};
+    //     go->AddComponent(new Text{*go, ASSETS "/font/THEROOTS.TTF", 120,
+    //                               Text::Blended, "COPPER",
+    //                               colorFromHex("CB6D51")});
+    //     go->AddComponent(new TextFadeIn{*go, 4.0f});
+    //     // go->box.SetFoot(Vec2<Cart>{SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 64});
+    //     go->box.SetCenter({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f});
+    //     RequestAddObject(go);
+    // }
 
     {
         auto go = new GameObject{};
@@ -84,7 +84,7 @@ void TitleState::Start() {
         go->AddComponent(new Text{*go, ASSETS "/font/THEROOTS.TTF", 30,
                                   Text::Blended, text, colorFromHex("dda08d")});
         go->AddComponent(new TextBlinker{*go, 4.0f});
-        go->box.SetCenter({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f + 140});
+        go->box.SetCenter({SCREEN_WIDTH / 2.0f + 200, SCREEN_HEIGHT / 2.0f + 100});
         RequestAddObject(go);
     }
 

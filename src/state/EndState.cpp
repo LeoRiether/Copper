@@ -27,7 +27,7 @@ void EndState::LoadAssets() {
 void EndState::Update(float dt) {
   if(leave) {
     timer += dt;
-    if(timer>1) {
+    if(timer>0.2) {
       GameData::playerHp = 100;
       Game::Instance().RequestPop();
       Game::Instance().RequestPush(new StageState{});
