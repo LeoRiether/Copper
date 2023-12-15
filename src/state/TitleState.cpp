@@ -5,6 +5,7 @@
 #include "GameObject.h"
 #include "InputManager.h"
 #include "Music.h"
+#include "component/Animation.h"
 #include "component/Text.h"
 #include "component/TextBlinker.h"
 #include "component/TextFadeIn.h"

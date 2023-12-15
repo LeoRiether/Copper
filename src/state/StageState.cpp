@@ -15,6 +15,7 @@
 #include "component/Animation.h"
 #include "component/CoinCounter.h"
 #include "component/Dialog.h"
+#include "component/EnemyCounter.h"
 #include "component/FPSCounter.h"
 #include "component/InfiniteBg.h"
 #include "component/Sound.h"
@@ -80,6 +81,10 @@ void StageState::Start() {
 	auto coinCounterGo = new GameObject{};
 	coinCounterGo->AddComponent(new CoinCounter{*coinCounterGo});
 	RequestAddObject(coinCounterGo);
+
+	auto enemyCountergo = new GameObject{};
+	enemyCountergo->AddComponent(new EnemyCounter{*enemyCountergo});
+	RequestAddObject(enemyCountergo);
 
     StartArray();
     started = true;
