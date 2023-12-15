@@ -47,4 +47,5 @@ enum class CType {
     HitMarker,
 	CoinCounter,
 	Coin,
+	EnemyCounter,
 };
