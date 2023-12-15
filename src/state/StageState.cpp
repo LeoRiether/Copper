@@ -12,6 +12,8 @@
 #include "InputManager.h"
 #include "Prefabs.h"
 #include "StagePrefabs.h"
+#include "component/Animation.h"
+#include "component/CoinCounter.h"
 #include "component/Dialog.h"
 #include "component/FPSCounter.h"
 #include "component/InfiniteBg.h"
@@ -75,6 +77,10 @@ void StageState::Start() {
     tooltipGo->AddComponent(new Tooltip{*tooltipGo});
     RequestAddObject(tooltipGo);
 
+	auto coinCounterGo = new GameObject{};
+	coinCounterGo->AddComponent(new CoinCounter{*coinCounterGo});
+	RequestAddObject(coinCounterGo);
+
     StartArray();
     started = true;
 
@@ -122,6 +128,10 @@ void StageState::Update(float dt) {
             if (go->tags.test(tag::Enemy)) go->RequestDelete();
         }
     }
+
+	if (input.KeyPress(SDL_SCANCODE_I)) {
+		RequestAddObject(MakeCoin()->WithCenterAt({input.MouseX(), input.MouseY()}));
+	}
 
     // Handle updates
     CollisionEngine::Update(objects);

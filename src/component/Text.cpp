@@ -8,7 +8,7 @@
 #define MODULE "Text"
 
 Text::Text(GameObject& associated, string fontFile, int fontSize,
-           TextStyle style, string text, SDL_Color color, int wp)
+           TextStyle style, string text, SDL_Color color, int wp, bool followsCamera)
     : Component(associated),
       font(nullptr),
       texture(nullptr),
@@ -17,7 +17,8 @@ Text::Text(GameObject& associated, string fontFile, int fontSize,
       fontFile(std::move(fontFile)),
       fontSize(fontSize),
       color(color),
-	  wrapWidth(wp){
+	  wrapWidth(wp),
+	  followsCamera(followsCamera){
     if (this->text.empty()) {
         warn(
             "constructor called with empty text. This will probably not work "
@@ -34,8 +35,12 @@ void Text::Update(float) {}
 void Text::Render(Vec2<Cart> camera) {
     auto& game = Game::Instance();
     SDL_Rect clipRect{0, 0, (int)associated.box.w, (int)associated.box.h};
-    SDL_Rect destRect{int(associated.box.x - camera.x),
-                      int(associated.box.y - camera.y), clipRect.w, clipRect.h};
+	SDL_Rect destRect;
+	if (followsCamera) {
+    destRect = {int(associated.box.x), int(associated.box.y), clipRect.w, clipRect.h};
+	} else {
+    destRect = {int(associated.box.x - camera.x), int(associated.box.y - camera.y), clipRect.w, clipRect.h};
+	}
     SDL_RenderCopyEx(game.Renderer(), texture->inner, &clipRect, &destRect, 0.0,
                      nullptr, SDL_FLIP_NONE);
 }

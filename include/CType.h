@@ -44,4 +44,6 @@ enum class CType {
     StrongerAttack,
     Pickupable,
     HitMarker,
+	CoinCounter,
+	Coin,
 };

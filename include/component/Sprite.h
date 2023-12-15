@@ -18,11 +18,11 @@ class Sprite : public Component {
     bool hasShadow{false};
     float flashTimeout{0};
 
-    bool followsCamera;
 
    public:
     SDL_Rect clipRect;
     uint8_t Alpha{255};
+    bool followsCamera;
 
     Sprite(GameObject& associated, const string& file, bool followsCamera=false);
     ~Sprite();

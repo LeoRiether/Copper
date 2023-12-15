@@ -39,6 +39,10 @@ struct Vec2 {
         return x == 0 && y == 0 ? Vec2{0, 0} : (*this / norm());
     }
 
+	inline float magnitude() const {return sqrt(pow(x, 2) + pow(y, 2)); }
+
+	inline float dist(Vec2 v) const { return (*this - v).magnitude(); }
+
     inline float angle() const { return std::atan2(y, x); }
 
     inline float dot(const Vec2<CoordsSystem> rhs) const {

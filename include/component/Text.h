@@ -28,10 +28,11 @@ class Text : public Component {
     int fontSize;
     SDL_Color color;
 	int wrapWidth;
+	bool followsCamera;
 
    public:
     Text(GameObject& associated, string fontFile, int fontSize, TextStyle style,
-         string text, SDL_Color color, int wrapWidth = 0);
+         string text, SDL_Color color, int wrapWidth = 0, bool followsCamera = false);
     ~Text();
 
     void Update(float dt);

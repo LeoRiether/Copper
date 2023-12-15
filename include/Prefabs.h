@@ -28,3 +28,4 @@ GameObject* MakeDialogTrigger(Rect base, std::string dialogFile);
 GameObject* MakeLifeBar();
 GameObject* MakeRandomPowerup();
 GameObject* MakeHitMarker(int dmg);
+GameObject* MakeCoin();
