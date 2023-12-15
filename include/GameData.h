@@ -3,7 +3,7 @@
 struct GameData {
     static bool playerVictory;
     static int playerHp;
-    static bool firstStage;
+    static int stage;
 	static int coins;
 	static int enemiesKilled;
 };
