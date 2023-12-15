@@ -1,5 +1,6 @@
 #include "StagePrefabs.h"
 
+#include <iostream>
 #include <functional>
 #include <unordered_map>
 
@@ -137,10 +138,8 @@ void MakeStage1(StageState& s, string stage) {
             return vector<GameObject*>{
                 MakeDialogTrigger({955, 17845, 1000, 1000}
 						, ASSETS "/dialog/initial.txt"),
-                MakeDialogTrigger({19765, 19447, 200, 200}
-						, ASSETS "/dialog/sample.txt"),
-                MakeDialogTrigger({19765, 19447, 200, 200}
-						, ASSETS "/dialog/sample.txt"),
+                MakeDialogTrigger({1094, 14786, 1000, 1000}
+						, ASSETS "/dialog/why.txt"),
 
                 (go = new GameObject{})
                     ->AddComponent((new IsoCollider{*go})
@@ -158,8 +157,10 @@ void MakeStage1(StageState& s, string stage) {
     for (auto& [key, _] : components) {
         componentIds.emplace_back(key);
     }
-
-    if (stage == "") stage = componentIds[randi(0, components.size() - 1)];
+    bool stage_dialogs = stage == "the one with dialogs";
+    if (!stage_dialogs) {
+        while (stage == "" || stage == "the one with dialogs") stage = componentIds[randi(0, components.size() - 1)];
+    }
     log2("Chose stage '%s'", stage.c_str());
 
     // Select enemies (its rly ugly sry)
