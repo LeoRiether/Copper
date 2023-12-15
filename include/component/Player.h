@@ -44,6 +44,7 @@ class Player : public Component {
 
     int hp{GameData::playerHp};
     int hpLoss{0};
+    Timer hpLossTimer{};
 
     Vec2<Cart> moveVec{};
 
@@ -56,8 +57,6 @@ class Player : public Component {
     AttackState attackState{};
     Timer stepsTimer{};
     Timer trailTimer{};
-
-    Timer hpLossTimer{};
 
     Vec2<Cart> knockbackVelocity{0, 0};
 

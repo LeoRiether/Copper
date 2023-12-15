@@ -47,8 +47,9 @@ RULES = [
     Concat(
         "img/copper/spritesheet.png",
         [
-            "img/copper/walk.png",
+            "img/copper/run.png",
             "img/copper/attack.png",
+            "img/copper/dash.png",
         ],
     ),
     Concat(

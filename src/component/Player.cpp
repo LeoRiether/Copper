@@ -32,13 +32,13 @@ Player::Player(GameObject& associated) : Component(associated) {
 
     auto sprite = new Sprite{associated, ASSETS "/img/copper/spritesheet.png"};
     sprite->SetHasShadow(true);
-    sprite->SetScale(150.0f / (sprite->SheetHeight() / 16.0f));
+    sprite->SetScale(150.0f / (sprite->SheetHeight() / 24.0f));
     associated.AddComponent(sprite);
 
     {
         auto anim = new Animation{associated, *sprite};
-        GridKeyframe grid{20, 16, sprite->SheetWidth(), sprite->SheetHeight(),
-                          0.02};
+        GridKeyframe grid{25, 8 * 3, sprite->SheetWidth(),
+                          sprite->SheetHeight(), 0.02};
 
         auto row = [&](int i, int startJ, int frames, float frameTime) {
             Keyframes kf;
@@ -69,14 +69,14 @@ Player::Player(GameObject& associated) : Component(associated) {
             return r;
         };
 
-        anim->AddKeyframes("S", row(0, 0, 20, 0.02));
-        anim->AddKeyframes("SW", row(1, 0, 20, 0.02));
-        anim->AddKeyframes("W", row(2, 0, 20, 0.02));
-        anim->AddKeyframes("NW", row(3, 0, 20, 0.02));
-        anim->AddKeyframes("N", row(4, 0, 20, 0.02));
-        anim->AddKeyframes("NE", row(5, 0, 20, 0.02));
-        anim->AddKeyframes("E", row(6, 0, 20, 0.02));
-        anim->AddKeyframes("SE", row(7, 0, 20, 0.02));
+        anim->AddKeyframes("E", row(0, 0, 25, 0.02));
+        anim->AddKeyframes("SE", row(1, 0, 25, 0.02));
+        anim->AddKeyframes("S", row(2, 0, 25, 0.02));
+        anim->AddKeyframes("SW", row(3, 0, 25, 0.02));
+        anim->AddKeyframes("W", row(4, 0, 25, 0.02));
+        anim->AddKeyframes("NW", row(5, 0, 25, 0.02));
+        anim->AddKeyframes("N", row(6, 0, 25, 0.02));
+        anim->AddKeyframes("NE", row(7, 0, 25, 0.02));
         anim->AddKeyframes("attack_S", row3(8, 0, 20, 0.06));
         anim->AddKeyframes("attack_SW", row3(9, 0, 20, 0.06));
         anim->AddKeyframes("attack_W", row3(10, 0, 20, 0.06));
@@ -85,14 +85,22 @@ Player::Player(GameObject& associated) : Component(associated) {
         anim->AddKeyframes("attack_NE", row3(13, 0, 20, 0.06));
         anim->AddKeyframes("attack_E", row3(14, 0, 20, 0.06));
         anim->AddKeyframes("attack_SE", row3(15, 0, 20, 0.06));
-        anim->AddKeyframes("idle_S", row(0, 3, 1, 1));
-        anim->AddKeyframes("idle_SW", row(1, 3, 1, 1));
-        anim->AddKeyframes("idle_W", row(2, 3, 1, 1));
-        anim->AddKeyframes("idle_NW", row(3, 3, 1, 1));
-        anim->AddKeyframes("idle_N", row(4, 3, 1, 1));
-        anim->AddKeyframes("idle_NE", row(5, 3, 1, 1));
-        anim->AddKeyframes("idle_E", row(6, 3, 1, 1));
-        anim->AddKeyframes("idle_SE", row(7, 3, 1, 1));
+        anim->AddKeyframes("dash_E", row(16, 6, 14 - 6, 0.02));
+        anim->AddKeyframes("dash_SE", row(17, 6, 14 - 6, 0.02));
+        anim->AddKeyframes("dash_S", row(18, 6, 14 - 6, 0.02));
+        anim->AddKeyframes("dash_SW", row(19, 6, 14 - 6, 0.02));
+        anim->AddKeyframes("dash_W", row(20, 6, 14 - 6, 0.02));
+        anim->AddKeyframes("dash_NW", row(21, 6, 14 - 6, 0.02));
+        anim->AddKeyframes("dash_N", row(22, 6, 14 - 6, 0.02));
+        anim->AddKeyframes("dash_NE", row(23, 6, 14 - 6, 0.02));
+        anim->AddKeyframes("idle_E", row(0, 6, 1, 1));
+        anim->AddKeyframes("idle_SE", row(1, 6, 1, 1));
+        anim->AddKeyframes("idle_S", row(2, 6, 1, 1));
+        anim->AddKeyframes("idle_SW", row(3, 3, 1, 1));
+        anim->AddKeyframes("idle_W", row(4, 6, 1, 1));
+        anim->AddKeyframes("idle_NW", row(5, 6, 1, 1));
+        anim->AddKeyframes("idle_N", row(6, 6, 1, 1));
+        anim->AddKeyframes("idle_NE", row(7, 6, 1, 1));
         anim->Play("idle_S");  // just to kickstart the associated.box...
         associated.AddComponent(anim);
     }
@@ -116,7 +124,6 @@ void Player::ChangeState(State newState) {
             break;
         }
         case Dashing: {
-            associated.angle = 0;
             dashState.timeout.Restart();
             break;
         }
@@ -138,8 +145,7 @@ void Player::ChangeState(State newState) {
         }
         case Dashing: {
             dashState = {};
-            associated.angle = PI / 2.3;
-            anim->SoftPlay("idle_" + direction.toString());
+            anim->SoftPlay("dash_" + direction.toString(), false);
             break;
         }
         case Attacking: {
@@ -367,6 +373,15 @@ void Player::UpdatePosition(float dt) {
             break;
         }
         case Dashing: {
+            auto anim = (Animation*)associated.GetComponent(CType::Animation);
+            if (!anim) fail("no associated Animation");
+            if (anim->currentFrame < 3) {
+                dashState.timeSinceStart.Restart();
+                Vec2<Cart> speed = getMoveVec() * dt;
+                associated.box.OffsetBy(speed);
+                break;
+            }
+
             Vec2<Cart> speed = getMoveVec() * 2.5 * dt;
             associated.box.OffsetBy(speed);
             break;

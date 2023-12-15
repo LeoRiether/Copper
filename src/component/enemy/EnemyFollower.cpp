@@ -263,6 +263,11 @@ void EnemyFollower::NotifyCollision(GameObject& other) {
     bool bulletHit = bullet && !bullet->TargetsPlayer();
     bool meleeHit = other.tags.test(tag::PlayerHitbox);
     if (bulletHit || meleeHit) {
+
+        // Player stops loosing HP
+        Player::player->hpLoss = 0;
+        Player::player->hpLossTimer.Restart();
+
         auto bar =
             (OverheadHpBar*)associated.GetComponent(CType::OverheadHpBar);
         if (bar) {

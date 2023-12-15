@@ -46,6 +46,11 @@ void MakeStage1(StageState& s, string stage) {
         return go;
     };
 
+    // min enemies
+    std::unordered_map<string, int> minEnemy;
+    minEnemy["main"] = 4;
+    minEnemy["the one on the top left"] = 3;
+
     std::unordered_map<string, __Component> components;
     components["main"] = {
         {165, 166},
@@ -122,6 +127,26 @@ void MakeStage1(StageState& s, string stage) {
     if (stage == "") stage = componentIds[randi(0, components.size() - 1)];
     log2("Chose stage '%s'", stage.c_str());
 
+    // Select enemies (its rly ugly sry)
+    int enemyNumber = 0;
+    for (auto go : components[stage].gen()) {
+        if (go->tags.test(tag::Enemy)) {enemyNumber++;}
+    }
+
+    vector<int> enemySelected;
+    int count = 0;
+    for (int i=0; i<enemyNumber; i++) {
+        int j = randi(0, 1);
+        if (j) {count++;}
+        else {
+            if(minEnemy[stage]-count > enemyNumber-i) {
+                count++;
+                j = 1;
+            }
+        }
+        enemySelected.emplace_back(j);
+    }
+
     // Fix some coordinates
     auto& c = components[stage];
     c.offset = c.offset + Vec2<Iso>{-2, -8};
@@ -147,10 +172,20 @@ void MakeStage1(StageState& s, string stage) {
     s.RequestAddObject(
         MakeCompanion()->WithFootAt(base - Vec2<Cart>{-100, -100}));
 
+    int i = 0;
     for (auto go : c.gen()) {
-        s.RequestAddObject(go);
 
-        if (go->tags.test(tag::Enemy)) s.EnemyCount++;
+        if (go->tags.test(tag::Enemy)) {
+            if (!enemySelected[i]) {
+                delete go;
+            } else {
+                s.RequestAddObject(go);
+                s.EnemyCount++;
+            }
+            i++;
+        } else {
+            s.RequestAddObject(go);
+        }
     }
 
     auto tilemapRenderLayer = -10;

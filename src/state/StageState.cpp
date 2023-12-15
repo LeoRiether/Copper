@@ -44,6 +44,17 @@ void StageState::Start() {
     RequestAddObject(fpsGo);
 
     //////////////////////////////
+    //        Background        //
+    //////////////////////////////
+    {
+        auto go = new GameObject;
+        go->box = Rect{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+        go->AddComponent(new InfiniteBg{*go, ASSETS "/img/acidbg2.png"});
+        go->renderLayer = -10;
+        RequestAddObject(go);
+    }
+
+    //////////////////////////////
     //        Load Stage        //
     //////////////////////////////
     MakeStage1(*this, "main");

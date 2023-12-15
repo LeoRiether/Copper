@@ -46,7 +46,7 @@ GameObject* MakePlayer() {
     go->AddComponent(new Player{*go});
     go->AddComponent((new IsoCollider{*go})
                          ->WithTag(tag::Player)
-                         ->WithBase({390.975, 153.522, 45.8416, 45.8416})
+                         ->WithBase({ 368.171, 138.745, 124.892, 122.601 })
                          ->ScaleToSprite());
     go->AddComponent((new Collider{*go})
                          ->WithBase({97.716, 56.2834, 41.2575, 101.234})
