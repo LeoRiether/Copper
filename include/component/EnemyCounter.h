@@ -5,10 +5,13 @@
 
 class EnemyCounter : public Component {
    public:
-	   EnemyCounter(GameObject& go, Vec2<Cart> pos = {SCREEN_WIDTH-127, 80});
+	   EnemyCounter(GameObject& go, bool gameData = false);
 	   void Update(float dt);
 
 	   inline CType Key() const { return CType::EnemyCounter; }
+
+	   int enemyCount{0};
+	   bool gameData;
 
 };
 

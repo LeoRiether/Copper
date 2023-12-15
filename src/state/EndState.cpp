@@ -16,6 +16,8 @@
 #include "state/StageState.h"
 #include "util.h"
 
+#define MODULE "EndState"
+
 EndState::EndState() {}
 
 EndState::~EndState() {}
@@ -31,6 +33,7 @@ void EndState::Update(float dt) {
       GameData::playerHp = 100;
       Game::Instance().RequestPop();
       Game::Instance().RequestPush(new StageState{});
+	  GameData::coins = 0;
     }
     return;
   }
@@ -116,6 +119,19 @@ void EndState::Start() {
   // bgGO->box.x = 0;
   // bgGO->box.y = 0;
   // RequestAddObject(bgGO);
+
+	auto coinCounterGo = new GameObject{};
+	coinCounterGo->AddComponent(new CoinCounter{*coinCounterGo});
+	RequestAddObject(coinCounterGo);
+
+	EnemyCount = GameData::enemiesKilled;
+	log2("antes: %d", EnemyCount);
+
+	auto enemyCountergo = new GameObject{};
+	enemyCountergo->AddComponent(new EnemyCounter{*enemyCountergo, true});
+	RequestAddObject(enemyCountergo);
+
+	log2("depois: %d", EnemyCount);
 
 }
 
