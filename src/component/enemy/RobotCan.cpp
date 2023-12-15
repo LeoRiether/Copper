@@ -108,10 +108,11 @@ void RobotCan::Update(float dt) {
 
 void RobotCan::Render(Vec2<Cart>) {}
 
-void RobotCan::NotifyCollision(GameObject& other) {
+void RobotCan::NotifyCollisionEnter(GameObject& other) {
     auto bullet = (Bullet*)other.GetComponent(CType::Bullet);
     bool bulletHit = bullet && !bullet->TargetsPlayer();
     bool meleeHit = other.tags.test(tag::PlayerHitbox);
+	bool explosion = other.tags.test(tag::Explosion);
     if (bulletHit || meleeHit) {
 
         // Player stops loosing HP
@@ -128,7 +129,8 @@ void RobotCan::NotifyCollision(GameObject& other) {
 
         if (bar && bar->Hp() <= 0) {
             Die();
-            other.RequestDelete();
+			if (!explosion)
+				other.RequestDelete();
             return;
         }
 
@@ -153,6 +155,8 @@ void RobotCan::NotifyCollision(GameObject& other) {
         float kb = 150'000 * Game::Instance().DeltaTime();
         knockbackVelocity = Vec2<Cart>{kb, 0}.GetRotated(other.angle);
 
+		if (explosion)
+				return;
         other.RequestDelete();
     }
 }

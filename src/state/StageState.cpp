@@ -129,6 +129,11 @@ void StageState::Update(float dt) {
         }
     }
 
+	if (input.KeyPress(SDL_SCANCODE_B)) {
+		RequestAddObject(MakeBarril()->WithCenterAt(
+					{input.MouseX(), input.MouseY()}));
+	}
+
 	if (input.KeyPress(SDL_SCANCODE_I)) {
 		RequestAddObject(MakeCoin()->WithCenterAt({input.MouseX(), input.MouseY()}));
 	}

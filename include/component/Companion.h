@@ -19,7 +19,7 @@ class Companion : public Component {
 
     void Update(float dt);
     void Render(Vec2<Cart> camera);
-    void NotifyCollision(GameObject& other);
+    void NotifyCollisionEnter(GameObject& other);
 
    private:
     float& speed{Consts::GetFloat("companion.speed")};

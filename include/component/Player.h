@@ -76,7 +76,7 @@ class Player : public Component {
     void Update(float dt);
     void Render(Vec2<Cart> camera);
     inline CType Key() const { return CType::Player; }
-    void NotifyCollision(GameObject& other);
+    void NotifyCollisionEnter(GameObject& other);
     void RequestDelete();
 
     /* Finds the player if in view, or a point in the trail that's visible */

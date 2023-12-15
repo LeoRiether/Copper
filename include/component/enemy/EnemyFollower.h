@@ -42,7 +42,7 @@ class EnemyFollower : public Component {
     void Start();
     void Update(float dt);
     void Render(Vec2<Cart> camera);
-    void NotifyCollision(GameObject& other);
+    void NotifyCollisionEnter(GameObject& other);
     void Die();
 
     inline CType Key() const { return CType::EnemyBehavior; }
