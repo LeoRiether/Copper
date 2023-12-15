@@ -176,4 +176,11 @@ void RobotCan::Die() {
     associated.RequestDelete();
     if (randi(0, 99) < powerupChance)
         associated.RequestAdd(MakeRandomPowerup()->WithCenterAt(center));
+
+	int coins = randi(0, 5);
+	for (int i = 0; i < coins; i++) {
+		associated.RequestAdd(MakeCoin()
+			->WithCenterAt(center +
+				Vec2<Cart>{randi(0,30), randi(0,30)}));
+	}
 }

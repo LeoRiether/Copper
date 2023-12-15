@@ -15,6 +15,7 @@ class Coin : public Component {
    private:
 	   bool moving{false};
 	   bool collected{false};
+	   float accel{500};
 	   Vec2<Cart> speed{0,0};
 	   Vec2<Cart> target{0,0};
 

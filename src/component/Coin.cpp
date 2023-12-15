@@ -15,7 +15,8 @@ void Coin::Update(float dt) {
 		Vec2<Cart> pos = associated.box.Center();
 		auto camera = Game::Instance().GetState().GetCamera();
 		target = camera.Pos() + Vec2<Cart>{SCREEN_WIDTH-113, 62};
-		speed = (target - pos).normalize() * 500;
+		speed = (target - pos).normalize() * accel;
+		accel += 10;
 		Vec2<Cart> nPos = pos + speed * dt;
 		if (nPos.dist(target) < 5.0) {
 			nPos = target;
@@ -29,10 +30,6 @@ void Coin::Update(float dt) {
 
 void Coin::NotifyCollisionEnter(GameObject& other) {
     if (!collected && other.tags.test(tag::Player)) {
-		Vec2<Cart> pos = associated.box.Center();
-		auto camera = Game::Instance().GetState().GetCamera();
-		target = camera.Pos() + Vec2<Cart>{SCREEN_WIDTH-120, 50};
-		speed = (target - pos).normalize() * 500;
 		collected = true;
 		moving = true;
 		associated.renderLayer = 200;
