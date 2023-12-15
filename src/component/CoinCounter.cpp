@@ -13,6 +13,8 @@ int CoinCounter::coins = 0;
 int CoinCounter::target = 0;
 CoinCounter* CoinCounter::coinCounter = nullptr;
 CoinCounter::CoinCounter(GameObject& go): Component(go){
+	coins = 0;
+	target = 0;
     auto text = new Text{go,
                          ASSETS "/font/AldotheApache.ttf",
                          30,
@@ -47,6 +49,6 @@ void CoinCounter::Update(float) {
 }
 
 void CoinCounter::AddCoin() {
-	target = coins + 5;
+	target = target + 5;
 }
 

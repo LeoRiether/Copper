@@ -13,8 +13,11 @@ Coin::Coin(GameObject& go): Component(go) {
 void Coin::Update(float dt) {
 	if (moving) {
 		Vec2<Cart> pos = associated.box.Center();
+		auto camera = Game::Instance().GetState().GetCamera();
+		target = camera.Pos() + Vec2<Cart>{SCREEN_WIDTH-113, 62};
+		speed = (target - pos).normalize() * 500;
 		Vec2<Cart> nPos = pos + speed * dt;
-		if (nPos.dist(target) < 10.0) {
+		if (nPos.dist(target) < 5.0) {
 			nPos = target;
 			moving = false;
 			CoinCounter::coinCounter->AddCoin();
@@ -27,13 +30,11 @@ void Coin::Update(float dt) {
 void Coin::NotifyCollisionEnter(GameObject& other) {
     if (!collected && other.tags.test(tag::Player)) {
 		Vec2<Cart> pos = associated.box.Center();
-		//auto camera = Game::Instance().GetState().GetCamera();
-		//associated.box.SetCenter(pos + camera.Pos());
-		float angle = (target - pos).angle();
-		speed = speed.GetRotated(angle);
+		auto camera = Game::Instance().GetState().GetCamera();
+		target = camera.Pos() + Vec2<Cart>{SCREEN_WIDTH-120, 50};
+		speed = (target - pos).normalize() * 500;
 		collected = true;
 		moving = true;
 		associated.renderLayer = 200;
-		//((Sprite*)associated.GetComponent(CType::Sprite))->followsCamera = true;
 	}
 }

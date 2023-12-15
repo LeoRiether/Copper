@@ -15,8 +15,8 @@ class Coin : public Component {
    private:
 	   bool moving{false};
 	   bool collected{false};
-	   Vec2<Cart> speed{500,500};
-	   Vec2<Cart> target{SCREEN_WIDTH-120, 50};
+	   Vec2<Cart> speed{0,0};
+	   Vec2<Cart> target{0,0};
 
 };
 
