@@ -9,11 +9,11 @@ class DialogTrigger : public Component {
    public:
     DialogTrigger(GameObject& go, std::string dialogFile);
 
-	void Update(float dt);
-
     inline CType Key() const { return CType::DialogTrigger; }
 
     void NotifyCollision(GameObject& other);
+    void NotifyCollisionEnter(GameObject& other);
+    void NotifyCollisionLeave(GameObject& other);
 
    private:
 	std::string dialogFile{};

@@ -86,7 +86,7 @@ void Dialog::Start() {
 void Dialog::Update(float) {
   auto &input = InputManager::Instance();
 
-  if (input.KeyPress(NEXT_KEY)) {
+  if (input.KeyPress(NEXT_KEY) || input.ControllerPress(SDL_CONTROLLER_BUTTON_A)) {
     if (index >= (int)script.size()) {
       associated.RequestDelete();
       return;

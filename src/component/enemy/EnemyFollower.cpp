@@ -263,6 +263,7 @@ void EnemyFollower::NotifyCollisionEnter(GameObject& other) {
     bool bulletHit = bullet && !bullet->TargetsPlayer();
     bool meleeHit = other.tags.test(tag::PlayerHitbox);
 	bool explosion = other.tags.test(tag::Explosion);
+	int damage = explosion ? 75 : 25;
     if (bulletHit || meleeHit) {
 
         // Player stops loosing HP
@@ -272,9 +273,9 @@ void EnemyFollower::NotifyCollisionEnter(GameObject& other) {
         auto bar =
             (OverheadHpBar*)associated.GetComponent(CType::OverheadHpBar);
         if (bar) {
-            bar->SetHp(bar->Hp() - 25);
+            bar->SetHp(bar->Hp() - damage);
             associated.RequestAdd(
-                MakeHitMarker(25)->WithFootAt(associated.box.Head()));
+                MakeHitMarker(damage)->WithFootAt(associated.box.Head()));
         }
 
         // Trauma
