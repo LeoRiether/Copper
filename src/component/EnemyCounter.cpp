@@ -9,7 +9,7 @@
 
 #define MODULE "EnemyCounter"
 
-EnemyCounter::EnemyCounter(GameObject& go): Component(go){
+EnemyCounter::EnemyCounter(GameObject& go, Vec2<Cart> pos): Component(go){
     auto& state = (StageState&)Game::Instance().GetState();
     auto text = new Text{go,
                          ASSETS "/font/AldotheApache.ttf",
@@ -22,7 +22,7 @@ EnemyCounter::EnemyCounter(GameObject& go): Component(go){
     go.AddComponent(text);
 	go.box.SetCenter({SCREEN_WIDTH-50, 107});
 	go.renderLayer = 200;
-	auto skull = (new GameObject{})->WithCenterAt(Vec2<Cart>{SCREEN_WIDTH-127, 80});
+	auto skull = (new GameObject{})->WithCenterAt(pos);
 	auto skullSprite = new Sprite{*skull,
 		ASSETS "/img/skull.png", true};
 	skullSprite->SetScale(1.2);

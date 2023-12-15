@@ -5,11 +5,14 @@
 #include "GameData.h"
 #include "GameObject.h"
 #include "InputManager.h"
+#include "Prefabs.h"
 #include "Resources.h"
 #include "component/Sprite.h"
 #include "component/Text.h"
 #include "component/TextBlinker.h"
 #include "component/TextFadeIn.h"
+#include "component/CoinCounter.h"
+#include "component/EnemyCounter.h"
 #include "state/StageState.h"
 #include "util.h"
 
@@ -22,6 +25,16 @@ void EndState::LoadAssets() {
 }
 
 void EndState::Update(float dt) {
+  if(leave) {
+    timer += dt;
+    if(timer>1) {
+      GameData::playerHp = 100;
+      Game::Instance().RequestPop();
+      Game::Instance().RequestPush(new StageState{});
+    }
+    return;
+  }
+
   ProcessAddRequests();
 
   auto &input = InputManager::Instance();
@@ -33,9 +46,8 @@ void EndState::Update(float dt) {
   }
 
   if (input.KeyPress(SDL_SCANCODE_SPACE)) {
-    GameData::playerHp = 100;
-    Game::Instance().RequestPop();
-    Game::Instance().RequestPush(new StageState{});
+    leave = true;
+    RequestAddObject(MakeStageTransitionDimmer_FadeOut());
   }
 
   UpdateArray(dt);
@@ -70,7 +82,7 @@ void EndState::Start() {
       go->AddComponent(new Text{*go, ASSETS "/font/THEROOTS.TTF", 20,
                                 Text::Blended, text, colorFromHex("dda08d")});
       go->AddComponent(new TextBlinker{*go, 4.0f});
-      go->box.SetCenter({SCREEN_WIDTH / 2.0f + 250, SCREEN_HEIGHT / 2.0f - 150});
+      go->box.SetCenter({SCREEN_WIDTH / 2.0f + 250, SCREEN_HEIGHT / 2.0f - 110});
       RequestAddObject(go);
     }
   }
@@ -86,16 +98,18 @@ void EndState::Start() {
     RequestAddObject(go);
   }
 
-  {
-    auto coinCounterGo = new GameObject{};
-    coinCounterGo->AddComponent(new CoinCounter{*coinCounterGo});
-    RequestAddObject(coinCounterGo);
+  // {
+  //   auto coinCounterGo = new GameObject{};
+  //   coinCounterGo->AddComponent(new CoinCounter{*coinCounterGo, {SCREEN_WIDTH / 2.0f + 250, SCREEN_HEIGHT / 2.0f + 100}});
+  //   coinCounterGo->box.SetCenter({SCREEN_WIDTH / 2.0f + 250, SCREEN_HEIGHT / 2.0f + 100});
+  //   RequestAddObject(coinCounterGo);
 
-    EnemyCount = GameData::enemiesKilled;
-    auto enemyCountergo = new GameObject{};
-    enemyCountergo->AddComponent(new EnemyCounter{*enemyCountergo});
-    RequestAddObject(enemyCountergo);
-  }
+  //   EnemyCount = GameData::enemiesKilled;
+  //   auto enemyCountergo = new GameObject{};
+  //   enemyCountergo->AddComponent(new EnemyCounter{*enemyCountergo, {SCREEN_WIDTH / 2.0f + 250, SCREEN_HEIGHT / 2.0f + 100}});
+  //   coinCounterGo->box.SetCenter({SCREEN_WIDTH / 2.0f + 250, SCREEN_HEIGHT / 2.0f + 100});
+  //   RequestAddObject(enemyCountergo);
+  // }
 
   // bgMusic.Play();
 

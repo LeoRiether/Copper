@@ -6,6 +6,9 @@
 class EndState : public State {
 private:
   Music bgMusic;
+  int EnemyCount{0};
+  float timer{0};
+  bool leave = false;
 
 public:
   EndState();

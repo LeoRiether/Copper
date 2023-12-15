@@ -11,7 +11,7 @@
 #define MODULE "CoinCounter"
 
 CoinCounter* CoinCounter::coinCounter = nullptr;
-CoinCounter::CoinCounter(GameObject& go): Component(go){
+CoinCounter::CoinCounter(GameObject& go, Vec2<Cart> pos): Component(go){
 	target = GameData::coins;
     auto text = new Text{go,
                          ASSETS "/font/AldotheApache.ttf",
@@ -24,7 +24,7 @@ CoinCounter::CoinCounter(GameObject& go): Component(go){
     go.AddComponent(text);
 	go.box.SetCenter({SCREEN_WIDTH-50, 67});
 	go.renderLayer = 200;
-	auto coin = (new GameObject{})->WithCenterAt(Vec2<Cart>{SCREEN_WIDTH-120, 50});
+	auto coin = (new GameObject{})->WithCenterAt(pos);
 	auto coinSprite = new Sprite{*coin,
 		ASSETS "/img/lego_studs.png", true};
 	coinSprite->SetScale(0.5);
