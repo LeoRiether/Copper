@@ -13,8 +13,7 @@ class CoinCounter : public Component {
 	   void AddCoin();
 
    private:
-	   static int coins; 
-	   static int target;
+	   int target;
 
 };
 
