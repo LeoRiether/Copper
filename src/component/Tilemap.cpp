@@ -40,8 +40,13 @@ void Tilemap::Render(Vec2<Cart> camera) {
     int mid_j = P.x / tileWidth - offset.j;
     int mid_i = P.y * 2.0f / tileHeight - offset.i;
 
-    for (int i = std::max(0, mid_i - 14); i < mid_i + 11 && i < height; i++) {
-        for (int j = std::max(0, mid_j - 15); j < mid_j + 10 && j < width;
+    constexpr int less = 15;
+    constexpr int more = 11;
+    // constexpr int less = 150;
+    // constexpr int more = 110;
+
+    for (int i = std::max(0, mid_i - less); i < mid_i + more && i < height; i++) {
+        for (int j = std::max(0, mid_j - less); j < mid_j + more && j < width;
              j++) {
             int id = map[At(i, j)];
             if (id < 0) continue;
