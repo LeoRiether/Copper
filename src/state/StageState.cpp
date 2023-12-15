@@ -1,7 +1,6 @@
 #include "state/StageState.h"
 
 #include <algorithm>
-#include <iostream>
 #include <memory>
 
 #include "CType.h"
@@ -21,6 +20,7 @@
 #include "component/Tilemap.h"
 #include "component/Tileset.h"
 #include "component/Tooltip.h"
+#include "component/Player.h"
 #include "component/powerup/StrongerAttack.h"
 #include "physics/CollisionEngine.h"
 #include "physics/Tags.h"
@@ -132,6 +132,10 @@ void StageState::Update(float dt) {
 	if (input.KeyPress(SDL_SCANCODE_I)) {
 		RequestAddObject(MakeCoin()->WithCenterAt({input.MouseX(), input.MouseY()}));
 	}
+
+    if (input.KeyPress(SDL_SCANCODE_9)) {
+        Player::player->hp=0;
+    }
 
     // Handle updates
     CollisionEngine::Update(objects);

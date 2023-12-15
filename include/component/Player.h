@@ -64,6 +64,8 @@ class Player : public Component {
     void UpdatePosition(float dt);
     void ConstrainToTile();
 
+    bool dead{false};
+
    public:
     static Player* player;
     inline GameObject& Associated() { return associated; }

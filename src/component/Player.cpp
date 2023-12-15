@@ -18,6 +18,7 @@
 #include "component/Sound.h"
 #include "component/Sprite.h"
 #include "component/Text.h"
+#include "state/EndState.h"
 #include "math/Direction.h"
 #include "physics/CollisionEngine.h"
 #include "physics/Tags.h"
@@ -172,6 +173,13 @@ void Player::MaybeChangeState(State newState) {
 }
 
 void Player::Update(float dt) {
+    if (dead) {
+        dead = false;
+        Game::Instance().RequestPop();
+        Game::Instance().RequestPush(new EndState{});
+        return;
+    }
+
     UpdateState(dt);
     UpdatePosition(dt);
 
@@ -198,6 +206,12 @@ void Player::Update(float dt) {
         }
     }
     GameData::playerHp = hp;
+
+    if (hp <= 0) {
+        dead = true;
+        ChangeState(Idle);
+        associated.RequestAdd(MakeStageTransitionDimmer_FadeOut());
+    }
 }
 
 void Player::UpdateState(float dt) {
